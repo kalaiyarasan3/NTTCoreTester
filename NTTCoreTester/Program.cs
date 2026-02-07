@@ -7,12 +7,14 @@ using NTTCoreTester.Scenarios;
 using NTTCoreTester.Services;
 using NTTCoreTester.UI;
 using NTTCoreTester.Validators;
+using System.Net;
 
 namespace NTTCoreTester
 {
     class Program
     {
         static async Task Main(string[] args)
+        
         {
             try
             {
@@ -25,6 +27,8 @@ namespace NTTCoreTester
                 // Get configurations
                 var apiCfg = config.GetSection("ApiConfiguration").Get<ApiConfiguration>();
                 var reportCfg = config.GetSection("ReportConfig").Get<ReportConfig>();
+
+
 
                 // Use defaults if null
                 if (reportCfg == null)
@@ -46,6 +50,15 @@ namespace NTTCoreTester
 
                 // setup DI
                 var services = new ServiceCollection();
+
+                services.AddHttpClient<IApiService, ApiService>()
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        AutomaticDecompression = DecompressionMethods.GZip
+                               | DecompressionMethods.Deflate
+                               | DecompressionMethods.Brotli
+    });
+
 
                 // Register configurations
                 services.AddSingleton(apiCfg);

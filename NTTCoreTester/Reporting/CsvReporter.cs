@@ -46,12 +46,14 @@ namespace NTTCoreTester.Reporting
         {
             var sb = new StringBuilder();
 
-            
             sb.AppendLine("Timestamp,Module,Scenario,API,Status,ResponseMs,ValidJson,Error,HttpCode");
 
-            
             foreach (var r in _results)
             {
+                string errorMessage = r.Error ?? "";
+
+                errorMessage = errorMessage.Replace("\"", "\"\"");
+
                 sb.AppendLine($"{r.Time:yyyy-MM-dd HH:mm:ss}," +
                              $"{r.Module}," +
                              $"{r.Scenario}," +
@@ -59,7 +61,7 @@ namespace NTTCoreTester.Reporting
                              $"{r.Result}," +
                              $"{r.ResponseMs}," +
                              $"{(r.ValidJson ? "YES" : "NO")}," +
-                             $"\"{r.Error.Replace("\"", "\"\"")}\"," +
+                             $"\"{errorMessage}\"," +
                              $"{r.HttpCode}");
             }
 

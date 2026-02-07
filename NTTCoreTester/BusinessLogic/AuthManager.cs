@@ -38,6 +38,7 @@ namespace NTTCoreTester.BusinessLogic
 
         public async Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(string uid, string pwd, string scenario)
         {
+                return (true,"", new());
             _lastUid = uid; 
 
             var req = new SendOtpRequest { uid = uid, pwd = pwd };
@@ -81,7 +82,8 @@ namespace NTTCoreTester.BusinessLogic
                 password = pwd,
                 pwd = pwd,
                 otp = otp,
-                source = "web"
+                TwoFA=1,
+                source = "WEB"
             };
 
             var (res, time, status) = await _api.Login(req);

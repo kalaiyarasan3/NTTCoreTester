@@ -1,4 +1,5 @@
-﻿using NTTCoreTester.Reporting;
+﻿using NTTCoreTester.BusinessLogic;
+using NTTCoreTester.Reporting;
 using NTTCoreTester.Scenarios;
 
 namespace NTTCoreTester.UI
@@ -7,11 +8,13 @@ namespace NTTCoreTester.UI
     {
         private readonly ITestScenarios _scenarios;
         private readonly ICsvReport _report;
+        private readonly IAuthManager _authManager;
 
-        public Menu(ITestScenarios scenarios, ICsvReport report)
+        public Menu(ITestScenarios scenarios, ICsvReport report, IAuthManager authManager)
         {
             _scenarios = scenarios;
             _report = report;
+            _authManager = authManager;
         }
 
         public async Task Start()
@@ -40,7 +43,7 @@ namespace NTTCoreTester.UI
                         break;
                     case "6":
                         await _report.Save();
-                        Console.WriteLine("\nBye!");
+                        Console.WriteLine("\nSaved");
                         return;
                     default:
                         Console.WriteLine("\nInvalid option");
@@ -55,14 +58,28 @@ namespace NTTCoreTester.UI
 
         private void ShowMenu()
         {
-            Console.WriteLine("Auth Testing Framework              ");
+            Console.WriteLine("Auth Testing Framework");
+
+            // Show session status
+            var session = _authManager.GetSession();
+            if (session != null && session.IsActive)
+            {
+                Console.WriteLine($"\n✓ Logged in: {session.UserName} ({session.UserId})");
+                Console.WriteLine($"  Session: {session.GetMaskedToken()}");
+                Console.WriteLine($"  Login Time: {session.LoginTime:HH:mm:ss}");
+            }
+            else
+            {
+                Console.WriteLine("\n○ Not logged in");
+            }
+
             Console.WriteLine();
             Console.WriteLine("1. Normal Login Flow");
             Console.WriteLine("2. Session Validation");
             Console.WriteLine("3. Forgot Password");
             Console.WriteLine("4. Save Report");
             Console.WriteLine("5. Show Report Path");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("6. Exit & Save Report");
             Console.WriteLine();
             Console.Write("Choose: ");
         }
@@ -71,9 +88,11 @@ namespace NTTCoreTester.UI
         {
             Console.Write("\nUser ID: ");
             string uid = Console.ReadLine();
+            //string uid = "47054457";
 
             Console.Write("Password: ");
-            string pwd = Console.ReadLine(); // Shows actual characters typed
+            string pwd = Console.ReadLine();
+            //string pwd = "Uat@47054457";
 
             await _scenarios.RunNormalLogin(uid, pwd);
         }
@@ -84,7 +103,7 @@ namespace NTTCoreTester.UI
             string uid = Console.ReadLine();
 
             Console.Write("Password: ");
-            string pwd = Console.ReadLine(); // Shows actual characters typed
+            string pwd = Console.ReadLine();
 
             await _scenarios.RunSessionValidation(uid, pwd);
         }
@@ -93,14 +112,12 @@ namespace NTTCoreTester.UI
         {
             Console.Write("\nUser ID: ");
             string uid = Console.ReadLine();
-
-            Console.Write("Login Token: ");
-            string token = Console.ReadLine();
+            //string uid = "47054457";
 
             Console.Write("New Password: ");
-            string newPwd = Console.ReadLine(); // Shows actual characters typed
+            string newPwd = Console.ReadLine();
 
-            await _scenarios.RunForgotPassword(uid, token, newPwd);
+            await _scenarios.RunForgotPassword(uid, "", newPwd);
         }
     }
 }

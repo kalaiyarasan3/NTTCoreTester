@@ -20,6 +20,7 @@ namespace NTTCoreTester.Models
         public string password { get; set; }
         public string pwd { get; set; }
         public string otp { get; set; }
+        public int TwoFA { get; set; }
         public string source { get; set; } = "web";
     }
 
