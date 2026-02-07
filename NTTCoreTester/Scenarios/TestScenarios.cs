@@ -39,10 +39,10 @@ namespace NTTCoreTester.Scenarios
 
             if (!otpRes.ok)
             {
-                Console.WriteLine($"✗ Failed: {otpRes.msg}");
+                Console.WriteLine($" Failed: {otpRes.msg}");
                 return false;
             }
-            Console.WriteLine($"✓ {otpRes.msg}");
+            Console.WriteLine($" {otpRes.msg}");
 
             // step 2 - get otp from user
             Console.Write("\n[2] Enter OTP: ");
@@ -55,10 +55,10 @@ namespace NTTCoreTester.Scenarios
 
             if (!loginRes.ok)
             {
-                Console.WriteLine($"✗ Failed: {loginRes.msg}");
+                Console.WriteLine($" Failed: {loginRes.msg}");
                 return false;
             }
-            Console.WriteLine($"✓ Welcome {loginRes.session.UserName}!");
+            Console.WriteLine($" Welcome {loginRes.session.UserName}!");
 
             // step 4 - check session
             Console.WriteLine("\n[4] Checking session...");
@@ -67,12 +67,12 @@ namespace NTTCoreTester.Scenarios
 
             if (!checkRes.ok)
             {
-                Console.WriteLine($"✗ Failed: {checkRes.msg}");
+                Console.WriteLine($" Failed: {checkRes.msg}");
                 allGood = false;
             }
             else
             {
-                Console.WriteLine($"✓ {checkRes.msg}");
+                Console.WriteLine($" {checkRes.msg}");
             }
 
             // step 5 - logout
@@ -82,11 +82,11 @@ namespace NTTCoreTester.Scenarios
 
             if (!logoutRes.ok)
             {
-                Console.WriteLine($"⚠ Warning: {logoutRes.msg}");
+                Console.WriteLine($" Warning: {logoutRes.msg}");
             }
             else
             {
-                Console.WriteLine($"✓ {logoutRes.msg}");
+                Console.WriteLine($" {logoutRes.msg}");
             }
 
             Console.WriteLine($"\n>>> Scenario A: {(allGood ? "PASSED" : "FAILED")}");
@@ -106,7 +106,7 @@ namespace NTTCoreTester.Scenarios
 
             if (!otpRes.ok)
             {
-                Console.WriteLine("✗ OTP failed");
+                Console.WriteLine(" OTP failed");
                 return false;
             }
 
@@ -119,7 +119,7 @@ namespace NTTCoreTester.Scenarios
 
             if (!loginRes.ok)
             {
-                Console.WriteLine("✗ Login failed");
+                Console.WriteLine(" Login failed");
                 return false;
             }
 
@@ -132,12 +132,12 @@ namespace NTTCoreTester.Scenarios
 
                 if (!checkRes.ok)
                 {
-                    Console.WriteLine($"✗ Check {i} failed");
+                    Console.WriteLine($" Check {i} failed");
                     allGood = false;
                 }
                 else
                 {
-                    Console.WriteLine($"✓ Still active");
+                    Console.WriteLine($" Still active");
                 }
 
                 if (i < 3)
@@ -153,65 +153,72 @@ namespace NTTCoreTester.Scenarios
             return allGood;
         }
 
-        public async Task<bool> RunForgotPassword(string uid, string token, string newPwd)
+        public async Task<bool> RunForgotPassword(string uid, string loginToken, string newPwd)
         {
             Console.WriteLine("\n=== SCENARIO C: Forgot Password ===\n");
-            Console.WriteLine("⚠ WARNING: This will reset your password!");
-            Console.Write("Type YES to continue: ");
-
-            if (Console.ReadLine() != "YES")
-            {
-                Console.WriteLine("Cancelled");
-                return false;
-            }
+           
 
             bool allGood = true;
 
-            // step 1 - request otp
+     
             Console.WriteLine("\n[1] Requesting password reset OTP...");
-            var forgotRes = await _auth.ForgotPwdAndValidate(uid, token, "ForgotPwd");
+
+            var forgotRes = await _auth.ForgotPwdAndValidate(uid, loginToken ?? "", "ForgotPwd");
             _report.Add(forgotRes.test);
 
             if (!forgotRes.ok)
             {
-                Console.WriteLine($"✗ Failed: {forgotRes.msg}");
+                Console.WriteLine($"Failed: {forgotRes.msg}");
                 return false;
             }
-            Console.WriteLine($"✓ {forgotRes.msg}");
+            Console.WriteLine($"{forgotRes.msg}");
 
-            // step 2 - get otp
-            Console.Write("\n[2] Enter OTP: ");
+            
+            Console.Write("\n[2] Enter OTP received: ");
             string otp = Console.ReadLine();
 
-            // step 3 - reset password
+           
             Console.WriteLine("\n[3] Resetting password...");
             var resetRes = await _auth.ResetPwdAndValidate(uid, otp, newPwd, "ForgotPwd");
             _report.Add(resetRes.test);
 
             if (!resetRes.ok)
             {
-                Console.WriteLine($"✗ Failed: {resetRes.msg}");
+                Console.WriteLine($"Failed: {resetRes.msg}");
                 return false;
             }
-            Console.WriteLine($"✓ Password changed!");
+            Console.WriteLine($"Password changed successfully!");
 
-            // step 4 - test new password
+            
             Console.WriteLine("\n[4] Testing new password...");
-            var testRes = await _auth.SendOtpAndValidate(uid, newPwd, "ForgotPwd_Test");
-            _report.Add(testRes.test);
+            var testOtpRes = await _auth.SendOtpAndValidate(uid, newPwd, "ForgotPwd_Test");
+            _report.Add(testOtpRes.test);
 
-            if (!testRes.ok)
+            if (!testOtpRes.ok)
             {
-                Console.WriteLine("✗ New password not working");
+                Console.WriteLine("New password not working");
                 allGood = false;
             }
             else
             {
-                Console.WriteLine("✓ New password works");
+                Console.WriteLine("New password works!");
+
+                
+                Console.Write("\n[5] Enter OTP to test login: ");
+                string testOtp = Console.ReadLine();
+
+                var testLoginRes = await _auth.LoginAndValidate(uid, newPwd, testOtp, "ForgotPwd_Test");
+                _report.Add(testLoginRes.test);
+
+                if (testLoginRes.ok)
+                {
+                    Console.WriteLine(" Login successful with new password!");
+                }
             }
 
             Console.WriteLine($"\n>>> Scenario C: {(allGood ? "PASSED" : "FAILED")}");
             return allGood;
         }
+
     }
 }
