@@ -14,13 +14,10 @@ namespace NTTCoreTester.Models
         public DateTime LoginTime { get; set; }
         public bool IsActive { get; set; }
 
-        // mask token for display purposes
+        
         public string GetMaskedToken()
         {
-            if (string.IsNullOrEmpty(Token) || Token.Length < 10)
-                return "***";
-
-            return Token.Substring(0, 5) + "..." + Token.Substring(Token.Length - 5);
+            return Token; 
         }
     }
 

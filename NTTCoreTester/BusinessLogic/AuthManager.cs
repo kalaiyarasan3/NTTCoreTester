@@ -38,7 +38,7 @@ namespace NTTCoreTester.BusinessLogic
 
         public async Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(string uid, string pwd, string scenario)
         {
-            _lastUid = uid; // save for later
+            _lastUid = uid; 
 
             var req = new SendOtpRequest { uid = uid, pwd = pwd };
             var (res, time, status) = await _api.SendOtp(req);
@@ -52,11 +52,11 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            // check technical stuff
+            
             bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
             test.ValidJson = techOk;
 
-            // check business logic
+            
             if (res.StatusCode == 0)
             {
                 test.Result = Status.PASS;
@@ -95,14 +95,14 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            // validation
+            
             bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
             bool bizOk = _validator.CheckLogin(res, uid, out string bizErr);
             test.ValidJson = techOk && bizOk;
 
             if (bizOk && res.ResponceDataObject != null)
             {
-                // create session
+                
                 _session = new UserSession
                 {
                     UserId = res.ResponceDataObject.uid,
@@ -187,7 +187,7 @@ namespace NTTCoreTester.BusinessLogic
             bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
             test.ValidJson = techOk;
 
-            _session = null; // clear session
+            _session = null; 
 
             test.Result = Status.PASS;
             return (true, "Logged out", test);
@@ -196,7 +196,7 @@ namespace NTTCoreTester.BusinessLogic
         public async Task<(bool ok, string msg, TestResult test)> ForgotPwdAndValidate(
             string uid, string token, string scenario)
         {
-            // use remembered uid if not provided
+            
             string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
 
             var req = new ForgotPwdRequest
@@ -237,7 +237,7 @@ namespace NTTCoreTester.BusinessLogic
         public async Task<(bool ok, string msg, TestResult test)> ResetPwdAndValidate(
             string uid, string otp, string newPwd, string scenario)
         {
-            // use remembered uid if not provided
+            
             string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
 
             var req = new ResetPwdRequest

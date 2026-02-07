@@ -1,10 +1,5 @@
 ﻿using NTTCoreTester.Reporting;
 using NTTCoreTester.Scenarios;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester.UI
 {
@@ -60,9 +55,7 @@ namespace NTTCoreTester.UI
 
         private void ShowMenu()
         {
-            Console.WriteLine("╔══════════════════════════════════════╗");
-            Console.WriteLine("║  Auth Testing Framework              ║");
-            Console.WriteLine("╚══════════════════════════════════════╝");
+            Console.WriteLine("Auth Testing Framework              ");
             Console.WriteLine();
             Console.WriteLine("1. Normal Login Flow");
             Console.WriteLine("2. Session Validation");
@@ -80,7 +73,7 @@ namespace NTTCoreTester.UI
             string uid = Console.ReadLine();
 
             Console.Write("Password: ");
-            string pwd = GetPassword();
+            string pwd = Console.ReadLine(); // Shows actual characters typed
 
             await _scenarios.RunNormalLogin(uid, pwd);
         }
@@ -91,7 +84,7 @@ namespace NTTCoreTester.UI
             string uid = Console.ReadLine();
 
             Console.Write("Password: ");
-            string pwd = GetPassword();
+            string pwd = Console.ReadLine(); // Shows actual characters typed
 
             await _scenarios.RunSessionValidation(uid, pwd);
         }
@@ -105,36 +98,9 @@ namespace NTTCoreTester.UI
             string token = Console.ReadLine();
 
             Console.Write("New Password: ");
-            string newPwd = GetPassword();
+            string newPwd = Console.ReadLine(); // Shows actual characters typed
 
             await _scenarios.RunForgotPassword(uid, token, newPwd);
-        }
-
-        // simple password masking
-        private string GetPassword()
-        {
-            string pwd = "";
-            ConsoleKey key;
-
-            do
-            {
-                var keyInfo = Console.ReadKey(true);
-                key = keyInfo.Key;
-
-                if (key == ConsoleKey.Backspace && pwd.Length > 0)
-                {
-                    Console.Write("\b \b");
-                    pwd = pwd.Substring(0, pwd.Length - 1);
-                }
-                else if (!char.IsControl(keyInfo.KeyChar))
-                {
-                    Console.Write("*");
-                    pwd += keyInfo.KeyChar;
-                }
-            } while (key != ConsoleKey.Enter);
-
-            Console.WriteLine();
-            return pwd;
         }
     }
 }

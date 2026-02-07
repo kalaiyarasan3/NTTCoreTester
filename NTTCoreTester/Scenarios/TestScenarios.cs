@@ -17,10 +17,10 @@ namespace NTTCoreTester.Scenarios
 
     public class TestScenarios : ITestScenarios
     {
-        private readonly AuthManager _auth;
+        private readonly IAuthManager _auth;
         private readonly ICsvReport _report;
 
-        public TestScenarios(AuthManager auth, ICsvReport report)
+        public TestScenarios(IAuthManager auth, ICsvReport report)
         {
             _auth = auth;
             _report = report;

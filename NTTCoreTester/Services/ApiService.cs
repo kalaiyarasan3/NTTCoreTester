@@ -1,283 +1,131 @@
-﻿using Newtonsoft.Json;
-using NTTCoreTester.Configuration;
+﻿using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
-using NTTCoreTester.Validators;
-using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester.Services
 {
-    public interface IAuthManager
+    public interface IApiService
     {
-        Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(string uid, string pwd, string scenario);
-        Task<(bool ok, string msg, UserSession session, TestResult test)> LoginAndValidate(string uid, string pwd, string otp, string scenario);
-        Task<(bool ok, string msg, TestResult test)> CheckSessionAndValidate(string scenario);
-        Task<(bool ok, string msg, TestResult test)> LogoutAndValidate(string scenario);
-        Task<(bool ok, string msg, TestResult test)> ForgotPwdAndValidate(string uid, string token, string scenario);
-        Task<(bool ok, string msg, TestResult test)> ResetPwdAndValidate(string uid, string otp, string newPwd, string scenario);
-        UserSession GetSession();
+        Task<(ApiResponse<GeneralData> res, long time, int status)> SendOtp(SendOtpRequest req);
+        Task<(ApiResponse<LoginData> res, long time, int status)> Login(LoginRequest req);
+        Task<(ApiResponse<GeneralData> res, long time, int status)> CheckLogin(CheckLoginRequest req);
+        Task<(ApiResponse<GeneralData> res, long time, int status)> Logout(string token, string userId);
+        Task<(ApiResponse<GeneralData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req);
+        Task<(ApiResponse<GeneralData> res, long time, int status)> ResetPassword(ResetPwdRequest req);
     }
 
-    public class AuthManager : IAuthManager
+    public class ApiService : IApiService
     {
-        private readonly IApiService _api;
-        private readonly IValidator _validator;
-        private readonly ApiConfiguration _cfg;
-        private UserSession _session;
-        private string _lastUid; // remember uid for forgot password flow
+        private readonly HttpClient _http;
+        private readonly ApiConfiguration _config;
 
-        public AuthManager(IApiService api, IValidator validator, ApiConfiguration cfg)
+        public ApiService(HttpClient http, ApiConfiguration config)
         {
-            _api = api;
-            _validator = validator;
-            _cfg = cfg;
+            _http = http;
+            _config = config;
+            SetupHttpClient();
         }
 
-        public async Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(string uid, string pwd, string scenario)
+        private void SetupHttpClient()
         {
-            _lastUid = uid; // save for later
+            _http.BaseAddress = new Uri(_config.BaseUrl);
 
-            var req = new SendOtpRequest { uid = uid, pwd = pwd };
-            var (res, time, status) = await _api.SendOtp(req);
-
-            var test = new TestResult
+            foreach (var h in _config.DefaultHeaders)
             {
-                Time = DateTime.Now,
-                Scenario = scenario,
-                Api = "SendOTP",
-                ResponseMs = time,
-                HttpCode = status
-            };
-
-            // check technical stuff
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
-            // check business logic
-            if (res.StatusCode == 0)
-            {
-                test.Result = Status.PASS;
-                return (true, res.Message, test);
-            }
-            else
-            {
-                test.Result = Status.FAIL;
-                test.Error = res.Message;
-                return (false, res.Message, test);
+                _http.DefaultRequestHeaders.TryAddWithoutValidation(h.Key, h.Value);
             }
         }
 
-        public async Task<(bool ok, string msg, UserSession session, TestResult test)> LoginAndValidate(
-            string uid, string pwd, string otp, string scenario)
+        public async Task<(ApiResponse<GeneralData> res, long time, int status)> SendOtp(SendOtpRequest req)
         {
-            var req = new LoginRequest
+            return await PostRequest<GeneralData>("?Activity=SendOTP", req);
+        }
+
+        public async Task<(ApiResponse<LoginData> res, long time, int status)> Login(LoginRequest req)
+        {
+            return await PostRequest<LoginData>("?Activity=Login", req);
+        }
+
+        public async Task<(ApiResponse<GeneralData> res, long time, int status)> CheckLogin(CheckLoginRequest req)
+        {
+            return await PostRequest<GeneralData>("?Activity=CheckLogin", req);
+        }
+
+        public async Task<(ApiResponse<GeneralData> res, long time, int status)> Logout(string token, string userId)
+        {
+            string url = $"?Activity=Logout&logintoken={Uri.EscapeDataString(token)}&username={Uri.EscapeDataString(userId)}";
+            return await GetRequest<GeneralData>(url);
+        }
+
+        public async Task<(ApiResponse<GeneralData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req)
+        {
+            return await PostRequest<GeneralData>("?Activity=FgtPwdOTP", req);
+        }
+
+        public async Task<(ApiResponse<GeneralData> res, long time, int status)> ResetPassword(ResetPwdRequest req)
+        {
+            return await PostRequest<GeneralData>("?Activity=ValOTPStPwd", req);
+        }
+
+        // generic POST handler
+        private async Task<(ApiResponse<T> res, long time, int status)> PostRequest<T>(string endpoint, object data)
+        {
+            var timer = Stopwatch.StartNew();
+            try
             {
-                site = _cfg.Site,
-                username = uid,
-                uid = uid,
-                password = pwd,
-                pwd = pwd,
-                otp = otp,
-                source = "web"
-            };
+                string json = JsonConvert.SerializeObject(data);
+                var content = new StringContent(json, Encoding.UTF8, "text/plain");
 
-            var (res, time, status) = await _api.Login(req);
+                Console.WriteLine($"\n>> POST {endpoint}");
+                Console.WriteLine($">> Payload: {json}");  // Show actual data
 
-            var test = new TestResult
-            {
-                Time = DateTime.Now,
-                Scenario = scenario,
-                Api = "Login",
-                ResponseMs = time,
-                HttpCode = status
-            };
+                var response = await _http.PostAsync(endpoint, content);
+                string respBody = await response.Content.ReadAsStringAsync();
+                timer.Stop();
 
-            // validation
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            bool bizOk = _validator.CheckLogin(res, uid, out string bizErr);
-            test.ValidJson = techOk && bizOk;
+                Console.WriteLine($"<< {(int)response.StatusCode} ({timer.ElapsedMilliseconds}ms)");
+                Console.WriteLine($"<< Response: {respBody}"); // Show actual response
 
-            if (bizOk && res.ResponceDataObject != null)
-            {
-                // create session
-                _session = new UserSession
-                {
-                    UserId = res.ResponceDataObject.uid,
-                    UserName = res.ResponceDataObject.uname,
-                    Token = res.ResponceDataObject.susertoken,
-                    LoginTime = DateTime.Now,
-                    IsActive = true
-                };
-
-                _lastUid = uid;
-                test.Result = Status.PASS;
-                return (true, res.Message, _session, test);
+                var result = JsonConvert.DeserializeObject<ApiResponse<T>>(respBody);
+                return (result, timer.ElapsedMilliseconds, (int)response.StatusCode);
             }
-            else
+            catch (Exception ex)
             {
-                test.Result = Status.FAIL;
-                test.Error = bizErr;
-                return (false, bizErr, null, test);
+                timer.Stop();
+                Console.WriteLine($"!! Error: {ex.Message}");
+                return (new ApiResponse<T> { Status = "Error", Message = ex.Message },
+                        timer.ElapsedMilliseconds, 0);
             }
         }
 
-        public async Task<(bool ok, string msg, TestResult test)> CheckSessionAndValidate(string scenario)
+        // generic GET handler
+        private async Task<(ApiResponse<T> res, long time, int status)> GetRequest<T>(string endpoint)
         {
-            var test = new TestResult
+            var timer = Stopwatch.StartNew();
+            try
             {
-                Time = DateTime.Now,
-                Scenario = scenario,
-                Api = "CheckLogin"
-            };
+                Console.WriteLine($"\n>> GET {endpoint}");
 
-            if (_session == null || string.IsNullOrEmpty(_session.Token))
-            {
-                test.Result = Status.FAIL;
-                test.Error = "No session";
-                return (false, "No active session", test);
+                var response = await _http.GetAsync(endpoint);
+                string respBody = await response.Content.ReadAsStringAsync();
+                timer.Stop();
+
+                Console.WriteLine($"<< {(int)response.StatusCode} ({timer.ElapsedMilliseconds}ms)");
+
+                var result = JsonConvert.DeserializeObject<ApiResponse<T>>(respBody);
+                return (result, timer.ElapsedMilliseconds, (int)response.StatusCode);
             }
-
-            var req = new CheckLoginRequest { sessionkey = _session.Token };
-            var (res, time, status) = await _api.CheckLogin(req);
-
-            test.ResponseMs = time;
-            test.HttpCode = status;
-
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            bool sessOk = _validator.CheckSession(res, out string sessErr);
-            test.ValidJson = techOk && sessOk;
-
-            if (sessOk)
+            catch (Exception ex)
             {
-                test.Result = Status.PASS;
-                return (true, "Session active", test);
-            }
-            else
-            {
-                test.Result = Status.FAIL;
-                test.Error = sessErr;
-                return (false, sessErr, test);
+                timer.Stop();
+                Console.WriteLine($"!! Error: {ex.Message}");
+                return (new ApiResponse<T> { Status = "Error", Message = ex.Message },
+                        timer.ElapsedMilliseconds, 0);
             }
         }
 
-        public async Task<(bool ok, string msg, TestResult test)> LogoutAndValidate(string scenario)
-        {
-            var test = new TestResult
-            {
-                Time = DateTime.Now,
-                Scenario = scenario,
-                Api = "Logout"
-            };
-
-            if (_session == null)
-            {
-                test.Result = Status.SKIP;
-                test.Error = "No session";
-                return (false, "No session to logout", test);
-            }
-
-            var (res, time, status) = await _api.Logout(_session.Token, _session.UserId);
-
-            test.ResponseMs = time;
-            test.HttpCode = status;
-
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
-            _session = null; // clear session
-
-            test.Result = Status.PASS;
-            return (true, "Logged out", test);
-        }
-
-        public async Task<(bool ok, string msg, TestResult test)> ForgotPwdAndValidate(
-            string uid, string token, string scenario)
-        {
-            // use remembered uid if not provided
-            string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
-
-            var req = new ForgotPwdRequest
-            {
-                site = _cfg.Site,
-                loginid = actualUid,
-                uid = actualUid,
-                logintoken = token
-            };
-
-            var (res, time, status) = await _api.ForgotPassword(req);
-
-            var test = new TestResult
-            {
-                Time = DateTime.Now,
-                Scenario = scenario,
-                Api = "FgtPwdOTP",
-                ResponseMs = time,
-                HttpCode = status
-            };
-
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
-            if (res.StatusCode == 0)
-            {
-                test.Result = Status.PASS;
-                return (true, res.Message, test);
-            }
-            else
-            {
-                test.Result = Status.FAIL;
-                test.Error = res.Message;
-                return (false, res.Message, test);
-            }
-        }
-
-        public async Task<(bool ok, string msg, TestResult test)> ResetPwdAndValidate(
-            string uid, string otp, string newPwd, string scenario)
-        {
-            // use remembered uid if not provided
-            string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
-
-            var req = new ResetPwdRequest
-            {
-                uid = actualUid,
-                otp = otp,
-                pwd = newPwd
-            };
-
-            var (res, time, status) = await _api.ResetPassword(req);
-
-            var test = new TestResult
-            {
-                Time = DateTime.Now,
-                Scenario = scenario,
-                Api = "ValOTPStPwd",
-                ResponseMs = time,
-                HttpCode = status
-            };
-
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
-            if (res.StatusCode == 0)
-            {
-                test.Result = Status.PASS;
-                return (true, res.Message, test);
-            }
-            else
-            {
-                test.Result = Status.FAIL;
-                test.Error = res.Message;
-                return (false, res.Message, test);
-            }
-        }
-
-        public UserSession GetSession()
-        {
-            return _session;
-        }
+       
     }
 }

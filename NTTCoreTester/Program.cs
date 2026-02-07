@@ -19,28 +19,49 @@ namespace NTTCoreTester
                 // load config
                 var config = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
 
+                // Get configurations
                 var apiCfg = config.GetSection("ApiConfiguration").Get<ApiConfiguration>();
                 var reportCfg = config.GetSection("ReportConfig").Get<ReportConfig>();
+
+                // Use defaults if null
+                if (reportCfg == null)
+                {
+                    reportCfg = new ReportConfig
+                    {
+                        OutputFolder = "Reports",
+                        FilePrefix = "auth_test"
+                    };
+                }
+
+                if (apiCfg == null)
+                {
+                    Console.WriteLine("ERROR: ApiConfiguration is null!");
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadKey();
+                    return;
+                }
 
                 // setup DI
                 var services = new ServiceCollection();
 
+                // Register configurations
                 services.AddSingleton(apiCfg);
                 services.AddSingleton(reportCfg);
-                // If you want the BusinessLogic version:
-                services.AddSingleton<NTTCoreTester.BusinessLogic.AuthManager,
-                                      NTTCoreTester.BusinessLogic.AuthManager>();
 
-                //// OR if you want the Services version:
-                //services.AddSingleton<NTTCoreTester.Services.AuthManager,
-                //                      NTTCoreTester.Services.AuthManager>();
+                // Register HttpClient and API Service - THIS IS CRITICAL
+                services.AddHttpClient<IApiService, ApiService>();
 
+                // Register other services
                 services.AddSingleton<IValidator, Validator>();
                 services.AddSingleton<ICsvReport, CsvReport>();
-                
+
+                // Register Business Logic - THIS WAS THE PROBLEM
+                services.AddSingleton<IAuthManager, AuthManager>();
+
+                // Register Scenarios and UI
                 services.AddSingleton<ITestScenarios, TestScenarios>();
                 services.AddSingleton<Menu>();
 
@@ -50,11 +71,9 @@ namespace NTTCoreTester
                 var menu = provider.GetRequiredService<Menu>();
 
                 Console.Clear();
-                Console.WriteLine("╔══════════════════════════════════════╗");
-                Console.WriteLine("║  Fintech Auth Test v1.0              ║");
-                Console.WriteLine("╚══════════════════════════════════════╝");
+                Console.WriteLine("  Auth Test              ");
                 Console.WriteLine();
-                Console.WriteLine("Ready to test authentication APIs");
+                Console.WriteLine($"Server: {apiCfg.BaseUrl}");
                 Console.WriteLine("\nPress any key to start...");
                 Console.ReadKey();
                 Console.Clear();
@@ -65,6 +84,7 @@ namespace NTTCoreTester
             {
                 Console.WriteLine($"\n!! ERROR: {ex.Message}");
                 Console.WriteLine($"\n{ex.StackTrace}");
+                Console.WriteLine("\nPress any key to exit...");
                 Console.ReadKey();
             }
         }

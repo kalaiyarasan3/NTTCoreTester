@@ -27,7 +27,7 @@ namespace NTTCoreTester.Reporting
             _cfg = cfg;
             _results = new List<TestResult>();
 
-            // create report filename with timestamp
+            
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             _filename = $"{_cfg.FilePrefix}_{timestamp}.csv";
 
@@ -46,10 +46,10 @@ namespace NTTCoreTester.Reporting
         {
             var sb = new StringBuilder();
 
-            // header row
+            
             sb.AppendLine("Timestamp,Module,Scenario,API,Status,ResponseMs,ValidJson,Error,HttpCode");
 
-            // data rows
+            
             foreach (var r in _results)
             {
                 sb.AppendLine($"{r.Time:yyyy-MM-dd HH:mm:ss}," +
