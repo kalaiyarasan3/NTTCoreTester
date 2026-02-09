@@ -1,4 +1,5 @@
-﻿using NTTCoreTester.BusinessLogic;
+﻿using NTTCoreTester.Application.Repositories;
+using NTTCoreTester.BusinessLogic;
 using NTTCoreTester.Reporting;
 using NTTCoreTester.Scenarios;
 
@@ -9,12 +10,14 @@ namespace NTTCoreTester.UI
         private readonly ITestScenarios _scenarios;
         private readonly ICsvReport _report;
         private readonly IAuthManager _authManager;
+        private readonly IOrderService _orderService;
 
-        public Menu(ITestScenarios scenarios, ICsvReport report, IAuthManager authManager)
+        public Menu(ITestScenarios scenarios, IOrderService orderService, ICsvReport report, IAuthManager authManager)
         {
             _scenarios = scenarios;
             _report = report;
             _authManager = authManager;
+            _orderService = orderService;
         }
 
         public async Task Start()
@@ -53,6 +56,11 @@ namespace NTTCoreTester.UI
                 Console.WriteLine("\nPress any key...");
                 Console.ReadKey();
                 Console.Clear();
+                await _orderService.GetSecurityInfoAsync(new Application.Features.Orders.Request.GetSecurityInfoRequest
+                {
+                    Token = "12000",
+                    Exch = "NSE"
+                });
             }
         }
 
@@ -87,14 +95,15 @@ namespace NTTCoreTester.UI
         private async Task RunScenarioA()
         {
             Console.Write("\nUser ID: ");
-            string uid = Console.ReadLine();
-            //string uid = "47054457";
+           // string uid = Console.ReadLine();
+            string uid = "90255961";
 
             Console.Write("Password: ");
-            string pwd = Console.ReadLine();
-            //string pwd = "Uat@47054457";
+            //string pwd = Console.ReadLine();
+            string pwd = "Navia@123";
 
             await _scenarios.RunNormalLogin(uid, pwd);
+           
         }
 
         private async Task RunScenarioB()

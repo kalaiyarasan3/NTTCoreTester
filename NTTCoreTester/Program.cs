@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NTTCoreTester.Application.Repositories;
+using NTTCoreTester.Application.Services;
 using NTTCoreTester.BusinessLogic;
 using NTTCoreTester.Configuration;
 using NTTCoreTester.Reporting;
@@ -73,6 +75,19 @@ namespace NTTCoreTester
 
                 // Register Business Logic - THIS WAS THE PROBLEM
                 services.AddSingleton<IAuthManager, AuthManager>();
+
+                services.AddHttpClient<IApiServiceManager, ApiServiceManager>()
+      .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+      {
+          AutomaticDecompression =
+              DecompressionMethods.GZip |
+              DecompressionMethods.Deflate |
+              DecompressionMethods.Brotli
+      });
+
+
+                // OrderService (new)
+                services.AddSingleton<IOrderService, OrderService>();
 
                 // Register Scenarios and UI
                 services.AddSingleton<ITestScenarios, TestScenarios>();

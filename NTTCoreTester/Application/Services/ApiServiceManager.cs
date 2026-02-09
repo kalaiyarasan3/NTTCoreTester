@@ -12,13 +12,13 @@ namespace NTTCoreTester.Application.Services;
 public class ApiServiceManager : IApiServiceManager
 {
     private readonly HttpClient _httpClient;
-    private readonly AuthManager _authManager;
+    private readonly IAuthManager _authManager;
     private readonly ApiConfiguration _config;
     private readonly ILogger<ApiServiceManager> _logger;
 
     public ApiServiceManager(
         HttpClient httpClient,
-        AuthManager authManager,
+        IAuthManager authManager,
         ILogger<ApiServiceManager> logger,
         ApiConfiguration config)
     {
@@ -45,12 +45,13 @@ public class ApiServiceManager : IApiServiceManager
 
         try
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, endpoint)
+           var url =  _config.BaseUrl+= endpoint;
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = JsonContent.Create(requestBody)
             };
 
-            var token = _authManager.GetSession().Token;
+            var token = "9gZEhj/d2zuSgL2ICS6F41R6FqNS0+8QlBUTt/ia6cPviWTNMnhaC/FAR4/Z+yLGkYEYeEJNiN2/H6xuw9/kzzcK9tsZeGYto65JH53xANQ=";
 
             _logger.LogInformation("POST {Endpoint}", endpoint);
 
@@ -63,7 +64,7 @@ public class ApiServiceManager : IApiServiceManager
                     requestMessage.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
                 }
             }
-
+            stopwatch.Restart();
             var response = await _httpClient.SendAsync(requestMessage, ct);
             var rawContent = await response.Content.ReadAsStringAsync(ct);
 
