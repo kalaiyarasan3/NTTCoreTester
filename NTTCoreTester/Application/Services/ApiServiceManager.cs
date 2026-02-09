@@ -46,7 +46,7 @@ public class ApiServiceManager : IApiServiceManager
 
         try
         {
-            var url = _config.BaseUrl += endpoint;
+            var url = _config.BaseUrl + endpoint;
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = JsonContent.Create(requestBody)
