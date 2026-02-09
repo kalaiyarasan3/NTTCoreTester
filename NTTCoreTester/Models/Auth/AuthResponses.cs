@@ -1,18 +1,12 @@
-﻿using NTTCoreTester.Models.Common.NTTCoreTester.Models.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using NTTCoreTester.Models.Common;
 
 namespace NTTCoreTester.Models.Auth
 {
     /// <summary>
     /// SendOTP Response Data
-    /// Level 3: 3 additional fields (DealerUCC, DealerStatus, ClientType)
-    /// Always validated regardless of StatusCode
     /// </summary>
-    public class SendOtpData : ResponceDataObjectBase
+    public class SendOtpData : ResponceDataObjectBase  // ✅ Must inherit
     {
         public string DealerUCC { get; set; }
         public int DealerStatus { get; set; }
@@ -20,33 +14,25 @@ namespace NTTCoreTester.Models.Auth
     }
 
     /// <summary>
-    /// Login SUCCESS Response Data (StatusCode = 0)
-    /// Level 3: 17 additional fields + complex objects (values, mws)
-    /// Fully validated on success
+    /// Login SUCCESS Response Data
     /// </summary>
-    public class LoginSuccessData : ResponceDataObjectBase
+    public class LoginSuccessData : ResponceDataObjectBase  // ✅ Must inherit
     {
-        // Required string fields
         public string susertoken { get; set; }
         public string uname { get; set; }
         public string uid { get; set; }
-
-        // Required number fields
         public int TOTPEnabled { get; set; }
         public int IsTOTPSkip { get; set; }
         public int DealerStatus { get; set; }
         public int ClientType { get; set; }
 
-        // Required array fields
         public List<string> prarr { get; set; }
         public List<string> access_type { get; set; }
         public List<string> orarr { get; set; }
 
-        // Required complex object fields
-        public Dictionary<string, string> values { get; set; }              // Dynamic keys, string values
-        public Dictionary<string, List<MwsItem>> mws { get; set; }          // Dynamic keys, array of MwsItem
+        public Dictionary<string, string> values { get; set; }
+        public Dictionary<string, List<MwsItem>> mws { get; set; }
 
-        // Optional/nullable fields
         public object AuthorizedActivity { get; set; }
         public string email { get; set; }
         public List<int> KraStatus { get; set; }
@@ -54,7 +40,7 @@ namespace NTTCoreTester.Models.Auth
     }
 
     /// <summary>
-    /// Market Watch Item structure (used in LoginSuccessData.mws)
+    /// Market Watch Item
     /// </summary>
     public class MwsItem
     {
@@ -72,11 +58,9 @@ namespace NTTCoreTester.Models.Auth
     }
 
     /// <summary>
-    /// Login ERROR Response Data (StatusCode ≠ 0)
-    /// Level 3: Same 17 fields but all nullable
-    /// Record only - do not validate (they are null in error scenarios)
+    /// Login ERROR Response Data
     /// </summary>
-    public class LoginErrorData : ResponceDataObjectBase
+    public class LoginErrorData : ResponceDataObjectBase  // ✅ Must inherit
     {
         public string susertoken { get; set; }
         public object AuthorizedActivity { get; set; }
@@ -98,11 +82,9 @@ namespace NTTCoreTester.Models.Auth
 
     /// <summary>
     /// General Auth Response Data
-    /// Used by: CheckLogin, ForgotPassword, ResetPassword, Logout
-    /// Level 3: No additional fields beyond common ResponceDataObjectBase
     /// </summary>
-    public class GeneralAuthData : ResponceDataObjectBase
+    public class GeneralAuthData : ResponceDataObjectBase  // ✅ Must inherit
     {
-        // No additional fields - only inherits common fields from base
+        // No additional fields
     }
 }
