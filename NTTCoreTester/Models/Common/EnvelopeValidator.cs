@@ -1,70 +1,128 @@
-﻿using NTTCoreTester.Models.Common;
+﻿using Newtonsoft.Json.Linq;
+using NTTCoreTester.Models.Common;
 
 namespace NTTCoreTester.Validators.Common
 {
-    //Level 1 Validator: Response Envelope
-    // Validates data types and structure of the 9 envelope fields
     public interface IEnvelopeValidator
     {
-        ValidationResult Validate<T>(ApiResponse<T> response);
+        ValidationResult Validate(JObject json);
     }
 
     public class EnvelopeValidator : IEnvelopeValidator
     {
-        public ValidationResult Validate<T>(ApiResponse<T> response)
+        public ValidationResult Validate(JObject json)
         {
             var result = new ValidationResult();
 
-            if (response == null)
+            if (json == null)
             {
-                result.AddLevel1Error("Response", "Response object is null", "ApiResponse<T>", null);
+                result.AddLevel1Error("Response:", "JSON object is null ");
                 return result;
             }
 
+            //validate 9 envelope fields
 
-            
-            ValidateStringType(response.Status, "Status", false, result); // Status - must be string, not null
+            CheckStringField(json, "Status", false, result);
+            CheckStringField(json, "Message", false, result);
+            CheckIntegerField(json, "StatusCode", false, result);
+            CheckStringField(json, "RequestID", false, result);
+            CheckStringField(json, "Activity", false, result);
+            CheckObjectField(json, "ResponceDataObject", false, result);
 
-            
-            ValidateStringType(response.Message, "Message", false, result);// Message - must be string, not null
+            // Optional fields (Responce, TypeID, Info) - no validation needed
 
-            
-            
-            ValidateStringType(response.RequestID, "RequestID", false, result);// RequestID - must be string, not null
-
-           
-            ValidateStringType(response.Activity, "Activity", false, result); // Activity - must be string, not null
-
-            // ResponceDataObject - must be object, not null
-            if (response.ResponceDataObject == null)
+            // Validate StatusCode range (0-9)
+            if (json.ContainsKey("StatusCode") && json["StatusCode"] != null && json["StatusCode"].Type == JTokenType.Integer)
             {
-                result.AddLevel1Error("ResponceDataObject", "ResponceDataObject is null", "object", null);
+                int code = json["StatusCode"].Value<int>();
+                if (code < 0 || code > 9)
+                {
+                    result.AddLevel1Error("StatusCode", "StatusCode must be 0-9", "0-9", code);
+                }
             }
-
-            // Responce - can be null (nullable)
-            // No validation needed
-
-            // TypeID - can be null (nullable)
-            // No validation needed
-
-            // Info - can be null (nullable)
-            // No validation needed
 
             return result;
         }
 
-        private void ValidateStringType(object value, string fieldName, bool nullable, ValidationResult result)
+        private void CheckStringField(JObject json, string fieldName, bool nullable, ValidationResult result)
         {
-            if (value == null)
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel1Error(fieldName, $"{fieldName} is missing", "present", "missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
             {
                 if (!nullable)
                 {
-                    result.AddLevel1Error(fieldName, $"{fieldName} is null", "string", null);
+                    result.AddLevel1Error(fieldName, $"{fieldName} is null", "string", "null");
                 }
+                return;
             }
-            else if (!(value is string))
+
+            if (field.Type != JTokenType.String)
             {
-                result.AddLevel1Error(fieldName, $"{fieldName} is not a string", "string", value.GetType().Name);
+                result.AddLevel1Error(fieldName, $"{fieldName} is not a string", "string", field.Type.ToString());
+                return;
+            }
+
+            string value = field.Value<string>();
+            if (!nullable && string.IsNullOrWhiteSpace(value))
+            {
+                result.AddLevel1Error(fieldName, $"{fieldName} is empty", "non-empty string", "empty");
+            }
+        }
+
+        private void CheckIntegerField(JObject json, string fieldName, bool nullable, ValidationResult result)
+        {
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel1Error(fieldName, $"{fieldName} is missing", "present", "missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
+            {
+                if (!nullable)
+                {
+                    result.AddLevel1Error(fieldName, $"{fieldName} is null", "integer", "null");
+                }
+                return;
+            }
+
+            if (field.Type != JTokenType.Integer)
+            {
+                result.AddLevel1Error(fieldName, $"{fieldName} is not an integer", "integer", field.Type.ToString());
+            }
+        }
+
+        private void CheckObjectField(JObject json, string fieldName, bool nullable, ValidationResult result)
+        {
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel1Error(fieldName, $"{fieldName} is missing", "present", "missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
+            {
+                if (!nullable)
+                {
+                    result.AddLevel1Error(fieldName, $"{fieldName} is null", "object", "null");
+                }
+                return;
+            }
+
+            if (field.Type != JTokenType.Object)
+            {
+                result.AddLevel1Error(fieldName, $"{fieldName} is not an object", "object", field.Type.ToString());
             }
         }
     }

@@ -3,6 +3,7 @@ using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
 using NTTCoreTester.Models.Auth;
 using NTTCoreTester.Models.Common;
+using NTTCoreTester.Services;
 using System.Diagnostics;
 using System.Text;
 
@@ -10,252 +11,125 @@ namespace NTTCoreTester.Services
 {
     public interface IApiService
     {
-        Task<(ApiResponse<SendOtpData> res, long time, int status)> SendOtp(SendOtpRequest req);
-        Task<(ApiResponse<LoginSuccessData> res, long time, int status)> Login(LoginRequest req);
-        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> CheckLogin(CheckLoginRequest req);
-        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> Logout(string token, string userId);
-        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req);
-        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ResetPassword(ResetPwdRequest req);
+        // All methods now return (string jsonResponse, long ms, int httpCode)
+        Task<(string json, long ms, int httpCode)> SendOtp(SendOtpRequest req);
+        Task<(string json, long ms, int httpCode)> Login(LoginRequest req);
+        Task<(string json, long ms, int httpCode)> CheckLogin(CheckLoginRequest req);
+        Task<(string json, long ms, int httpCode)> Logout(string token, string uid);
+        Task<(string json, long ms, int httpCode)> ForgotPassword(ForgotPwdRequest req);
+        Task<(string json, long ms, int httpCode)> ResetPassword(ResetPwdRequest req);
+    }
+}
+
+public class ApiService : IApiService
+{
+    private readonly HttpClient _client;
+    private readonly ApiConfiguration _cfg;
+
+    public ApiService(HttpClient client, ApiConfiguration cfg)
+    {
+        _client = client;
+        _cfg = cfg;
+
+        // Setup headers
+        _client.DefaultRequestHeaders.Clear();
+        _client.DefaultRequestHeaders.Add("Accept", "*/*");
+        _client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+        _client.DefaultRequestHeaders.Add("AuthToken", "DEFAULT");
+        _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+        _client.DefaultRequestHeaders.Add("DeviceId", "MyAPI");
+        _client.DefaultRequestHeaders.Add("Module", "DEFAULT");
+        _client.DefaultRequestHeaders.Add("Source", "RMS");
+        _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.51.1");
     }
 
-    public class ApiService : IApiService
+    public async Task<(string json, long ms, int httpCode)> SendOtp(SendOtpRequest req)
     {
-        private readonly HttpClient _http;
-        private readonly ApiConfiguration _config;
+        return await SendRequest("SendOTP", req);
+    }
 
-        public ApiService(HttpClient http, ApiConfiguration config)
+    public async Task<(string json, long ms, int httpCode)> Login(LoginRequest req)
+    {
+        return await SendRequest("Login", req);
+    }
+
+    public async Task<(string json, long ms, int httpCode)> CheckLogin(CheckLoginRequest req)
+    {
+        return await SendRequest("CheckLogin", req);
+    }
+
+    public async Task<(string json, long ms, int httpCode)> Logout(string token, string uid)
+    {
+        var req = new { sessionkey = token, uid = uid };
+        return await SendRequest("Logout", req);
+    }
+
+    public async Task<(string json, long ms, int httpCode)> ForgotPassword(ForgotPwdRequest req)
+    {
+        return await SendRequest("FgtPwdOTP", req);
+    }
+
+    public async Task<(string json, long ms, int httpCode)> ResetPassword(ResetPwdRequest req)
+    {
+        return await SendRequest("ValOTPStPwd", req);
+    }
+
+    /// <summary>
+    /// Generic method to send HTTP POST and return raw JSON
+    /// </summary>
+    private async Task<(string json, long ms, int httpCode)> SendRequest(string activity, object payload)
+    {
+        var sw = Stopwatch.StartNew();
+
+        try
         {
-            _http = http;
-            _config = config;
-            _http.BaseAddress = new Uri(_config.BaseUrl);
-        }
+            string endpoint = $"{_cfg.BaseUrl}{activity}";
+            string jsonPayload = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "text/plain");
 
-        public async Task<(ApiResponse<SendOtpData> res, long time, int status)> SendOtp(SendOtpRequest req)
+            LogRequest(endpoint, jsonPayload);
+
+            var response = await _client.PostAsync(endpoint, content);
+            sw.Stop();
+
+            int httpCode = (int)response.StatusCode;
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            LogResponse(response, sw.ElapsedMilliseconds, responseBody);
+
+            return (responseBody, sw.ElapsedMilliseconds, httpCode);
+        }
+        catch (Exception ex)
         {
-            return await PostRequest<SendOtpData>("SendOTP", req);
+            sw.Stop();
+            Console.WriteLine($"\n❌ Exception: {ex.Message}");
+            return (null, sw.ElapsedMilliseconds, 0);
         }
+    }
 
-        public async Task<(ApiResponse<LoginSuccessData> res, long time, int status)> Login(LoginRequest req)
+    private void LogRequest(string endpoint, string jsonPayload)
+    {
+        Console.WriteLine("\n" + new string('=', 80));
+        Console.WriteLine($"[REQUEST] POST {endpoint}");
+        Console.WriteLine(new string('-', 80));
+        Console.WriteLine("[HEADERS]");
+        foreach (var header in _client.DefaultRequestHeaders)
         {
-            return await PostRequest<LoginSuccessData>("Login", req);
+            Console.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
         }
+        Console.WriteLine(new string('-', 80));
+        Console.WriteLine("[REQUEST BODY]");
+        Console.WriteLine(jsonPayload);
+        Console.WriteLine(new string('=', 80));
+    }
 
-        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> CheckLogin(CheckLoginRequest req)
-        {
-            var timer = Stopwatch.StartNew();
-            try
-            {
-                string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}CheckLogin";
-                var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
-
-                string json = JsonConvert.SerializeObject(req);
-                request.Content = new StringContent(json, Encoding.UTF8, "text/plain");
-
-                foreach (var header in _config.DefaultHeaders)
-                {
-                    string lowerKey = header.Key.ToLower();
-
-                    if (lowerKey == "authtoken" ||
-                        lowerKey == "module" ||
-                        lowerKey == "content-type" ||
-                        lowerKey == "content-length" ||
-                        lowerKey == "host")
-                        continue;
-
-                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                }
-
-                request.Headers.TryAddWithoutValidation("AuthToken", req.sessionkey);
-                request.Headers.TryAddWithoutValidation("Module", "OrderService");
-
-                Console.WriteLine("\n" + new string('=', 80));
-                Console.WriteLine($"[REQUEST] POST {fullUrl}");
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[HEADERS]");
-                foreach (var header in request.Headers)
-                {
-                    Console.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
-                }
-                if (request.Content?.Headers != null)
-                {
-                    foreach (var header in request.Content.Headers)
-                    {
-                        Console.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
-                    }
-                }
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[REQUEST BODY]");
-                Console.WriteLine(json);
-                Console.WriteLine(new string('=', 80));
-
-                var response = await _http.SendAsync(request);
-                string respBody = await response.Content.ReadAsStringAsync();
-                timer.Stop();
-
-                Console.WriteLine($"\n[RESPONSE] Status: {(int)response.StatusCode}");
-                Console.WriteLine($"[RESPONSE] Time: {timer.ElapsedMilliseconds}ms");
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[RESPONSE BODY]");
-                Console.WriteLine(respBody);
-                Console.WriteLine(new string('=', 80) + "\n");
-
-                var result = JsonConvert.DeserializeObject<ApiResponse<GeneralAuthData>>(respBody);
-                return (result ?? new ApiResponse<GeneralAuthData>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
-            }
-            catch (Exception ex)
-            {
-                timer.Stop();
-                Console.WriteLine($"\n[ERROR] {ex.Message}");
-                return (new ApiResponse<GeneralAuthData> { Status = "Error", Message = ex.Message },
-                        timer.ElapsedMilliseconds, 0);
-            }
-        }
-
-        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> Logout(string token, string userId)
-        {
-            var timer = Stopwatch.StartNew();
-            try
-            {
-                string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}Logout";
-                var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
-
-                string json = JsonConvert.SerializeObject(new { uid = userId });
-                request.Content = new StringContent(json, Encoding.UTF8, "text/plain");
-
-                foreach (var header in _config.DefaultHeaders)
-                {
-                    string lowerKey = header.Key.ToLower();
-
-                    if (lowerKey == "authtoken" ||
-                        lowerKey == "content-type" ||
-                        lowerKey == "content-length" ||
-                        lowerKey == "host")
-                        continue;
-
-                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                }
-
-                request.Headers.TryAddWithoutValidation("AuthToken", token);
-
-                Console.WriteLine("\n" + new string('=', 80));
-                Console.WriteLine($"[REQUEST] POST {fullUrl}");
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[HEADERS]");
-                foreach (var header in request.Headers)
-                {
-                    Console.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
-                }
-                if (request.Content?.Headers != null)
-                {
-                    foreach (var header in request.Content.Headers)
-                    {
-                        Console.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
-                    }
-                }
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[REQUEST BODY]");
-                Console.WriteLine(json);
-                Console.WriteLine(new string('=', 80));
-
-                var response = await _http.SendAsync(request);
-                string respBody = await response.Content.ReadAsStringAsync();
-                timer.Stop();
-
-                Console.WriteLine($"\n[RESPONSE] Status: {(int)response.StatusCode}");
-                Console.WriteLine($"[RESPONSE] Time: {timer.ElapsedMilliseconds}ms");
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[RESPONSE BODY]");
-                Console.WriteLine(respBody);
-                Console.WriteLine(new string('=', 80) + "\n");
-
-                var result = JsonConvert.DeserializeObject<ApiResponse<GeneralAuthData>>(respBody);
-                return (result ?? new ApiResponse<GeneralAuthData>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
-            }
-            catch (Exception ex)
-            {
-                timer.Stop();
-                Console.WriteLine($"\n[ERROR] {ex.Message}");
-                return (new ApiResponse<GeneralAuthData> { Status = "Error", Message = ex.Message },
-                        timer.ElapsedMilliseconds, 0);
-            }
-        }
-
-        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req)
-        {
-            return await PostRequest<GeneralAuthData>("FgtPwdOTP", req);
-        }
-
-        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ResetPassword(ResetPwdRequest req)
-        {
-            return await PostRequest<GeneralAuthData>("ValOTPStPwd", req);
-        }
-
-        private async Task<(ApiResponse<T> res, long time, int status)> PostRequest<T>(string endpoint, object data)
-        {
-            var timer = Stopwatch.StartNew();
-            try
-            {
-                string json = JsonConvert.SerializeObject(data);
-                string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}{endpoint}";
-
-                var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
-                request.Content = new StringContent(json, Encoding.UTF8, "text/plain");
-
-                foreach (var header in _config.DefaultHeaders)
-                {
-                    string lowerKey = header.Key.ToLower();
-
-                    if (lowerKey == "content-type" ||
-                        lowerKey == "content-length" ||
-                        lowerKey == "host")
-                        continue;
-
-                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                }
-
-                Console.WriteLine("\n" + new string('=', 80));
-                Console.WriteLine($"[REQUEST] POST {fullUrl}");
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[HEADERS]");
-                foreach (var header in request.Headers)
-                {
-                    Console.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
-                }
-                if (request.Content?.Headers != null)
-                {
-                    foreach (var header in request.Content.Headers)
-                    {
-                        Console.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
-                    }
-                }
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[REQUEST BODY]");
-                Console.WriteLine(json);
-                Console.WriteLine(new string('=', 80));
-
-                var response = await _http.SendAsync(request);
-                string respBody = await response.Content.ReadAsStringAsync();
-                timer.Stop();
-
-                Console.WriteLine($"\n[RESPONSE] Status: {(int)response.StatusCode} {response.StatusCode}");
-                Console.WriteLine($"[RESPONSE] Time: {timer.ElapsedMilliseconds}ms");
-                Console.WriteLine(new string('-', 80));
-                Console.WriteLine("[RESPONSE BODY]");
-                Console.WriteLine(respBody);
-                Console.WriteLine(new string('=', 80) + "\n");
-
-                var result = JsonConvert.DeserializeObject<ApiResponse<T>>(respBody);
-                return (result ?? new ApiResponse<T>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
-            }
-            catch (Exception ex)
-            {
-                timer.Stop();
-                Console.WriteLine($"\n[ERROR] {ex.Message}");
-                Console.WriteLine($"\nStack: {ex.StackTrace}");
-                Console.WriteLine(new string('=', 80) + "\n");
-                return (new ApiResponse<T> { Status = "Error", Message = ex.Message },
-                        timer.ElapsedMilliseconds, 0);
-            }
-        }
+    private void LogResponse(HttpResponseMessage response, long elapsedMs, string body)
+    {
+        Console.WriteLine($"\n[RESPONSE] Status: {(int)response.StatusCode} {response.ReasonPhrase}");
+        Console.WriteLine($"[RESPONSE] Time: {elapsedMs}ms");
+        Console.WriteLine(new string('-', 80));
+        Console.WriteLine("[RESPONSE BODY]");
+        Console.WriteLine(body);
+        Console.WriteLine(new string('=', 80));
     }
 }

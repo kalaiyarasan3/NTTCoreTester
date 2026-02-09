@@ -1,4 +1,5 @@
-﻿using NTTCoreTester.Models.Common;
+﻿using Newtonsoft.Json.Linq;
+using NTTCoreTester.Models.Common;
 
 namespace NTTCoreTester.Validators.Common
 {
@@ -8,82 +9,104 @@ namespace NTTCoreTester.Validators.Common
     /// </summary>
     public interface ICommonDataValidator
     {
-        ValidationResult Validate(ResponceDataObjectBase data);
+        ValidationResult Validate(JObject dataObject);
     }
 
     public class CommonDataValidator : ICommonDataValidator
     {
-        public ValidationResult Validate(ResponceDataObjectBase data)
+        public ValidationResult Validate(JObject dataObject)
         {
             var result = new ValidationResult();
 
-            if (data == null)
+            if (dataObject == null)
             {
-                result.AddLevel2Error("ResponceDataObject", "ResponceDataObject is null", "ResponceDataObjectBase", null);
+                result.AddLevel2Error("ResponceDataObject", "Data object is null");
                 return result;
             }
 
-            // Validate data types and structure
+            // Validate 11 common fields
+            CheckStringField(dataObject, "request_time", false, result);
+            CheckStringField(dataObject, "status", false, result);
+            CheckStringField(dataObject, "Message", false, result);
+            CheckIntegerField(dataObject, "Result", false, result);
 
-            // request_time - must be string, not null
-            ValidateStringType(data.request_time, "request_time", false, result);
-
-            // status - must be string, not null
-            ValidateStringType(data.status, "status", false, result);
-
-            // Message - must be string, not null
-            ValidateStringType(data.Message, "Message", false, result);
-
-            // Result - must be number (int) - already enforced by C# type system
-            // No additional validation needed
-
-            // Data - must be object, not null
-            if (data.Data == null)
+            // Data object validation
+            if (!dataObject.ContainsKey("Data"))
             {
-                result.AddLevel2Error("Data", "Data object is null", "object", null);
+                result.AddLevel2Error("Data", "Data object is missing");
             }
-            else
+            else if (dataObject["Data"] != null && dataObject["Data"].Type == JTokenType.Object)
             {
-                // Validate Data.TimeTaken - must be string
-                ValidateStringType(data.Data.TimeTaken, "Data.TimeTaken", true, result);
-
-                // Validate Data.APITimeTaken - can be null (for non-auth APIs)
-                ValidateStringType(data.Data.APITimeTaken, "Data.APITimeTaken", true, result);
+                JObject data = (JObject)dataObject["Data"];
+                CheckStringField(data, "TimeTaken", true, result, "Data.TimeTaken");
+            }
+            else if (dataObject["Data"] != null && dataObject["Data"].Type != JTokenType.Null)
+            {
+                result.AddLevel2Error("Data", "Data is not an object", "object", dataObject["Data"].Type.ToString());
             }
 
-            // OSId - nullable, can be any type
-            // No validation needed
-
-            // TypeID - nullable, can be any type
-            // No validation needed
-
-            // Info - nullable, can be any type
-            // No validation needed
-
-            // ModelId - nullable, can be any type
-            // No validation needed
-
-            // CTA - nullable, can be any type
-            // No validation needed
-
-            // Action - nullable, can be any type
-            // No validation needed
+            // Optional fields (OSId, TypeID, Info, ModelId, CTA, Action) - no validation needed
 
             return result;
         }
 
-        private void ValidateStringType(object value, string fieldName, bool nullable, ValidationResult result)
+        private void CheckStringField(JObject json, string fieldName, bool nullable,
+            ValidationResult result, string displayName = null)
         {
-            if (value == null)
+            string display = displayName ?? fieldName;
+
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel2Error(display, $"{display} is missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
             {
                 if (!nullable)
                 {
-                    result.AddLevel2Error(fieldName, $"{fieldName} is null", "string", null);
+                    result.AddLevel2Error(display, $"{display} is null", "string", "null");
                 }
+                return;
             }
-            else if (!(value is string))
+
+            if (field.Type != JTokenType.String)
             {
-                result.AddLevel2Error(fieldName, $"{fieldName} is not a string", "string", value.GetType().Name);
+                result.AddLevel2Error(display, $"{display} is not a string", "string", field.Type.ToString());
+                return;
+            }
+
+            string value = field.Value<string>();
+            if (!nullable && string.IsNullOrWhiteSpace(value))
+            {
+                result.AddLevel2Error(display, $"{display} is empty", "non-empty string", "empty");
+            }
+        }
+
+        private void CheckIntegerField(JObject json, string fieldName, bool nullable, ValidationResult result)
+        {
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel2Error(fieldName, $"{fieldName} is missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
+            {
+                if (!nullable)
+                {
+                    result.AddLevel2Error(fieldName, $"{fieldName} is null", "integer", "null");
+                }
+                return;
+            }
+
+            if (field.Type != JTokenType.Integer)
+            {
+                result.AddLevel2Error(fieldName, $"{fieldName} is not an integer", "integer", field.Type.ToString());
             }
         }
     }

@@ -1,199 +1,194 @@
-﻿using NTTCoreTester.Models.Auth;
+﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Models.Common;
-using System;
-using System.Collections.Generic;
 
 namespace NTTCoreTester.Validators.Auth
 {
-   
+    /// <summary>
+    /// Level 3 Validator: Auth Activity-Specific Fields
+    /// Validates fields unique to each Auth endpoint
+    /// </summary>
     public interface IAuthActivityValidator
     {
-        ValidationResult ValidateSendOtp(SendOtpData data);
-        ValidationResult ValidateLoginSuccess(LoginSuccessData data);
-        ValidationResult ValidateLoginError(LoginErrorData data);
+        ValidationResult ValidateSendOtp(JObject dataObject);
+        ValidationResult ValidateLogin(JObject dataObject, int statusCode);
     }
 
     public class AuthActivityValidator : IAuthActivityValidator
     {
-        // Validates SendOTP - data types and structure (3 fields)
-        public ValidationResult ValidateSendOtp(SendOtpData data)
+        /// <summary>
+        /// Validate SendOTP (3 fields)
+        /// </summary>
+        public ValidationResult ValidateSendOtp(JObject dataObject)
         {
             var result = new ValidationResult();
 
-            if (data == null)
+            if (dataObject == null)
             {
-                result.AddLevel3Error("SendOtpData", "SendOtpData is null", "SendOtpData", null);
+                result.AddLevel3Error("ResponceDataObject", "Data object is null");
                 return result;
             }
 
-            // DealerUCC - must be string
-            ValidateStringType(data.DealerUCC, "DealerUCC", false, result);
-
+            CheckStringField(dataObject, "DealerUCC", false, result);
+            CheckIntegerField(dataObject, "DealerStatus", false, result);
+            CheckIntegerField(dataObject, "ClientType", false, result);
 
             return result;
         }
 
-        /// Validates Login SUCCESS - data types and structure (17 fields + complex objects)
-        public ValidationResult ValidateLoginSuccess(LoginSuccessData data)
+        /// <summary>
+        /// Validate Login (17 fields if StatusCode = 0)
+        /// </summary>
+        public ValidationResult ValidateLogin(JObject dataObject, int statusCode)
         {
             var result = new ValidationResult();
 
-            if (data == null)
+            if (dataObject == null)
             {
-                result.AddLevel3Error("LoginSuccessData", "LoginSuccessData is null", "LoginSuccessData", null);
+                result.AddLevel3Error("ResponceDataObject", "Data object is null");
                 return result;
             }
 
-            // String fields
-            ValidateStringType(data.susertoken, "susertoken", false, result);
-            ValidateStringType(data.uname, "uname", false, result);
-            ValidateStringType(data.uid, "uid", false, result);
-            ValidateStringType(data.email, "email", true, result); // nullable
-
-            // Number fields - enforced by C# type system
-            // TOTPEnabled, IsTOTPSkip, DealerStatus, ClientType - all int
-
-            // Array fields - check structure (specify type explicitly)
-            ValidateListOfStrings(data.prarr, "prarr", false, result);
-            ValidateListOfStrings(data.access_type, "access_type", false, result);
-            ValidateListOfStrings(data.orarr, "orarr", false, result);
-            ValidateListOfInts(data.KraStatus, "KraStatus", true, result); // nullable
-            ValidateListOfStrings(data.Clients, "Clients", true, result); // nullable
-
-            // Complex object: values - must be Dictionary<string, string>
-            if (data.values == null)
+            // Only validate success fields if StatusCode = 0
+            if (statusCode != 0)
             {
-                result.AddLevel3Error("values", "values is null", "Dictionary<string, string>", null);
-            }
-            else if (!(data.values is Dictionary<string, string>))
-            {
-                result.AddLevel3Error("values", "values is not a Dictionary", "Dictionary<string, string>",
-                    data.values.GetType().Name);
-            }
-            else
-            {
-                // Validate all values are strings
-                foreach (var kvp in data.values)
-                {
-                    if (kvp.Value != null && !(kvp.Value is string))
-                    {
-                        result.AddLevel3Error($"values[{kvp.Key}]", "Value is not a string", "string",
-                            kvp.Value.GetType().Name);
-                    }
-                }
+                return result; // Skip for error responses
             }
 
-            // Complex object: mws - must be Dictionary<string, List<MwsItem>>
-            if (data.mws == null)
-            {
-                result.AddLevel3Error("mws", "mws is null", "Dictionary<string, List<MwsItem>>", null);
-            }
-            else if (!(data.mws is Dictionary<string, List<MwsItem>>))
-            {
-                result.AddLevel3Error("mws", "mws is not a Dictionary", "Dictionary<string, List<MwsItem>>",
-                    data.mws.GetType().Name);
-            }
-            else
-            {
-                // Validate structure of mws
-                foreach (var kvp in data.mws)
-                {
-                    if (kvp.Value == null)
-                    {
-                        result.AddLevel3Error($"mws[{kvp.Key}]", "Array is null", "List<MwsItem>", null);
-                        continue;
-                    }
+            // String fields (required)
+            CheckStringField(dataObject, "susertoken", false, result);
+            CheckStringField(dataObject, "uname", false, result);
+            CheckStringField(dataObject, "uid", false, result);
 
-                    if (!(kvp.Value is List<MwsItem>))
-                    {
-                        result.AddLevel3Error($"mws[{kvp.Key}]", "Value is not a List", "List<MwsItem>",
-                            kvp.Value.GetType().Name);
-                        continue;
-                    }
+            // Integer fields (required)
+            CheckIntegerField(dataObject, "TOTPEnabled", false, result);
+            CheckIntegerField(dataObject, "IsTOTPSkip", false, result);
+            CheckIntegerField(dataObject, "DealerStatus", false, result);
+            CheckIntegerField(dataObject, "ClientType", false, result);
 
-                    // Validate each MwsItem structure
-                    for (int i = 0; i < kvp.Value.Count; i++)
-                    {
-                        ValidateMwsItemStructure(kvp.Value[i], $"mws[{kvp.Key}][{i}]", result);
-                    }
-                }
-            }
+            // Array fields (required)
+            CheckArrayField(dataObject, "prarr", false, result);
+            CheckArrayField(dataObject, "access_type", false, result);
+            CheckArrayField(dataObject, "orarr", false, result);
 
-            // AuthorizedActivity - nullable, any type
-            // No validation needed
+            // Object fields (required)
+            CheckObjectField(dataObject, "values", false, result);
+            CheckObjectField(dataObject, "mws", false, result);
+
+            // Nullable fields
+            CheckStringField(dataObject, "email", true, result);
+            CheckArrayField(dataObject, "KraStatus", true, result);
+            CheckArrayField(dataObject, "Clients", true, result);
+
+            // AuthorizedActivity can be any type - no validation
 
             return result;
         }
 
-        // Validates Login ERROR - just check structure exists
-        public ValidationResult ValidateLoginError(LoginErrorData data)
+        private void CheckStringField(JObject json, string fieldName, bool nullable, ValidationResult result)
         {
-            var result = new ValidationResult();
-
-            if (data == null)
+            if (!json.ContainsKey(fieldName))
             {
-                result.AddLevel3Error("LoginErrorData", "LoginErrorData is null", "LoginErrorData", null);
-            }
-
-            return result;
-        }
-
-        private void ValidateStringType(object value, string fieldName, bool nullable, ValidationResult result)
-        {
-            if (value == null)
-            {
-                if (!nullable)
-                {
-                    result.AddLevel3Error(fieldName, $"{fieldName} is null", "string", null);
-                }
-            }
-            else if (!(value is string))
-            {
-                result.AddLevel3Error(fieldName, $"{fieldName} is not a string", "string", value.GetType().Name);
-            }
-        }
-
-        private void ValidateListOfStrings(List<string> value, string fieldName, bool nullable, ValidationResult result)
-        {
-            if (value == null)
-            {
-                if (!nullable)
-                {
-                    result.AddLevel3Error(fieldName, $"{fieldName} is null", "List<string>", null);
-                }
-            }
-        }
-
-        private void ValidateListOfInts(List<int> value, string fieldName, bool nullable, ValidationResult result)
-        {
-            if (value == null)
-            {
-                if (!nullable)
-                {
-                    result.AddLevel3Error(fieldName, $"{fieldName} is null", "List<int>", null);
-                }
-            }
-        }
-
-        private void ValidateMwsItemStructure(MwsItem item, string path, ValidationResult result)
-        {
-            if (item == null)
-            {
-                result.AddLevel3Error(path, "MwsItem is null", "MwsItem", null);
+                result.AddLevel3Error(fieldName, $"{fieldName} is missing");
                 return;
             }
 
-            ValidateStringType(item.MarketWatchName, $"{path}.MarketWatchName", false, result);
-            ValidateStringType(item.exch, $"{path}.exch", false, result);
-            ValidateStringType(item.tsym, $"{path}.tsym", false, result);
-            ValidateStringType(item.Segment, $"{path}.Segment", false, result);
-            ValidateStringType(item.instname, $"{path}.instname", false, result);
-            ValidateStringType(item.pp, $"{path}.pp", false, result);
-            ValidateStringType(item.ls, $"{path}.ls", false, result);
-            ValidateStringType(item.ti, $"{path}.ti", false, result);
+            JToken field = json[fieldName];
 
-            // token - must be int (enforced by C#)
-            // SymbolInfos - nullable, any type
+            if (field == null || field.Type == JTokenType.Null)
+            {
+                if (!nullable)
+                {
+                    result.AddLevel3Error(fieldName, $"{fieldName} is null", "string", "null");
+                }
+                return;
+            }
+
+            if (field.Type != JTokenType.String)
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is not a string", "string", field.Type.ToString());
+                return;
+            }
+
+            string value = field.Value<string>();
+            if (!nullable && string.IsNullOrWhiteSpace(value))
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is empty", "non-empty string", "empty");
+            }
+        }
+
+        private void CheckIntegerField(JObject json, string fieldName, bool nullable, ValidationResult result)
+        {
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
+            {
+                if (!nullable)
+                {
+                    result.AddLevel3Error(fieldName, $"{fieldName} is null", "integer", "null");
+                }
+                return;
+            }
+
+            if (field.Type != JTokenType.Integer)
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is not an integer", "integer", field.Type.ToString());
+            }
+        }
+
+        private void CheckArrayField(JObject json, string fieldName, bool nullable, ValidationResult result)
+        {
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
+            {
+                if (!nullable)
+                {
+                    result.AddLevel3Error(fieldName, $"{fieldName} is null", "array", "null");
+                }
+                return;
+            }
+
+            if (field.Type != JTokenType.Array)
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is not an array", "array", field.Type.ToString());
+            }
+        }
+
+        private void CheckObjectField(JObject json, string fieldName, bool nullable, ValidationResult result)
+        {
+            if (!json.ContainsKey(fieldName))
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is missing");
+                return;
+            }
+
+            JToken field = json[fieldName];
+
+            if (field == null || field.Type == JTokenType.Null)
+            {
+                if (!nullable)
+                {
+                    result.AddLevel3Error(fieldName, $"{fieldName} is null", "object", "null");
+                }
+                return;
+            }
+
+            if (field.Type != JTokenType.Object)
+            {
+                result.AddLevel3Error(fieldName, $"{fieldName} is not an object", "object", field.Type.ToString());
+            }
         }
     }
 }

@@ -1,154 +1,102 @@
-﻿using NTTCoreTester.Models.Auth;
+﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Models.Common;
 using NTTCoreTester.Validators.Auth;
 using NTTCoreTester.Validators.Common;
+using System;
 
 namespace NTTCoreTester.Validators
 {
     /// <summary>
-    /// Response Validator - Runs all validations in order
-    /// Step 1: Check envelope (Level 1)
-    /// Step 2: Check common fields (Level 2)
-    /// Step 3: Check status correlation
-    /// Step 4: Check activity-specific fields (Level 3)
+    /// Main Response Validator
+    /// Orchestrates 3-level validation using JObject (no model classes)
     /// </summary>
     public interface IResponseValidator
     {
-        ValidationResult Validate(ApiResponse<SendOtpData> response);
-        ValidationResult Validate(ApiResponse<LoginSuccessData> response);
-        ValidationResult Validate(ApiResponse<LoginErrorData> response);
-        ValidationResult Validate(ApiResponse<GeneralAuthData> response);
+        ValidationResult Validate(string jsonResponse, string activity);
     }
 
     public class ResponseValidator : IResponseValidator
     {
         private readonly IEnvelopeValidator _envelopeValidator;
         private readonly ICommonDataValidator _commonDataValidator;
-        private readonly IStatusCorrelationValidator _statusCorrelationValidator;
         private readonly IAuthActivityValidator _authActivityValidator;
 
         public ResponseValidator(
             IEnvelopeValidator envelopeValidator,
             ICommonDataValidator commonDataValidator,
-            IStatusCorrelationValidator statusCorrelationValidator,
             IAuthActivityValidator authActivityValidator)
         {
             _envelopeValidator = envelopeValidator;
             _commonDataValidator = commonDataValidator;
-            _statusCorrelationValidator = statusCorrelationValidator;
             _authActivityValidator = authActivityValidator;
         }
 
-        /// Validate SendOTP response
-        public ValidationResult Validate(ApiResponse<SendOtpData> response)
+        public ValidationResult Validate(string jsonResponse, string activity)
         {
             var result = new ValidationResult();
 
-            // Step 1: Validate envelope
-            var step1 = _envelopeValidator.Validate(response);
-            result.Merge(step1);
-
-            // If envelope failed, stop here
-            if (response?.ResponceDataObject == null)
-                return result;
-
-            // Step 2: Validate common fields
-            var step2 = _commonDataValidator.Validate(response.ResponceDataObject);
-            result.Merge(step2);
-
-            // Step 3: Check status correlation
-            var step3 = _statusCorrelationValidator.Validate(response);
-            result.Merge(step3);
-
-            // Step 4: Validate SendOTP specific fields
-            var step4 = _authActivityValidator.ValidateSendOtp(response.ResponceDataObject);
-            result.Merge(step4);
-
-            return result;
-        }
-
-        // Validate Login SUCCESS response
-        public ValidationResult Validate(ApiResponse<LoginSuccessData> response)
-        {
-            var result = new ValidationResult();
-
-            // Step 1: Validate envelope
-            var step1 = _envelopeValidator.Validate(response);
-            result.Merge(step1);
-
-            if (response?.ResponceDataObject == null)
-                return result;
-
-            // Step 2: Validate common fields
-            var step2 = _commonDataValidator.Validate(response.ResponceDataObject);
-            result.Merge(step2);
-
-            // Step 3: Check status correlation
-            var step3 = _statusCorrelationValidator.Validate(response);
-            result.Merge(step3);
-
-            // Step 4: Validate Login success fields (only if StatusCode = 0)
-            if (response.StatusCode == 0)
+            // Parse JSON
+            JObject json;
+            try
             {
-                var step4 = _authActivityValidator.ValidateLoginSuccess(response.ResponceDataObject);
-                result.Merge(step4);
+                json = JObject.Parse(jsonResponse);
+            }
+            catch (Exception ex)
+            {
+                result.AddLevel1Error("Response", $"Invalid JSON: {ex.Message}");
+                return result;
             }
 
-            return result;
-        }
-
-        // Validate Login ERROR response
-        public ValidationResult Validate(ApiResponse<LoginErrorData> response)
-        {
-            var result = new ValidationResult();
-
-            // Step 1: Validate envelope
-            var step1 = _envelopeValidator.Validate(response);
+            // Step 1: Validate envelope (Level 1)
+            var step1 = _envelopeValidator.Validate(json);
             result.Merge(step1);
 
-            if (response?.ResponceDataObject == null)
-                return result;
+            // Get ResponceDataObject
+            if (!json.ContainsKey("ResponceDataObject") || json["ResponceDataObject"] == null)
+            {
+                return result; // Can't continue without data object
+            }
 
-            // Step 2: Validate common fields
-            var step2 = _commonDataValidator.Validate(response.ResponceDataObject);
+            JObject dataObject = json["ResponceDataObject"] as JObject;
+            if (dataObject == null)
+            {
+                result.AddLevel1Error("ResponceDataObject", "ResponceDataObject is not a valid object");
+                return result;
+            }
+
+            // Step 2: Validate common fields (Level 2)
+            var step2 = _commonDataValidator.Validate(dataObject);
             result.Merge(step2);
 
-            // Step 3: Check status correlation
-            var step3 = _statusCorrelationValidator.Validate(response);
-            result.Merge(step3);
+            // Step 3: Activity-specific validation (Level 3)
+            int statusCode = json["StatusCode"]?.Value<int>() ?? -1;
 
-            // Step 4: Just record error fields (don't validate values)
-            var step4 = _authActivityValidator.ValidateLoginError(response.ResponceDataObject);
-            result.Merge(step4);
+            ValidationResult step3;
+            switch (activity)
+            {
+                case "SendOTP":
+                    step3 = _authActivityValidator.ValidateSendOtp(dataObject);
+                    result.Merge(step3);
+                    break;
 
-            return result;
-        }
+                case "Login":
+                    step3 = _authActivityValidator.ValidateLogin(dataObject, statusCode);
+                    result.Merge(step3);
+                    break;
 
-        /// Validate General Auth responses (CheckLogin, Logout, ForgotPassword, ResetPassword)
-        /// No Level 3 validation needed
-        public ValidationResult Validate(ApiResponse<GeneralAuthData> response)
-        {
-            var result = new ValidationResult();
+                case "CheckLogin":
+                case "Logout":
+                case "FgtPwdOTP":
+                case "ValOTPStPwd":
+                    // No Level 3 validation for these endpoints
+                    break;
 
-            // Step 1: Validate envelope
-            var step1 = _envelopeValidator.Validate(response);
-            result.Merge(step1);
-
-            if (response?.ResponceDataObject == null)
-                return result;
-
-            // Step 2: Validate common fields
-            var step2 = _commonDataValidator.Validate(response.ResponceDataObject);
-            result.Merge(step2);
-
-            // Step 3: Check status correlation
-            var step3 = _statusCorrelationValidator.Validate(response);
-            result.Merge(step3);
-
-            // Step 4: No activity-specific validation for these endpoints
+                default:
+                    // Unknown activity - skip Level 3 validation
+                    break;
+            }
 
             return result;
         }
     }
 }
-

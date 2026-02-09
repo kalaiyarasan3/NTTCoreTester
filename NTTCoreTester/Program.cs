@@ -76,7 +76,6 @@ namespace NTTCoreTester
                 // Register response validators
                 services.AddSingleton<IEnvelopeValidator, EnvelopeValidator>();
                 services.AddSingleton<ICommonDataValidator, CommonDataValidator>();
-                services.AddSingleton<IStatusCorrelationValidator, StatusCorrelationValidator>();
                 services.AddSingleton<IAuthActivityValidator, AuthActivityValidator>();
 
                 // Main orchestrator - NEW NAME
