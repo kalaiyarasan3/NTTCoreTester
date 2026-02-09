@@ -1,5 +1,8 @@
 ﻿using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
+using NTTCoreTester.Models.Auth;
+using NTTCoreTester.Models.Common;
+using NTTCoreTester.Models.Common.NTTCoreTester.Models.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +14,8 @@ namespace NTTCoreTester.Validators
     public interface IValidator
     {
         bool CheckTechnical(int httpCode, long responseMs, bool validJson, out string msg);
-        bool CheckLogin(ApiResponse<LoginData> resp, string expectedUid, out string msg);
-        bool CheckSession(ApiResponse<GeneralData> resp, out string msg);
+        bool CheckLogin(ApiResponse<LoginSuccessData> resp, string expectedUid, out string msg);
+        bool CheckSession(ApiResponse<GeneralAuthData> resp, out string msg);  // Changed from SendOtpData
     }
 
     public class Validator : IValidator
@@ -41,7 +44,7 @@ namespace NTTCoreTester.Validators
             return !errors.Any();
         }
 
-        public bool CheckLogin(ApiResponse<LoginData> resp, string expectedUid, out string msg)
+        public bool CheckLogin(ApiResponse<LoginSuccessData> resp, string expectedUid, out string msg)
         {
             var errors = new List<string>();
 
@@ -64,7 +67,7 @@ namespace NTTCoreTester.Validators
             return !errors.Any();
         }
 
-        public bool CheckSession(ApiResponse<GeneralData> resp, out string msg)
+        public bool CheckSession(ApiResponse<GeneralAuthData> resp, out string msg)  // Changed from SendOtpData
         {
             if (resp.Message != "LoggedIn")
             {
