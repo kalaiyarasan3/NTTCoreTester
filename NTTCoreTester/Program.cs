@@ -7,7 +7,10 @@ using NTTCoreTester.Scenarios;
 using NTTCoreTester.Services;
 using NTTCoreTester.UI;
 using NTTCoreTester.Validators;
+using NTTCoreTester.Validators.Auth;
+using NTTCoreTester.Validators.Common;
 using System.Net;
+
 
 namespace NTTCoreTester
 {
@@ -70,6 +73,14 @@ namespace NTTCoreTester
                 // Register other services
                 services.AddSingleton<IValidator, Validator>();
                 services.AddSingleton<ICsvReport, CsvReport>();
+                // Register response validators
+                services.AddSingleton<IEnvelopeValidator, EnvelopeValidator>();
+                services.AddSingleton<ICommonDataValidator, CommonDataValidator>();
+                services.AddSingleton<IStatusCorrelationValidator, StatusCorrelationValidator>();
+                services.AddSingleton<IAuthActivityValidator, AuthActivityValidator>();
+
+                // Main orchestrator - NEW NAME
+                services.AddSingleton<IResponseValidator, ResponseValidator>();
 
                 // Register Business Logic - THIS WAS THE PROBLEM
                 services.AddSingleton<IAuthManager, AuthManager>();

@@ -3,7 +3,6 @@ using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
 using NTTCoreTester.Models.Auth;
 using NTTCoreTester.Models.Common;
-using NTTCoreTester.Models.Common.NTTCoreTester.Models.Common;
 using System.Diagnostics;
 using System.Text;
 

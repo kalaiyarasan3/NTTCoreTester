@@ -3,9 +3,6 @@ using NTTCoreTester.Models;
 using NTTCoreTester.Services;
 using NTTCoreTester.Validators;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NTTCoreTester.Models.Common;
 using NTTCoreTester.Models.Auth;
@@ -27,21 +24,27 @@ namespace NTTCoreTester.BusinessLogic
     {
         private readonly IApiService _api;
         private readonly IValidator _validator;
+        private readonly IResponseValidator _responseValidator;
         private readonly ApiConfiguration _cfg;
-        private UserSession _session;         // token stores
-        private string _lastUid; // remember uid for forgot password flow 
+        private UserSession _session;
+        private string _lastUid;
 
-        public AuthManager(IApiService api, IValidator validator, ApiConfiguration cfg)
+        public AuthManager(
+            IApiService api,
+            IValidator validator,
+            IResponseValidator responseValidator,
+            ApiConfiguration cfg)
         {
             _api = api;
             _validator = validator;
+            _responseValidator = responseValidator;
             _cfg = cfg;
         }
 
-        public async Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(string uid, string pwd, string scenario)
+        public async Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(
+            string uid, string pwd, string scenario)
         {
-                //return (true,"", new());
-            _lastUid = uid; 
+            _lastUid = uid;
 
             var req = new SendOtpRequest { uid = uid, pwd = pwd };
             var (res, time, status) = await _api.SendOtp(req);
@@ -55,14 +58,45 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
+            // Check critical errors only (HTTP, JSON) - stops execution
+            bool criticalOk = _validator.CheckCriticalErrors(status, res != null, out string criticalErr);
 
-            
+            if (!criticalOk)
+            {
+                test.Result = Status.FAIL;
+                test.Error = criticalErr;
+                test.ValidJson = false;
+                return (false, criticalErr, test);
+            }
+
+            bool allTechOk = _validator.CheckTechnical(status, time, res != null, out string allTechErr);
+            test.ValidJson = allTechOk;
+
+            if (!allTechOk)
+            {
+                Console.WriteLine($"⚠️ Technical issue: {allTechErr}");
+            }
+
+            // Complete 3-level validation
+            var validation = _responseValidator.Validate(res);
+
+            if (!validation.IsValid)
+            {
+                test.Result = Status.FAIL;
+                test.Error = validation.GetAllErrorsFormatted();
+                Console.WriteLine("\n❌ Validation Failed:");
+                Console.WriteLine(validation.GetAllErrorsFormatted());
+                return (false, validation.GetSummary(), test);
+            }
+
+            // Business logic
             if (res.StatusCode == 0)
             {
-                test.Result = Status.PASS;
+                
+                test.Result = allTechOk ? Status.PASS : Status.FAIL;
+                test.Error = allTechOk ? "" : allTechErr;
+
+                Console.WriteLine("✅ SendOTP validation passed!");
                 return (true, res.Message, test);
             }
             else
@@ -84,7 +118,7 @@ namespace NTTCoreTester.BusinessLogic
                 password = pwd,
                 pwd = pwd,
                 otp = otp,
-                TwoFA=1,
+                TwoFA = 1,
                 source = "WEB"
             };
 
@@ -99,14 +133,37 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            bool bizOk = _validator.CheckLogin(res, uid, out string bizErr);
-            test.ValidJson = techOk && bizOk;
+            bool criticalOk = _validator.CheckCriticalErrors(status, res != null, out string criticalErr);
 
-            if (bizOk && res.ResponceDataObject != null)
+            if (!criticalOk)
             {
-                
+                test.Result = Status.FAIL;
+                test.Error = criticalErr;
+                test.ValidJson = false;
+                return (false, criticalErr, null, test);
+            }
+
+            bool allTechOk = _validator.CheckTechnical(status, time, res != null, out string allTechErr);
+            test.ValidJson = allTechOk;
+
+            if (!allTechOk)
+            {
+                Console.WriteLine($"⚠️ Technical issue: {allTechErr}");
+            }
+
+            var validation = _responseValidator.Validate(res);
+
+            if (!validation.IsValid)
+            {
+                test.Result = Status.FAIL;
+                test.Error = validation.GetAllErrorsFormatted();
+                Console.WriteLine("\n❌ Login Validation Failed:");
+                Console.WriteLine(validation.GetAllErrorsFormatted());
+                return (false, validation.GetSummary(), null, test);
+            }
+
+            if (res.StatusCode == 0 && res.ResponceDataObject != null)
+            {
                 _session = new UserSession
                 {
                     UserId = res.ResponceDataObject.uid,
@@ -117,14 +174,18 @@ namespace NTTCoreTester.BusinessLogic
                 };
 
                 _lastUid = uid;
-                test.Result = Status.PASS;
+
+                test.Result = allTechOk ? Status.PASS : Status.FAIL;
+                test.Error = allTechOk ? "" : allTechErr;
+
+                Console.WriteLine("✅ Login validation passed!");
                 return (true, res.Message, _session, test);
             }
             else
             {
                 test.Result = Status.FAIL;
-                test.Error = bizErr;
-                return (false, bizErr, null, test);
+                test.Error = res.Message;
+                return (false, res.Message, null, test);
             }
         }
 
@@ -150,20 +211,48 @@ namespace NTTCoreTester.BusinessLogic
             test.ResponseMs = time;
             test.HttpCode = status;
 
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            bool sessOk = _validator.CheckSession(res, out string sessErr);
-            test.ValidJson = techOk && sessOk;
+            bool criticalOk = _validator.CheckCriticalErrors(status, res != null, out string criticalErr);
 
-            if (sessOk)
+            if (!criticalOk)
             {
-                test.Result = Status.PASS;
+                test.Result = Status.FAIL;
+                test.Error = criticalErr;
+                test.ValidJson = false;
+                return (false, criticalErr, test);
+            }
+
+            bool allTechOk = _validator.CheckTechnical(status, time, res != null, out string allTechErr);
+            test.ValidJson = allTechOk;
+
+            if (!allTechOk)
+            {
+                Console.WriteLine($"⚠️ Technical issue: {allTechErr}");
+            }
+
+            var validation = _responseValidator.Validate(res);
+
+            if (!validation.IsValid)
+            {
+                test.Result = Status.FAIL;
+                test.Error = validation.GetAllErrorsFormatted();
+                Console.WriteLine("\n❌ CheckLogin Validation Failed:");
+                Console.WriteLine(validation.GetAllErrorsFormatted());
+                return (false, validation.GetSummary(), test);
+            }
+
+            if (res.Message == "LoggedIn")
+            {
+                test.Result = allTechOk ? Status.PASS : Status.FAIL;
+                test.Error = allTechOk ? "" : allTechErr;
+
+                Console.WriteLine("✅ CheckLogin validation passed!");
                 return (true, "Session active", test);
             }
             else
             {
                 test.Result = Status.FAIL;
-                test.Error = sessErr;
-                return (false, sessErr, test);
+                test.Error = res.Message;
+                return (false, res.Message, test);
             }
         }
 
@@ -188,11 +277,22 @@ namespace NTTCoreTester.BusinessLogic
             test.ResponseMs = time;
             test.HttpCode = status;
 
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
+            bool allTechOk = _validator.CheckTechnical(status, time, res != null, out string allTechErr);
+            test.ValidJson = allTechOk;
 
-            _session = null; 
+            var validation = _responseValidator.Validate(res);
 
+            if (!validation.IsValid)
+            {
+                Console.WriteLine("\n⚠️ Logout Validation Issues:");
+                Console.WriteLine(validation.GetAllErrorsFormatted());
+            }
+            else
+            {
+                Console.WriteLine("✅ Logout validation passed!");
+            }
+
+            _session = null;
             test.Result = Status.PASS;
             return (true, "Logged out", test);
         }
@@ -200,7 +300,6 @@ namespace NTTCoreTester.BusinessLogic
         public async Task<(bool ok, string msg, TestResult test)> ForgotPwdAndValidate(
             string uid, string token, string scenario)
         {
-            
             string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
 
             var req = new ForgotPwdRequest
@@ -222,12 +321,21 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
+            bool allTechOk = _validator.CheckTechnical(status, time, res != null, out string allTechErr);
+            test.ValidJson = allTechOk;
+
+            var validation = _responseValidator.Validate(res);
+
+            if (!validation.IsValid)
+            {
+                Console.WriteLine("\n❌ ForgotPassword Validation Failed:");
+                Console.WriteLine(validation.GetAllErrorsFormatted());
+            }
 
             if (res.StatusCode == 0)
             {
-                test.Result = Status.PASS;
+                test.Result = allTechOk ? Status.PASS : Status.FAIL;
+                test.Error = allTechOk ? "" : allTechErr;
                 return (true, res.Message, test);
             }
             else
@@ -241,7 +349,6 @@ namespace NTTCoreTester.BusinessLogic
         public async Task<(bool ok, string msg, TestResult test)> ResetPwdAndValidate(
             string uid, string otp, string newPwd, string scenario)
         {
-            
             string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
 
             var req = new ResetPwdRequest
@@ -262,12 +369,21 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
+            bool allTechOk = _validator.CheckTechnical(status, time, res != null, out string allTechErr);
+            test.ValidJson = allTechOk;
+
+            var validation = _responseValidator.Validate(res);
+
+            if (!validation.IsValid)
+            {
+                Console.WriteLine("\n❌ ResetPassword Validation Failed:");
+                Console.WriteLine(validation.GetAllErrorsFormatted());
+            }
 
             if (res.StatusCode == 0)
             {
-                test.Result = Status.PASS;
+                test.Result = allTechOk ? Status.PASS : Status.FAIL;
+                test.Error = allTechOk ? "" : allTechErr;
                 return (true, res.Message, test);
             }
             else
@@ -283,5 +399,4 @@ namespace NTTCoreTester.BusinessLogic
             return _session;
         }
     }
-
 }
