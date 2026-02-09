@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NTTCoreTester.Models.Common;
+using NTTCoreTester.Models.Auth;
 
 namespace NTTCoreTester.BusinessLogic
 {
@@ -26,8 +28,8 @@ namespace NTTCoreTester.BusinessLogic
         private readonly IApiService _api;
         private readonly IValidator _validator;
         private readonly ApiConfiguration _cfg;
-        private UserSession _session;
-        private string _lastUid; // remember uid for forgot password flow
+        private UserSession _session;         // token stores
+        private string _lastUid; // remember uid for forgot password flow 
 
         public AuthManager(IApiService api, IValidator validator, ApiConfiguration cfg)
         {
@@ -38,7 +40,7 @@ namespace NTTCoreTester.BusinessLogic
 
         public async Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(string uid, string pwd, string scenario)
         {
-                return (true,"", new());
+                //return (true,"", new());
             _lastUid = uid; 
 
             var req = new SendOtpRequest { uid = uid, pwd = pwd };

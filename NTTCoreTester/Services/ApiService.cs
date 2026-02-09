@@ -1,6 +1,9 @@
-﻿using NTTCoreTester.Configuration;
+﻿using Newtonsoft.Json;
+using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
-using Newtonsoft.Json;
+using NTTCoreTester.Models.Auth;
+using NTTCoreTester.Models.Common;
+using NTTCoreTester.Models.Common.NTTCoreTester.Models.Common;
 using System.Diagnostics;
 using System.Text;
 
@@ -8,12 +11,12 @@ namespace NTTCoreTester.Services
 {
     public interface IApiService
     {
-        Task<(ApiResponse<GeneralData> res, long time, int status)> SendOtp(SendOtpRequest req);
-        Task<(ApiResponse<LoginData> res, long time, int status)> Login(LoginRequest req);
-        Task<(ApiResponse<GeneralData> res, long time, int status)> CheckLogin(CheckLoginRequest req);
-        Task<(ApiResponse<GeneralData> res, long time, int status)> Logout(string token, string userId);
-        Task<(ApiResponse<GeneralData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req);
-        Task<(ApiResponse<GeneralData> res, long time, int status)> ResetPassword(ResetPwdRequest req);
+        Task<(ApiResponse<SendOtpData> res, long time, int status)> SendOtp(SendOtpRequest req);
+        Task<(ApiResponse<LoginSuccessData> res, long time, int status)> Login(LoginRequest req);
+        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> CheckLogin(CheckLoginRequest req);
+        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> Logout(string token, string userId);
+        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req);
+        Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ResetPassword(ResetPwdRequest req);
     }
 
     public class ApiService : IApiService
@@ -28,17 +31,17 @@ namespace NTTCoreTester.Services
             _http.BaseAddress = new Uri(_config.BaseUrl);
         }
 
-        public async Task<(ApiResponse<GeneralData> res, long time, int status)> SendOtp(SendOtpRequest req)
+        public async Task<(ApiResponse<SendOtpData> res, long time, int status)> SendOtp(SendOtpRequest req)
         {
-            return await PostRequest<GeneralData>("SendOTP", req);
+            return await PostRequest<SendOtpData>("SendOTP", req);
         }
 
-        public async Task<(ApiResponse<LoginData> res, long time, int status)> Login(LoginRequest req)
+        public async Task<(ApiResponse<LoginSuccessData> res, long time, int status)> Login(LoginRequest req)
         {
-            return await PostRequest<LoginData>("Login", req);
+            return await PostRequest<LoginSuccessData>("Login", req);
         }
 
-        public async Task<(ApiResponse<GeneralData> res, long time, int status)> CheckLogin(CheckLoginRequest req)
+        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> CheckLogin(CheckLoginRequest req)
         {
             var timer = Stopwatch.StartNew();
             try
@@ -46,7 +49,7 @@ namespace NTTCoreTester.Services
                 string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}CheckLogin";
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
 
-                string json = JsonConvert.SerializeObject(req);  //  creating {"sessionkey":"..."}
+                string json = JsonConvert.SerializeObject(req);
                 request.Content = new StringContent(json, Encoding.UTF8, "text/plain");
 
                 foreach (var header in _config.DefaultHeaders)
@@ -63,9 +66,8 @@ namespace NTTCoreTester.Services
                     request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
 
-                // Override with CheckLogin-specific headers
-                request.Headers.TryAddWithoutValidation("AuthToken", req.sessionkey);  
-                request.Headers.TryAddWithoutValidation("Module", "OrderService");     
+                request.Headers.TryAddWithoutValidation("AuthToken", req.sessionkey);
+                request.Headers.TryAddWithoutValidation("Module", "OrderService");
 
                 Console.WriteLine("\n" + new string('=', 80));
                 Console.WriteLine($"[REQUEST] POST {fullUrl}");
@@ -98,35 +100,29 @@ namespace NTTCoreTester.Services
                 Console.WriteLine(respBody);
                 Console.WriteLine(new string('=', 80) + "\n");
 
-                var result = JsonConvert.DeserializeObject<ApiResponse<GeneralData>>(respBody);
-                return (result ?? new ApiResponse<GeneralData>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
+                var result = JsonConvert.DeserializeObject<ApiResponse<GeneralAuthData>>(respBody);
+                return (result ?? new ApiResponse<GeneralAuthData>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
             }
             catch (Exception ex)
             {
                 timer.Stop();
                 Console.WriteLine($"\n[ERROR] {ex.Message}");
-                return (new ApiResponse<GeneralData> { Status = "Error", Message = ex.Message },
+                return (new ApiResponse<GeneralAuthData> { Status = "Error", Message = ex.Message },
                         timer.ElapsedMilliseconds, 0);
             }
         }
 
-
-
-        public async Task<(ApiResponse<GeneralData> res, long time, int status)> Logout(string token, string userId)
+        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> Logout(string token, string userId)
         {
             var timer = Stopwatch.StartNew();
             try
             {
                 string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}Logout";
-
-                // Logout is POST, not GET!
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
 
-                // Small body (11 bytes - maybe empty JSON or user info)
                 string json = JsonConvert.SerializeObject(new { uid = userId });
                 request.Content = new StringContent(json, Encoding.UTF8, "text/plain");
 
-                // Add default headers from config
                 foreach (var header in _config.DefaultHeaders)
                 {
                     string lowerKey = header.Key.ToLower();
@@ -173,30 +169,27 @@ namespace NTTCoreTester.Services
                 Console.WriteLine(respBody);
                 Console.WriteLine(new string('=', 80) + "\n");
 
-                var result = JsonConvert.DeserializeObject<ApiResponse<GeneralData>>(respBody);
-                return (result ?? new ApiResponse<GeneralData>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
+                var result = JsonConvert.DeserializeObject<ApiResponse<GeneralAuthData>>(respBody);
+                return (result ?? new ApiResponse<GeneralAuthData>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
             }
             catch (Exception ex)
             {
                 timer.Stop();
                 Console.WriteLine($"\n[ERROR] {ex.Message}");
-                return (new ApiResponse<GeneralData> { Status = "Error", Message = ex.Message },
+                return (new ApiResponse<GeneralAuthData> { Status = "Error", Message = ex.Message },
                         timer.ElapsedMilliseconds, 0);
             }
         }
 
-
-        public async Task<(ApiResponse<GeneralData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req)
+        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req)
         {
-            return await PostRequest<GeneralData>("FgtPwdOTP", req);
+            return await PostRequest<GeneralAuthData>("FgtPwdOTP", req);
         }
 
-        public async Task<(ApiResponse<GeneralData> res, long time, int status)> ResetPassword(ResetPwdRequest req)
+        public async Task<(ApiResponse<GeneralAuthData> res, long time, int status)> ResetPassword(ResetPwdRequest req)
         {
-            return await PostRequest<GeneralData>("ValOTPStPwd", req);
+            return await PostRequest<GeneralAuthData>("ValOTPStPwd", req);
         }
-
-        
 
         private async Task<(ApiResponse<T> res, long time, int status)> PostRequest<T>(string endpoint, object data)
         {
@@ -204,13 +197,11 @@ namespace NTTCoreTester.Services
             try
             {
                 string json = JsonConvert.SerializeObject(data);
-
                 string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}{endpoint}";
 
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
                 request.Content = new StringContent(json, Encoding.UTF8, "text/plain");
 
-                // Add headers
                 foreach (var header in _config.DefaultHeaders)
                 {
                     string lowerKey = header.Key.ToLower();
@@ -223,7 +214,6 @@ namespace NTTCoreTester.Services
                     request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
 
-                // Detailed logging
                 Console.WriteLine("\n" + new string('=', 80));
                 Console.WriteLine($"[REQUEST] POST {fullUrl}");
                 Console.WriteLine(new string('-', 80));
@@ -248,7 +238,6 @@ namespace NTTCoreTester.Services
                 string respBody = await response.Content.ReadAsStringAsync();
                 timer.Stop();
 
-                // Response logging
                 Console.WriteLine($"\n[RESPONSE] Status: {(int)response.StatusCode} {response.StatusCode}");
                 Console.WriteLine($"[RESPONSE] Time: {timer.ElapsedMilliseconds}ms");
                 Console.WriteLine(new string('-', 80));
@@ -269,7 +258,5 @@ namespace NTTCoreTester.Services
                         timer.ElapsedMilliseconds, 0);
             }
         }
-
-       
     }
 }
