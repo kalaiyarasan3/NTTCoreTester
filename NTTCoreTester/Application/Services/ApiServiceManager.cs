@@ -4,6 +4,7 @@ using NTTCoreTester.Application.Repositories;
 using NTTCoreTester.BusinessLogic;
 using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
+using NTTCoreTester.Models.Common;
 using System.Diagnostics;
 using System.Net.Http.Json;
 
@@ -45,7 +46,7 @@ public class ApiServiceManager : IApiServiceManager
 
         try
         {
-           var url =  _config.BaseUrl+= endpoint;
+            var url = _config.BaseUrl += endpoint;
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = JsonContent.Create(requestBody)
@@ -88,16 +89,22 @@ public class ApiServiceManager : IApiServiceManager
                 .DeserializeObject<ApiResponse<TResponse>>(rawContent);
 
             if (apiResponse == null)
-                throw new InvalidOperationException("Failed to deserialize response");
+            {
+                _logger.LogError("Failed to deserialize response");
+                return default;
+            }
 
             if (!string.Equals(apiResponse.Status, "OK", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException(
-                    $"Business Status not OK → {apiResponse.Status}");
+            {
+                _logger.LogError($"Business Status not OK → {apiResponse.Status}");
+                return default;
+            }
 
             if (apiResponse.ResponceDataObject == null)
-                throw new InvalidOperationException(
-                    "ResponceDataObject is null");
-
+            {
+                _logger.LogError("ResponceDataObject is null");
+                return default;
+            }
             return apiResponse.ResponceDataObject;
         }
         catch (Exception ex)
