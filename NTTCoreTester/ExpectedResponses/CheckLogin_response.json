@@ -1,0 +1,26 @@
+{
+    "Status": "Ok",
+    "Message": "LoggedIn",
+    "StatusCode": 0,
+    "RequestID": "1c26da1b-9730-48f6-bef7-e62e473e1c5b",
+    "Responce": null,
+    "ResponceDataObject": {
+        "request_time": "15:11:33:0245 07-02-2026",
+        "status": "Ok",
+        "OSId": null,
+        "TypeID": null,
+        "Info": null,
+        "ModelId": null,
+        "Message": "LoggedIn",
+        "Result": 0,
+        "CTA": null,
+        "Action": null,
+        "Data": {
+            "APITimeTaken": "Auth 1 | Access 0 | LMod 0 | Invo 0 | ",
+            "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 1 |  Total 2"
+        }
+    },
+    "Activity": "CheckLogin",
+    "TypeID": null,
+    "Info": null
+}

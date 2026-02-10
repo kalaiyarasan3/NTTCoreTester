@@ -30,7 +30,6 @@ namespace NTTCoreTester
 
 
 
-                // Use defaults if null
                 if (reportCfg == null)
                 {
                     reportCfg = new ReportConfig
@@ -64,14 +63,16 @@ namespace NTTCoreTester
                 services.AddSingleton(apiCfg);
                 services.AddSingleton(reportCfg);
 
-                // Register HttpClient and API Service - THIS IS CRITICAL
                 services.AddHttpClient<IApiService, ApiService>();
 
                 // Register other services
                 services.AddSingleton<IValidator, Validator>();
                 services.AddSingleton<ICsvReport, CsvReport>();
+                services.AddSingleton<ResponseChecker>();  
 
-                // Register Business Logic - THIS WAS THE PROBLEM
+
+
+
                 services.AddSingleton<IAuthManager, AuthManager>();
 
                 // Register Scenarios and UI

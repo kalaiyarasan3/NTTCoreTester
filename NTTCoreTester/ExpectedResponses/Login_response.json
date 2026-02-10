@@ -1,0 +1,187 @@
+{
+    "Status": "OK",
+    "Message": "Authendication Success",
+    "StatusCode": 0,
+    "RequestID": "71c64ca4-b58a-422c-90ed-fe40ea381c81",
+    "Responce": null,
+    "ResponceDataObject": {
+        "susertoken": "ARtFTdh6uwBk2c744nLlzs5eLSqT3Q1uFo7y+MSvLjF/6HT6Leu630LisGQ4XB8FTadJOH2djW1WdFHVIrYmEOWoHXyA3ZqBHbH1bH1uS0A=",
+        "AuthorizedActivity": null,
+        "values": {
+            "26586": "watchlist1",
+            "26641": "manju"
+        },
+        "mws": {
+            "26586": [
+                {
+                    "MarketWatchId": 26586,
+                    "MarketWatchName": "watchlist1",
+                    "exch": "BSE",
+                    "token": 100295,
+                    "tsym": "VEDL#-A",
+                    "Segment": "1",
+                    "instname": "A",
+                    "pp": "0",
+                    "ls": "1",
+                    "ti": "5",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26586,
+                    "MarketWatchName": "watchlist1",
+                    "exch": "NSE",
+                    "token": 20532,
+                    "tsym": "AXISGOLD-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "-0.49",
+                    "ls": "1",
+                    "ti": "1",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26586,
+                    "MarketWatchName": "watchlist1",
+                    "exch": "NSE",
+                    "token": 3426,
+                    "tsym": "TATAPOWER-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "-0.45",
+                    "ls": "1",
+                    "ti": "5",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26586,
+                    "MarketWatchName": "watchlist1",
+                    "exch": "NSE",
+                    "token": 5900,
+                    "tsym": "AXISBANK-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "-0.13",
+                    "ls": "1",
+                    "ti": "10",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26586,
+                    "MarketWatchName": "watchlist1",
+                    "exch": "NSE",
+                    "token": 1594,
+                    "tsym": "INFY-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "1.26",
+                    "ls": "1",
+                    "ti": "10",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26586,
+                    "MarketWatchName": "watchlist1",
+                    "exch": "NSE",
+                    "token": 18151,
+                    "tsym": "TVSSCS-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "-0.26",
+                    "ls": "1",
+                    "ti": "1",
+                    "SymbolInfos": null
+                }
+            ],
+            "26641": [
+                {
+                    "MarketWatchId": 26641,
+                    "MarketWatchName": "manju",
+                    "exch": "NSE",
+                    "token": 5900,
+                    "tsym": "AXISBANK-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "-0.13",
+                    "ls": "1",
+                    "ti": "10",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26641,
+                    "MarketWatchName": "manju",
+                    "exch": "NSE",
+                    "token": 1333,
+                    "tsym": "HDFCBANK-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "-0.88",
+                    "ls": "1",
+                    "ti": "10",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26641,
+                    "MarketWatchName": "manju",
+                    "exch": "NSE",
+                    "token": 16933,
+                    "tsym": "INDBANK-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "-0.25",
+                    "ls": "1",
+                    "ti": "1",
+                    "SymbolInfos": null
+                },
+                {
+                    "MarketWatchId": 26641,
+                    "MarketWatchName": "manju",
+                    "exch": "NSE",
+                    "token": 5258,
+                    "tsym": "INDUSINDBK-EQ",
+                    "Segment": "1",
+                    "instname": "EQ",
+                    "pp": "1.64",
+                    "ls": "1",
+                    "ti": "5",
+                    "SymbolInfos": null
+                }
+            ]
+        },
+        "uname": "GUNASEKARAN",
+        "prarr": [
+            "MIS",
+            "CNC",
+            "MTF"
+        ],
+        "access_type": [
+            "INSTAOPTIONS"
+        ],
+        "uid": "ADMIN",
+        "orarr": [
+            "MKT",
+            "LIMIT",
+            "SL_M",
+            "SL_L"
+        ],
+        "email": null,
+        "TOTPEnabled": 0,
+        "IsTOTPSkip": 0,
+        "KraStatus": [],
+        "Clients": [],
+        "request_time": "14:06:28 26-05-2025",
+        "status": "Ok",
+        "TypeID": null,
+        "Info": null,
+        "ModelId": null,
+        "Message": "Authentication Success",
+        "Result": 0,
+        "CTA": null,
+        "Action": null,
+        "Data": {
+            "TimeTaken": "ReadStreamD 18 | BeforePro 1 | AfterPro 204 |  Total 225"
+        }
+    },
+    "Activity": "Login",
+    "TypeID": null,
+    "Info": null
+}

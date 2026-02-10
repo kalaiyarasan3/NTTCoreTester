@@ -39,5 +39,6 @@ namespace NTTCoreTester.Models
         public bool ValidJson { get; set; }
         public string Error { get; set; }
         public int HttpCode { get; set; }
+        public bool SchemaValid { get; set; } = true;
     }
 }

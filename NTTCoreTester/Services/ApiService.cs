@@ -1,8 +1,12 @@
-﻿using NTTCoreTester.Configuration;
+﻿using Newtonsoft.Json;
+using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
-using Newtonsoft.Json;
+using NTTCoreTester.Validators;
 using System.Diagnostics;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
+
 
 namespace NTTCoreTester.Services
 {
@@ -14,18 +18,21 @@ namespace NTTCoreTester.Services
         Task<(ApiResponse<GeneralData> res, long time, int status)> Logout(string token, string userId);
         Task<(ApiResponse<GeneralData> res, long time, int status)> ForgotPassword(ForgotPwdRequest req);
         Task<(ApiResponse<GeneralData> res, long time, int status)> ResetPassword(ResetPwdRequest req);
+        
     }
 
     public class ApiService : IApiService
     {
         private readonly HttpClient _http;
         private readonly ApiConfiguration _config;
+        private readonly ResponseChecker _checker;
 
-        public ApiService(HttpClient http, ApiConfiguration config)
+        public ApiService(HttpClient http, ApiConfiguration config, ResponseChecker checker)
         {
             _http = http;
             _config = config;
             _http.BaseAddress = new Uri(_config.BaseUrl);
+            _checker = checker;
         }
 
         public async Task<(ApiResponse<GeneralData> res, long time, int status)> SendOtp(SendOtpRequest req)
@@ -90,6 +97,7 @@ namespace NTTCoreTester.Services
                 var response = await _http.SendAsync(request);
                 string respBody = await response.Content.ReadAsStringAsync();
                 timer.Stop();
+                _checker.Check("CheckLogin", respBody);
 
                 Console.WriteLine($"\n[RESPONSE] Status: {(int)response.StatusCode}");
                 Console.WriteLine($"[RESPONSE] Time: {timer.ElapsedMilliseconds}ms");
@@ -119,14 +127,14 @@ namespace NTTCoreTester.Services
             {
                 string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}Logout";
 
-                // Logout is POST, not GET!
+                
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
 
-                // Small body (11 bytes - maybe empty JSON or user info)
+                
                 string json = JsonConvert.SerializeObject(new { uid = userId });
                 request.Content = new StringContent(json, Encoding.UTF8, "text/plain");
 
-                // Add default headers from config
+  
                 foreach (var header in _config.DefaultHeaders)
                 {
                     string lowerKey = header.Key.ToLower();
@@ -165,6 +173,8 @@ namespace NTTCoreTester.Services
                 var response = await _http.SendAsync(request);
                 string respBody = await response.Content.ReadAsStringAsync();
                 timer.Stop();
+                _checker.Check("Logout", respBody);
+
 
                 Console.WriteLine($"\n[RESPONSE] Status: {(int)response.StatusCode}");
                 Console.WriteLine($"[RESPONSE] Time: {timer.ElapsedMilliseconds}ms");
@@ -246,6 +256,8 @@ namespace NTTCoreTester.Services
 
                 var response = await _http.SendAsync(request);
                 string respBody = await response.Content.ReadAsStringAsync();
+                _checker.Check(endpoint, respBody);
+                Console.WriteLine("");
                 timer.Stop();
 
                 // Response logging
@@ -257,6 +269,7 @@ namespace NTTCoreTester.Services
                 Console.WriteLine(new string('=', 80) + "\n");
 
                 var result = JsonConvert.DeserializeObject<ApiResponse<T>>(respBody);
+                
                 return (result ?? new ApiResponse<T>(), timer.ElapsedMilliseconds, (int)response.StatusCode);
             }
             catch (Exception ex)

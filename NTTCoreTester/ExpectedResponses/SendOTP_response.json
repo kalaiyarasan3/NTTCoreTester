@@ -1,0 +1,28 @@
+{
+  "Status": "",
+  "Message": "",
+  "StatusCode": 0,
+  "RequestID": "",
+  "Responce": null,
+  "ResponceDataObject": {
+    "DealerUCC": "",
+    "DealerStatus": 0,
+    "ClientType": 0,
+    "request_time": "",
+    "status": "",
+    "OSId": null,
+    "TypeID": null,
+    "Info": null,
+    "ModelId": null,
+    "Message": "",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {
+      "TimeTaken": ""
+    }
+  },
+  "Activity": "",
+  "TypeID": null,
+  "Info": null
+}

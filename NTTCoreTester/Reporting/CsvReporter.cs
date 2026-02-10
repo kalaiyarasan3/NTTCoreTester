@@ -27,7 +27,6 @@ namespace NTTCoreTester.Reporting
             _cfg = cfg;
             _results = new List<TestResult>();
 
-            
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             _filename = $"{_cfg.FilePrefix}_{timestamp}.csv";
 
@@ -46,14 +45,15 @@ namespace NTTCoreTester.Reporting
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine("Timestamp,Module,Scenario,API,Status,ResponseMs,ValidJson,Error,HttpCode");
+            // CHANGED: Added SchemaValid column
+            sb.AppendLine("Timestamp,Module,Scenario,API,Status,ResponseMs,ValidJson,SchemaValid,Error,HttpCode");
 
             foreach (var r in _results)
             {
                 string errorMessage = r.Error ?? "";
-
                 errorMessage = errorMessage.Replace("\"", "\"\"");
 
+                // CHANGED: Added SchemaValid
                 sb.AppendLine($"{r.Time:yyyy-MM-dd HH:mm:ss}," +
                              $"{r.Module}," +
                              $"{r.Scenario}," +
@@ -61,6 +61,7 @@ namespace NTTCoreTester.Reporting
                              $"{r.Result}," +
                              $"{r.ResponseMs}," +
                              $"{(r.ValidJson ? "YES" : "NO")}," +
+                             $"{(r.SchemaValid ? "YES" : "NO")}," +  // NEW
                              $"\"{errorMessage}\"," +
                              $"{r.HttpCode}");
             }

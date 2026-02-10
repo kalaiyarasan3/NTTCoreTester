@@ -1,12 +1,8 @@
-﻿using NTTCoreTester.Configuration;
+﻿using Newtonsoft.Json;
+using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
 using NTTCoreTester.Services;
-using NTTCoreTester.Validators;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester.BusinessLogic
 {
@@ -24,22 +20,19 @@ namespace NTTCoreTester.BusinessLogic
     public class AuthManager : IAuthManager
     {
         private readonly IApiService _api;
-        private readonly IValidator _validator;
         private readonly ApiConfiguration _cfg;
         private UserSession _session;
-        private string _lastUid; // remember uid for forgot password flow
+        private string _lastUid;
 
-        public AuthManager(IApiService api, IValidator validator, ApiConfiguration cfg)
+        public AuthManager(IApiService api, ApiConfiguration cfg)  
         {
             _api = api;
-            _validator = validator;
             _cfg = cfg;
         }
 
         public async Task<(bool ok, string msg, TestResult test)> SendOtpAndValidate(string uid, string pwd, string scenario)
         {
-                return (true,"", new());
-            _lastUid = uid; 
+            _lastUid = uid;
 
             var req = new SendOtpRequest { uid = uid, pwd = pwd };
             var (res, time, status) = await _api.SendOtp(req);
@@ -53,11 +46,6 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
-            
             if (res.StatusCode == 0)
             {
                 test.Result = Status.PASS;
@@ -82,7 +70,7 @@ namespace NTTCoreTester.BusinessLogic
                 password = pwd,
                 pwd = pwd,
                 otp = otp,
-                TwoFA=1,
+                TwoFA = 1,
                 source = "WEB"
             };
 
@@ -97,14 +85,8 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            bool bizOk = _validator.CheckLogin(res, uid, out string bizErr);
-            test.ValidJson = techOk && bizOk;
-
-            if (bizOk && res.ResponceDataObject != null)
+            if (res.ResponceDataObject != null)
             {
-                
                 _session = new UserSession
                 {
                     UserId = res.ResponceDataObject.uid,
@@ -121,8 +103,7 @@ namespace NTTCoreTester.BusinessLogic
             else
             {
                 test.Result = Status.FAIL;
-                test.Error = bizErr;
-                return (false, bizErr, null, test);
+                return (false, "Failed", null, test);
             }
         }
 
@@ -147,22 +128,9 @@ namespace NTTCoreTester.BusinessLogic
 
             test.ResponseMs = time;
             test.HttpCode = status;
+            test.Result = Status.PASS;
 
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            bool sessOk = _validator.CheckSession(res, out string sessErr);
-            test.ValidJson = techOk && sessOk;
-
-            if (sessOk)
-            {
-                test.Result = Status.PASS;
-                return (true, "Session active", test);
-            }
-            else
-            {
-                test.Result = Status.FAIL;
-                test.Error = sessErr;
-                return (false, sessErr, test);
-            }
+            return (true, "Session active", test);
         }
 
         public async Task<(bool ok, string msg, TestResult test)> LogoutAndValidate(string scenario)
@@ -185,20 +153,15 @@ namespace NTTCoreTester.BusinessLogic
 
             test.ResponseMs = time;
             test.HttpCode = status;
-
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
-            _session = null; 
-
+            _session = null;
             test.Result = Status.PASS;
+
             return (true, "Logged out", test);
         }
 
         public async Task<(bool ok, string msg, TestResult test)> ForgotPwdAndValidate(
             string uid, string token, string scenario)
         {
-            
             string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
 
             var req = new ForgotPwdRequest
@@ -220,9 +183,6 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
             if (res.StatusCode == 0)
             {
                 test.Result = Status.PASS;
@@ -239,7 +199,6 @@ namespace NTTCoreTester.BusinessLogic
         public async Task<(bool ok, string msg, TestResult test)> ResetPwdAndValidate(
             string uid, string otp, string newPwd, string scenario)
         {
-            
             string actualUid = string.IsNullOrEmpty(uid) ? _lastUid : uid;
 
             var req = new ResetPwdRequest
@@ -260,9 +219,6 @@ namespace NTTCoreTester.BusinessLogic
                 HttpCode = status
             };
 
-            bool techOk = _validator.CheckTechnical(status, time, res != null, out string techErr);
-            test.ValidJson = techOk;
-
             if (res.StatusCode == 0)
             {
                 test.Result = Status.PASS;
@@ -281,5 +237,4 @@ namespace NTTCoreTester.BusinessLogic
             return _session;
         }
     }
-
 }

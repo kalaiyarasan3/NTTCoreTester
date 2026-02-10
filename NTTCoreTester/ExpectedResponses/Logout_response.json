@@ -1,0 +1,26 @@
+{
+    "Status": "Ok",
+    "Message": "Logout Successfully",
+    "StatusCode": 0,
+    "RequestID": "9dc4bfec-14c6-498a-9edf-c4c83c4eb9d8",
+    "Responce": null,
+    "ResponceDataObject": {
+        "request_time": "10:19:56:7309 10-02-2026",
+        "status": "Ok",
+        "OSId": null,
+        "TypeID": null,
+        "Info": null,
+        "ModelId": null,
+        "Message": "Logout Successfully",
+        "Result": 0,
+        "CTA": null,
+        "Action": null,
+        "Data": {
+            "APITimeTaken": "Auth 1 | Access 0 | LMod 0 | Invo 11 | ",
+            "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 12 |  Total 12"
+        }
+    },
+    "Activity": "Logout",
+    "TypeID": null,
+    "Info": null
+}
