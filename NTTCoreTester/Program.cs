@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NTTCoreTester.Application.Helper;
 using NTTCoreTester.Application.Repositories;
 using NTTCoreTester.Application.Services;
 using NTTCoreTester.BusinessLogic;
@@ -28,6 +29,10 @@ namespace NTTCoreTester
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
+
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Resources/OrderTesting.json");
+
+                JsonStore.LoadFromFile(path);
 
                 // Get configurations
                 var apiCfg = config.GetSection("ApiConfiguration").Get<ApiConfiguration>();
@@ -63,7 +68,9 @@ namespace NTTCoreTester
                                | DecompressionMethods.Deflate
                                | DecompressionMethods.Brotli
     });
-
+                 
+                services.AddSingleton<VariableManager>();
+                services.AddSingleton<IOrderTestScenarios, OrderTestScenarios>();
 
                 // Register configurations
                 services.AddSingleton(apiCfg);

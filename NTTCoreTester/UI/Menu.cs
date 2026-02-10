@@ -1,4 +1,5 @@
-﻿using NTTCoreTester.Application.Repositories;
+﻿using NTTCoreTester.Application.Helper;
+using NTTCoreTester.Application.Repositories;
 using NTTCoreTester.BusinessLogic;
 using NTTCoreTester.Reporting;
 using NTTCoreTester.Scenarios;
@@ -56,13 +57,26 @@ namespace NTTCoreTester.UI
                 Console.WriteLine("\nPress any key...");
                 Console.ReadKey();
                 Console.Clear();
-                await _orderService.GetSecurityInfoAsync(new Application.Features.Orders.Request.GetSecurityInfoRequest
-                {
-                    Token = "12000",
-                    Exch = "NSE"
-                });
+                await ValidateGetSecurityInfoAsync();
             }
         }
+        public async Task ValidateGetSecurityInfoAsync()
+        {  
+            var result = await _orderService.GetSecurityInfoAsync();
+             
+            var apiNode = JsonStore.GetApi("GetSecurityInfo");
+
+            if (!apiNode.TryGetProperty("ResponceDataObject", out var expectedNode))
+                throw new Exception("ResponceDataObject not defined in JsonStore for GetSecurityInfo");
+
+            var expectedJson = expectedNode.GetRawText();
+             
+            JsonContractValidator.Validate(expectedJson, result.ResponseData.Value);
+
+            Console.WriteLine("✅ GetSecurityInfo validation PASSED");
+        }
+
+
 
         private void ShowMenu()
         {

@@ -1,6 +1,7 @@
-﻿
-public interface IOrderTestScenarios
+﻿namespace NTTCoreTester.Application.Repositories
 {
-    Task PlaceModifyCancelAsync();
-    Task SelectAndModifyAsync();
+    public interface IOrderTestScenarios
+    {
+       
+    }
 }

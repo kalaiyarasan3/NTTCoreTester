@@ -1,12 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NTTCoreTester.Application.Repositories;
+using NTTCoreTester.Application.Shared.Models;
 using NTTCoreTester.BusinessLogic;
 using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
 using NTTCoreTester.Models.Common;
 using System.Diagnostics;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 
 namespace NTTCoreTester.Application.Services;
 
@@ -32,6 +35,72 @@ public class ApiServiceManager : IApiServiceManager
         foreach (var header in _config.DefaultHeaders)
         {
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
+        }
+    }
+
+    public async Task<ApiResult> PostAsyncRaw(
+        string endpoint,
+        string requestJson,
+        IReadOnlyDictionary<string, string>? extraHeaders = null,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var url = _config.BaseUrl + endpoint;
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+            };
+
+            requestMessage.Headers.Add("AuthToken", "9gZEhj/d2zuSgL2ICS6F41R6FqNS0+8QlBUTt/ia6cPviWTNMnhaC/FAR4/Z+yLGkYEYeEJNiN2/H6xuw9/kzzcK9tsZeGYto65JH53xANQ=");
+
+            if (extraHeaders != null)
+            {
+                foreach (var kv in extraHeaders)
+                    requestMessage.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
+            }
+
+            _logger.LogInformation("POST (RAW) {Endpoint}", endpoint);
+
+            var response = await _httpClient.SendAsync(requestMessage, ct);
+            var rawJson = await response.Content.ReadAsStringAsync(ct);
+
+            if (!response.IsSuccessStatusCode)
+                throw new HttpRequestException(
+                    $"HTTP {(int)response.StatusCode} - {response.ReasonPhrase}\n{rawJson}");
+
+            
+        
+
+         
+            using var doc = JsonDocument.Parse(rawJson);
+            var root = doc.RootElement.Clone();
+
+            int statusCode = root.TryGetProperty("StatusCode", out var sc)
+            ? sc.GetInt32()
+            : 0;
+
+            JsonElement? responseData = null;
+            if (root.TryGetProperty("ResponceDataObject", out var rdo))
+            {
+                responseData = rdo.Clone();
+            }
+
+            return new ApiResult
+            {
+                StatusCode = statusCode,
+                Root = root,
+                ResponseData = responseData,
+                RawJson = rawJson
+            };
+
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning("Got exception {ex}", ex);
+            throw;
         }
     }
 
