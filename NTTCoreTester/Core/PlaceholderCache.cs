@@ -35,7 +35,7 @@
         public void Clear()
         {
             _cache.Clear();
-            Console.WriteLine("🗑️  Input cache cleared");
+            Console.WriteLine("  Input cache cleared");
         }
     }
 }

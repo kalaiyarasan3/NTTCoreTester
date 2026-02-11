@@ -23,7 +23,7 @@ namespace NTTCoreTester.UI
 
                 if (choice == "0")
                 {
-                    Console.WriteLine("\n✅ Exiting... CSV will be saved automatically.");
+                    Console.WriteLine("\n Exiting... CSV will be saved automatically.");
                     return;
                 }
 
@@ -47,20 +47,18 @@ namespace NTTCoreTester.UI
 
         private void ShowMenu()
         {
-            Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
-            Console.WriteLine("║          NTT Core Tester - File-Driven API Testing          ║");
-            Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+            Console.WriteLine("NTT Core Tester ");
 
             // Show session status
             if (_sessionManager.HasSession())
             {
-                Console.WriteLine($"\n✅ LOGGED IN");
+                Console.WriteLine($"\n LOGGED IN");
                 Console.WriteLine($"   User: {_sessionManager.GetUserName()} ({_sessionManager.GetUserId()})");
-                Console.WriteLine($"   Token: {((SessionManager)_sessionManager).GetMaskedToken()}");
+                Console.WriteLine($"   Token: {((SessionManager)_sessionManager)}");
             }
             else
             {
-                Console.WriteLine("\n⚪ NO ACTIVE SESSION");
+                Console.WriteLine("\n NO ACTIVE SESSION");
             }
 
             Console.WriteLine("\n" + new string('─', 64));
@@ -71,7 +69,7 @@ namespace NTTCoreTester.UI
 
             if (requests.Count == 0)
             {
-                Console.WriteLine("  ⚠️  No request files found in Requests/ folder");
+                Console.WriteLine("    No request files found in Requests/ folder");
             }
             else
             {

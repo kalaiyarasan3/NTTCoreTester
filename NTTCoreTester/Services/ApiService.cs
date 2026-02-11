@@ -57,7 +57,7 @@ namespace NTTCoreTester.Services
 
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"\n❌ Request file not found: {filePath}");
+                Console.WriteLine($"\n Request file not found: {filePath}");
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace NTTCoreTester.Services
             Console.WriteLine($"{new string('=', 80)}");
 
             string fileContent = await File.ReadAllTextAsync(filePath);
-            Console.WriteLine($"📄 Template loaded from: {filePath}");
+            Console.WriteLine($" Template loaded from: {filePath}");
 
             // Check if file has headers section (structured format)
             Dictionary<string, string> customHeaders = null;
@@ -81,27 +81,27 @@ namespace NTTCoreTester.Services
                     // Structured format with headers
                     customHeaders = jsonObj["headers"].ToObject<Dictionary<string, string>>();
                     requestTemplate = jsonObj["body"].ToString();
-                    Console.WriteLine($"📋 Custom headers detected: {customHeaders.Count}");
+                    Console.WriteLine($" Custom headers detected: {customHeaders.Count}");
                 }
                 else
                 {
                     // Simple format (just body)
                     requestTemplate = fileContent;
-                    Console.WriteLine($"📋 Using default headers from appsettings.json");
+                    Console.WriteLine($" Using default headers from appsettings.json");
                 }
             }
             catch
             {
                 // If parsing fails, treat as simple body-only format
                 requestTemplate = fileContent;
-                Console.WriteLine($"📋 Using default headers from appsettings.json");
+                Console.WriteLine($" Using default headers from appsettings.json");
             }
 
             // Replace placeholders in body
             string requestJson = await ResolvePlaceholders(requestTemplate, requestFileName);
             if (requestJson == null)
             {
-                Console.WriteLine("❌ Failed to resolve placeholders in body");
+                Console.WriteLine(" Failed to resolve placeholders in body");
                 return;
             }
 
@@ -114,7 +114,7 @@ namespace NTTCoreTester.Services
                     string resolvedValue = await ResolvePlaceholderValue(header.Value, requestFileName);
                     if (resolvedValue == null)
                     {
-                        Console.WriteLine($"❌ Failed to resolve placeholder in header: {header.Key}");
+                        Console.WriteLine($" Failed to resolve placeholder in header: {header.Key}");
                         return;
                     }
                     resolvedHeaders[header.Key] = resolvedValue;
@@ -122,7 +122,7 @@ namespace NTTCoreTester.Services
                 customHeaders = resolvedHeaders;
             }
 
-            Console.WriteLine($"✅ Placeholders resolved");
+            Console.WriteLine($" Placeholders resolved");
 
             await CallApi(requestFileName, requestJson, customHeaders);
         }
@@ -134,11 +134,11 @@ namespace NTTCoreTester.Services
 
             if (placeholders.Count == 0)
             {
-                Console.WriteLine("ℹ️  No placeholders found in body");
+                Console.WriteLine("  No placeholders found in body");
                 return template;
             }
 
-            Console.WriteLine($"\n🔍 Found {placeholders.Count} placeholder(s) in body: {string.Join(", ", placeholders)}");
+            Console.WriteLine($"\n Found {placeholders.Count} placeholder(s) in body: {string.Join(", ", placeholders)}");
 
             string result = template;
 
@@ -147,7 +147,7 @@ namespace NTTCoreTester.Services
                 string value = await GetPlaceholderValue(placeholder, endpoint);
                 if (value == null)
                 {
-                    Console.WriteLine($"❌ Failed to resolve: {placeholder}");
+                    Console.WriteLine($" Failed to resolve: {placeholder}");
                     return null;
                 }
                 result = result.Replace($"{{{{{placeholder}}}}}", value);
@@ -180,7 +180,7 @@ namespace NTTCoreTester.Services
                 string token = _sessionManager.GetToken();
                 if (string.IsNullOrEmpty(token))
                 {
-                    Console.WriteLine($"❌ No active session. Please login first.");
+                    Console.WriteLine($" No active session. Please login first.");
                     return null;
                 }
                 Console.WriteLine($"   {{{{token}}}} → [from session]");
@@ -192,7 +192,7 @@ namespace NTTCoreTester.Services
                 string userId = _sessionManager.GetUserId();
                 if (string.IsNullOrEmpty(userId))
                 {
-                    Console.WriteLine($"❌ No active session. Please login first.");
+                    Console.WriteLine($" No active session. Please login first.");
                     return null;
                 }
                 Console.WriteLine($"   {{{{userId}}}} → {userId} [from session]");
@@ -203,7 +203,7 @@ namespace NTTCoreTester.Services
             if (placeholder == "otp" || placeholder == "newPwd" || placeholder == "logintoken")
             {
                 Console.Write($"   Enter {placeholder}: ");
-                string value = placeholder == "newPwd" ? ReadPassword() : Console.ReadLine();
+                string value = Console.ReadLine();
                 return value;
             }
 
@@ -217,37 +217,12 @@ namespace NTTCoreTester.Services
 
             // Prompt and cache
             Console.Write($"   Enter {placeholder}: ");
-            string input = placeholder == "pwd" ? ReadPassword() : Console.ReadLine();
+            string input = Console.ReadLine();
             _cache.Set(placeholder, input);
             return input;
         }
 
-        private string ReadPassword()
-        {
-            string password = "";
-            ConsoleKeyInfo key;
-
-            do
-            {
-                key = Console.ReadKey(true);
-
-                if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
-                {
-                    password += key.KeyChar;
-                    Console.Write("*");
-                }
-                else if (key.Key == ConsoleKey.Backspace && password.Length > 0)
-                {
-                    password = password.Substring(0, password.Length - 1);
-                    Console.Write("\b \b");
-                }
-            }
-            while (key.Key != ConsoleKey.Enter);
-
-            Console.WriteLine();
-            return password;
-        }
-
+       
         private async Task CallApi(string endpoint, string requestJson, Dictionary<string, string> customHeaders)
         {
             var timer = Stopwatch.StartNew();
@@ -272,7 +247,7 @@ namespace NTTCoreTester.Services
                 // Override with custom headers from request file (if any)
                 if (customHeaders != null && customHeaders.Count > 0)
                 {
-                    Console.WriteLine($"🔧 Applying {customHeaders.Count} custom header(s):");
+                    Console.WriteLine($" Applying {customHeaders.Count} custom header(s):");
                     foreach (var header in customHeaders)
                     {
                         Console.WriteLine($"   {header.Key}: {MaskSensitiveValue(header.Key, header.Value)}");
@@ -281,14 +256,14 @@ namespace NTTCoreTester.Services
                     }
                 }
 
-                Console.WriteLine($"\n🌐 Calling API: {fullUrl}");
+                Console.WriteLine($"\n Calling API: {fullUrl}");
 
                 var response = await _http.SendAsync(request);
                 string respBody = await response.Content.ReadAsStringAsync();
                 timer.Stop();
 
-                Console.WriteLine($"⏱️  Response Time: {timer.ElapsedMilliseconds}ms");
-                Console.WriteLine($"📡 HTTP Status: {(int)response.StatusCode}");
+                Console.WriteLine($" Response Time: {timer.ElapsedMilliseconds}ms");
+                Console.WriteLine($" HTTP Status: {(int)response.StatusCode}");
 
                 // Validate schema
                 bool schemaValid = _checker.Check(endpoint, respBody, out List<string> errors);
@@ -315,18 +290,18 @@ namespace NTTCoreTester.Services
                                    businessStatus, respBody, schemaValid, validationErrors);
 
                 // Display result
-                Console.WriteLine($"💼 Business Status: {businessStatus}");
-                Console.WriteLine($"📋 Schema Valid: {(schemaValid ? "YES" : "NO")}");
+                Console.WriteLine($" Business Status: {businessStatus}");
+                Console.WriteLine($" Schema Valid: {(schemaValid ? "YES" : "NO")}");
 
                 if (!schemaValid)
                 {
-                    Console.WriteLine($"⚠️  Validation Errors: {validationErrors}");
+                    Console.WriteLine($"  Validation Errors: {validationErrors}");
                 }
             }
             catch (Exception ex)
             {
                 timer.Stop();
-                Console.WriteLine($"\n❌ ERROR: {ex.Message}");
+                Console.WriteLine($"\n ERROR: {ex.Message}");
 
                 _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, 0, "ERROR",
                                    $"{{\"error\":\"{ex.Message}\"}}", false, $"Exception: {ex.Message}");
@@ -377,7 +352,7 @@ namespace NTTCoreTester.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"⚠️  Could not extract session: {ex.Message}");
+                Console.WriteLine($" Could not extract session: {ex.Message}");
             }
         }
     }

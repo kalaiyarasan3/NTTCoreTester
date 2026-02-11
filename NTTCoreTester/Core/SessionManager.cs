@@ -21,7 +21,7 @@
             _token = token;
             _userId = userId;
             _userName = userName;
-            Console.WriteLine($"✅ Session saved: {_userName} ({_userId})");
+            Console.WriteLine($" Session saved: {_userName} ({_userId})");
         }
 
         public string GetToken()
@@ -49,18 +49,9 @@
             _token = null;
             _userId = null;
             _userName = null;
-            Console.WriteLine("🗑️  Session cleared");
+            Console.WriteLine("  Session cleared");
         }
 
-        public string GetMaskedToken()
-        {
-            if (string.IsNullOrEmpty(_token))
-                return "";
-
-            if (_token.Length <= 6)
-                return "***";
-
-            return _token.Substring(0, 3) + "***" + _token.Substring(_token.Length - 3);
-        }
+       
     }
 }

@@ -72,14 +72,12 @@ namespace NTTCoreTester
 
                 // Display startup info
                 Console.Clear();
-                Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
-                Console.WriteLine("║          NTT Core Tester - File-Driven Testing              ║");
-                Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+                Console.WriteLine(" NTT Core Tester - File-Driven Testing");
                 Console.WriteLine();
-                Console.WriteLine($"📡 Server: {apiCfg.BaseUrl}");
-                Console.WriteLine($"📊 Performance Threshold: 100ms");
-                Console.WriteLine($"📁 Report Folder: {reportCfg.OutputFolder}");
-                Console.WriteLine($"📂 Request Files: Requests/");
+                Console.WriteLine($"Server: {apiCfg.BaseUrl}");
+                Console.WriteLine($"Performance Threshold: 100ms");
+                Console.WriteLine($"Report Folder: {reportCfg.OutputFolder}");
+                Console.WriteLine($"Request Files: Requests/");
                 Console.WriteLine();
                 Console.WriteLine("Press any key to start testing...");
                 Console.ReadKey();

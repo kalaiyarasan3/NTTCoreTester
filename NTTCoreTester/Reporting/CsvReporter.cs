@@ -77,7 +77,7 @@ namespace NTTCoreTester.Reporting
             }
 
             await File.WriteAllTextAsync(_fullPath, sb.ToString());
-            Console.WriteLine($"\n✅ CSV Report saved: {_fullPath}");
+            Console.WriteLine($"\n CSV Report saved: {_fullPath}");
             Console.WriteLine($"   Total Entries: {_entries.Count}");
             Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
         }
