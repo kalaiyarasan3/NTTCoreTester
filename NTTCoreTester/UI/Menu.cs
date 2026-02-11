@@ -57,14 +57,16 @@ namespace NTTCoreTester.UI
                 Console.WriteLine("\nPress any key...");
                 Console.ReadKey();
                 Console.Clear();
-                await ValidateGetSecurityInfoAsync();
+                await ValidateGetUserInfoAsync();
             }
         }
-        public async Task ValidateGetSecurityInfoAsync()
-        {  
-            var result = await _orderService.GetSecurityInfoAsync();
+
+        public async Task ValidateGetUserInfoAsync()
+        { 
+
+            var result = await _orderService.GetUserInfoAsync();
              
-            var apiNode = JsonStore.GetApi("GetSecurityInfo");
+            var apiNode = JsonStore.GetApi("GetUserInfo");
 
             if (!apiNode.TryGetProperty("ResponceDataObject", out var expectedNode))
                 throw new Exception("ResponceDataObject not defined in JsonStore for GetSecurityInfo");

@@ -9,6 +9,7 @@ namespace NTTCoreTester.Application.Repositories
         Task<ApiResult> GetLastOrderStatusAsync();
         Task<ApiResult> GetOrderMarginAsync();
         Task<ApiResult> GetSecurityInfoAsync();
+        Task<ApiResult> GetUserInfoAsync();
         Task<ApiResult> ModifyOrderAsync();
         Task<ApiResult> PlaceOrderAsync();
     }

@@ -25,6 +25,7 @@ namespace NTTCoreTester.Application.Repositories
         public Task<ApiResult> GetOrderMarginAsync() => ExecuteJsonApiAsync(apiName: "GetOrderMargin", activity: "GetOrderMargin");
 
         public Task<ApiResult> GetSecurityInfoAsync() => ExecuteJsonApiAsync(apiName: "GetSecurityInfo", activity: "GetSecurityInfo");
+        public Task<ApiResult> GetUserInfoAsync() => ExecuteJsonApiAsync(apiName: "GetUserInfo", activity: "GetUserInfo");
 
         public Task<ApiResult> PlaceOrderAsync() => ExecuteJsonApiAsync("PlaceOrder", "PlaceOrder");
 

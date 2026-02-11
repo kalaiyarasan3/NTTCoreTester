@@ -53,7 +53,7 @@ public class ApiServiceManager : IApiServiceManager
                 Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
             };
 
-            requestMessage.Headers.Add("AuthToken", "9gZEhj/d2zuSgL2ICS6F41R6FqNS0+8QlBUTt/ia6cPviWTNMnhaC/FAR4/Z+yLGkYEYeEJNiN2/H6xuw9/kzzcK9tsZeGYto65JH53xANQ=");
+            requestMessage.Headers.Add("AuthToken", "/kzzcK9tsZeGYto65JH53xANQ=");
 
             if (extraHeaders != null)
             {
