@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NTTCoreTester.BusinessLogic;
 using NTTCoreTester.Configuration;
+using NTTCoreTester.Core;
 using NTTCoreTester.Reporting;
-using NTTCoreTester.Scenarios;
 using NTTCoreTester.Services;
 using NTTCoreTester.UI;
 using NTTCoreTester.Validators;
@@ -14,23 +13,18 @@ namespace NTTCoreTester
     class Program
     {
         static async Task Main(string[] args)
-        
         {
             try
             {
-                // load config
+                // Load config
                 var config = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
 
-                // Get configurations
                 var apiCfg = config.GetSection("ApiConfiguration").Get<ApiConfiguration>();
                 var reportCfg = config.GetSection("ReportConfig").Get<ReportConfig>();
 
-
-
-                // Use defaults if null
                 if (reportCfg == null)
                 {
                     reportCfg = new ReportConfig
@@ -48,56 +42,74 @@ namespace NTTCoreTester
                     return;
                 }
 
-                // setup DI
+                // Setup DI
                 var services = new ServiceCollection();
-
-                services.AddHttpClient<IApiService, ApiService>()
-    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-    {
-        AutomaticDecompression = DecompressionMethods.GZip
-                               | DecompressionMethods.Deflate
-                               | DecompressionMethods.Brotli
-    });
-
 
                 // Register configurations
                 services.AddSingleton(apiCfg);
                 services.AddSingleton(reportCfg);
 
-                // Register HttpClient and API Service - THIS IS CRITICAL
-                services.AddHttpClient<IApiService, ApiService>();
-
-                // Register other services
-                services.AddSingleton<IValidator, Validator>();
+                // Register core services
+                services.AddSingleton<ISessionManager, SessionManager>();
+                services.AddSingleton<IPlaceholderCache, PlaceholderCache>();
                 services.AddSingleton<ICsvReport, CsvReport>();
+                services.AddSingleton<ResponseChecker>();
 
-                // Register Business Logic - THIS WAS THE PROBLEM
-                services.AddSingleton<IAuthManager, AuthManager>();
+                // HttpClient with proper decompression
+                services.AddHttpClient<IApiService, ApiService>()
+                    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                    {
+                        AutomaticDecompression = DecompressionMethods.GZip
+                                               | DecompressionMethods.Deflate
+                                               | DecompressionMethods.Brotli,
+                        UseCookies = false
+                    });
 
-                // Register Scenarios and UI
-                services.AddSingleton<ITestScenarios, TestScenarios>();
+                // Register UI
                 services.AddSingleton<Menu>();
 
                 var provider = services.BuildServiceProvider();
 
-                // run
-                var menu = provider.GetRequiredService<Menu>();
-
+                // Display startup info
                 Console.Clear();
-                Console.WriteLine("  Auth Test              ");
+                Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
+                Console.WriteLine("║          NTT Core Tester - File-Driven Testing              ║");
+                Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
                 Console.WriteLine();
-                Console.WriteLine($"Server: {apiCfg.BaseUrl}");
-                Console.WriteLine("\nPress any key to start...");
+                Console.WriteLine($"📡 Server: {apiCfg.BaseUrl}");
+                Console.WriteLine($"📊 Performance Threshold: 100ms");
+                Console.WriteLine($"📁 Report Folder: {reportCfg.OutputFolder}");
+                Console.WriteLine($"📂 Request Files: Requests/");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to start testing...");
                 Console.ReadKey();
                 Console.Clear();
 
+                // Run tests
+                var menu = provider.GetRequiredService<Menu>();
                 await menu.Start();
+
+                // Save CSV report at the end
+                Console.WriteLine("\n" + new string('=', 80));
+                Console.WriteLine("Saving CSV Report...");
+                Console.WriteLine(new string('=', 80));
+
+                var csvReport = provider.GetRequiredService<ICsvReport>();
+                await csvReport.Save();
+
+                Console.WriteLine("\n✅ Testing completed successfully!");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n!! ERROR: {ex.Message}");
-                Console.WriteLine($"\n{ex.StackTrace}");
-                Console.WriteLine("\nPress any key to exit...");
+                Console.WriteLine("\n" + new string('═', 80));
+                Console.WriteLine("❌ FATAL ERROR");
+                Console.WriteLine(new string('═', 80));
+                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine($"\nStack Trace:\n{ex.StackTrace}");
+                Console.WriteLine("\n" + new string('═', 80));
+                Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
         }

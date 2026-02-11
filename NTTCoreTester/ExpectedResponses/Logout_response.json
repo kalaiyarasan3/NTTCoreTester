@@ -1,0 +1,15 @@
+{
+  "Status": "Ok",
+  "Message": "Logout Successfully",
+  "StatusCode": 0,
+  "RequestID": "sample-id",
+  "Responce": null,
+  "ResponceDataObject": {
+    "request_time": "15:30:34:3593 10-02-2026",
+    "status": "Ok",
+    "Message": "Logout Successfully",
+    "Result": 0,
+    "Data": {}
+  },
+  "Activity": "Logout"
+}

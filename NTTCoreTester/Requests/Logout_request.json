@@ -1,0 +1,8 @@
+﻿{
+  "headers": {
+    "AuthToken": "{{token}}"
+  },
+  "body": {
+    "uid": "{{userId}}"
+  }
+}
