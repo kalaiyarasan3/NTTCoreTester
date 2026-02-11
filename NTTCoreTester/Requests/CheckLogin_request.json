@@ -1,0 +1,9 @@
+﻿{
+  "headers": {
+    "AuthToken": "{{token}}",
+    "Module": "OrderService"
+  },
+  "body": {
+    "sessionkey": "{{token}}"
+  }
+}

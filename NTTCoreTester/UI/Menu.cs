@@ -1,20 +1,17 @@
-﻿using NTTCoreTester.BusinessLogic;
-using NTTCoreTester.Reporting;
-using NTTCoreTester.Scenarios;
+﻿using NTTCoreTester.Services;
+using NTTCoreTester.Core;
 
 namespace NTTCoreTester.UI
 {
     public class Menu
     {
-        private readonly ITestScenarios _scenarios;
-        private readonly ICsvReport _report;
-        private readonly IAuthManager _authManager;
+        private readonly IApiService _apiService;
+        private readonly ISessionManager _sessionManager;
 
-        public Menu(ITestScenarios scenarios, ICsvReport report, IAuthManager authManager)
+        public Menu(IApiService apiService, ISessionManager sessionManager)
         {
-            _scenarios = scenarios;
-            _report = report;
-            _authManager = authManager;
+            _apiService = apiService;
+            _sessionManager = sessionManager;
         }
 
         public async Task Start()
@@ -22,35 +19,27 @@ namespace NTTCoreTester.UI
             while (true)
             {
                 ShowMenu();
-                string choice = Console.ReadLine();
+                string choice = Console.ReadLine()?.Trim();
 
-                switch (choice)
+                if (choice == "0")
                 {
-                    case "1":
-                        await RunScenarioA();
-                        break;
-                    case "2":
-                        await RunScenarioB();
-                        break;
-                    case "3":
-                        await RunScenarioC();
-                        break;
-                    case "4":
-                        await _report.Save();
-                        break;
-                    case "5":
-                        Console.WriteLine($"\nReport location: {_report.GetPath()}");
-                        break;
-                    case "6":
-                        await _report.Save();
-                        Console.WriteLine("\nSaved");
-                        return;
-                    default:
-                        Console.WriteLine("\nInvalid option");
-                        break;
+                    Console.WriteLine("\n✅ Exiting... CSV will be saved automatically.");
+                    return;
                 }
 
-                Console.WriteLine("\nPress any key...");
+                var requests = _apiService.GetAvailableRequests();
+
+                if (int.TryParse(choice, out int index) && index > 0 && index <= requests.Count)
+                {
+                    string selectedRequest = requests[index - 1];
+                    await _apiService.ExecuteRequest(selectedRequest);
+                }
+                else
+                {
+                    Console.WriteLine("\n❌ Invalid option!");
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
                 Console.Clear();
             }
@@ -58,66 +47,43 @@ namespace NTTCoreTester.UI
 
         private void ShowMenu()
         {
-            Console.WriteLine("Auth Testing Framework");
+            Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
+            Console.WriteLine("║          NTT Core Tester - File-Driven API Testing          ║");
+            Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
 
             // Show session status
-            var session = _authManager.GetSession();
-            if (session != null && session.IsActive)
+            if (_sessionManager.HasSession())
             {
-                Console.WriteLine($"\n✓ Logged in: {session.UserName} ({session.UserId})");
-                Console.WriteLine($"  Session: {session.GetMaskedToken()}");
-                Console.WriteLine($"  Login Time: {session.LoginTime:HH:mm:ss}");
+                Console.WriteLine($"\n✅ LOGGED IN");
+                Console.WriteLine($"   User: {_sessionManager.GetUserName()} ({_sessionManager.GetUserId()})");
+                Console.WriteLine($"   Token: {((SessionManager)_sessionManager).GetMaskedToken()}");
             }
             else
             {
-                Console.WriteLine("\n○ Not logged in");
+                Console.WriteLine("\n⚪ NO ACTIVE SESSION");
             }
 
-            Console.WriteLine();
-            Console.WriteLine("1. Normal Login Flow");
-            Console.WriteLine("2. Session Validation");
-            Console.WriteLine("3. Forgot Password");
-            Console.WriteLine("4. Save Report");
-            Console.WriteLine("5. Show Report Path");
-            Console.WriteLine("6. Exit & Save Report");
-            Console.WriteLine();
-            Console.Write("Choose: ");
-        }
+            Console.WriteLine("\n" + new string('─', 64));
+            Console.WriteLine("AVAILABLE API TESTS:");
+            Console.WriteLine(new string('─', 64));
 
-        private async Task RunScenarioA()
-        {
-            Console.Write("\nUser ID: ");
-            string uid = Console.ReadLine();
-            //string uid = "47054457";
+            var requests = _apiService.GetAvailableRequests();
 
-            Console.Write("Password: ");
-            string pwd = Console.ReadLine();
-            //string pwd = "Uat@47054457";
+            if (requests.Count == 0)
+            {
+                Console.WriteLine("  ⚠️  No request files found in Requests/ folder");
+            }
+            else
+            {
+                for (int i = 0; i < requests.Count; i++)
+                {
+                    Console.WriteLine($"  {i + 1}. {requests[i]}");
+                }
+            }
 
-            await _scenarios.RunNormalLogin(uid, pwd);
-        }
-
-        private async Task RunScenarioB()
-        {
-            Console.Write("\nUser ID: ");
-            string uid = Console.ReadLine();
-
-            Console.Write("Password: ");
-            string pwd = Console.ReadLine();
-
-            await _scenarios.RunSessionValidation(uid, pwd);
-        }
-
-        private async Task RunScenarioC()
-        {
-            Console.Write("\nUser ID: ");
-            string uid = Console.ReadLine();
-            //string uid = "47054457";
-
-            Console.Write("New Password: ");
-            string newPwd = Console.ReadLine();
-
-            await _scenarios.RunForgotPassword(uid, "", newPwd);
+            Console.WriteLine("\n  0. Exit (Auto-save CSV Report)");
+            Console.WriteLine(new string('─', 64));
+            Console.Write("\nChoose option: ");
         }
     }
 }

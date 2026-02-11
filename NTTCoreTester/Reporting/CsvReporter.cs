@@ -1,16 +1,13 @@
 ﻿using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester.Reporting
 {
     public interface ICsvReport
     {
-        void Add(TestResult result);
+        void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
+                      string jsonResponse, bool schemaValid, string validationErrors);
         Task Save();
         string GetPath();
     }
@@ -18,16 +15,16 @@ namespace NTTCoreTester.Reporting
     public class CsvReport : ICsvReport
     {
         private readonly ReportConfig _cfg;
-        private readonly List<TestResult> _results;
+        private readonly List<CsvReportEntry> _entries;
         private readonly string _filename;
         private readonly string _fullPath;
+        private const int PERFORMANCE_THRESHOLD_MS = 100;
 
         public CsvReport(ReportConfig cfg)
         {
             _cfg = cfg;
-            _results = new List<TestResult>();
+            _entries = new List<CsvReportEntry>();
 
-            
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             _filename = $"{_cfg.FilePrefix}_{timestamp}.csv";
 
@@ -37,41 +34,69 @@ namespace NTTCoreTester.Reporting
             _fullPath = Path.Combine(_cfg.OutputFolder, _filename);
         }
 
-        public void Add(TestResult result)
+        public void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
+                            string jsonResponse, bool schemaValid, string validationErrors)
         {
-            _results.Add(result);
+            var entry = new CsvReportEntry
+            {
+                Timestamp = DateTime.Now,
+                Endpoint = endpoint,
+                ResponseTimeMs = responseMs,
+                PerformanceStatus = responseMs <= PERFORMANCE_THRESHOLD_MS ? "PASS" : "FAIL",
+                HttpStatusCode = httpCode,
+                BusinessStatus = businessStatus,
+                JsonResponse = jsonResponse,
+                SchemaValid = schemaValid,
+                ValidationErrors = validationErrors ?? ""
+            };
+
+            _entries.Add(entry);
         }
 
         public async Task Save()
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine("Timestamp,Module,Scenario,API,Status,ResponseMs,ValidJson,Error,HttpCode");
+            // CSV Header
+            sb.AppendLine("Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,BusinessStatus,SchemaValid,ValidationErrors,JsonResponse");
 
-            foreach (var r in _results)
+            foreach (var entry in _entries)
             {
-                string errorMessage = r.Error ?? "";
+                string escapedJson = EscapeForCsv(entry.JsonResponse);
+                string escapedErrors = EscapeForCsv(entry.ValidationErrors);
 
-                errorMessage = errorMessage.Replace("\"", "\"\"");
-
-                sb.AppendLine($"{r.Time:yyyy-MM-dd HH:mm:ss}," +
-                             $"{r.Module}," +
-                             $"{r.Scenario}," +
-                             $"{r.Api}," +
-                             $"{r.Result}," +
-                             $"{r.ResponseMs}," +
-                             $"{(r.ValidJson ? "YES" : "NO")}," +
-                             $"\"{errorMessage}\"," +
-                             $"{r.HttpCode}");
+                sb.AppendLine($"{entry.Timestamp:yyyy-MM-dd HH:mm:ss}," +
+                             $"{entry.Endpoint}," +
+                             $"{entry.ResponseTimeMs}," +
+                             $"{entry.PerformanceStatus}," +
+                             $"{entry.HttpStatusCode}," +
+                             $"{entry.BusinessStatus}," +
+                             $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
+                             $"\"{escapedErrors}\"," +
+                             $"\"{escapedJson}\"");
             }
 
             await File.WriteAllTextAsync(_fullPath, sb.ToString());
-            Console.WriteLine($"\n✓ Report saved: {_fullPath}");
+            Console.WriteLine($"\n✅ CSV Report saved: {_fullPath}");
+            Console.WriteLine($"   Total Entries: {_entries.Count}");
+            Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
         }
 
         public string GetPath()
         {
             return _fullPath;
+        }
+
+        private string EscapeForCsv(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return "";
+
+            return value.Replace("\"", "\"\"")
+                       .Replace("\r\n", " ")
+                       .Replace("\n", " ")
+                       .Replace("\r", " ")
+                       .Replace("\t", " ");
         }
     }
 }

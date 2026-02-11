@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NTTCoreTester.Application.Repositories;
-using NTTCoreTester.BusinessLogic;
+using NTTCoreTester.Core;  // ← Changed: Use Core instead of BusinessLogic
 using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
 using System.Diagnostics;
@@ -12,18 +12,18 @@ namespace NTTCoreTester.Application.Services;
 public class ApiServiceManager : IApiServiceManager
 {
     private readonly HttpClient _httpClient;
-    private readonly AuthManager _authManager;
+    private readonly ISessionManager _sessionManager;  // ← Changed: Use ISessionManager
     private readonly ApiConfiguration _config;
     private readonly ILogger<ApiServiceManager> _logger;
 
     public ApiServiceManager(
         HttpClient httpClient,
-        AuthManager authManager,
+        ISessionManager sessionManager,  // ← Changed
         ILogger<ApiServiceManager> logger,
         ApiConfiguration config)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
+        _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));  // ← Changed
         _config = config ?? throw new ArgumentNullException(nameof(config));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -34,12 +34,11 @@ public class ApiServiceManager : IApiServiceManager
         }
     }
 
-
     public async Task<TResponse> PostAsync<TRequest, TResponse>(
-     string endpoint,
-     TRequest requestBody,
-     IReadOnlyDictionary<string, string>? extraHeaders = null,
-     CancellationToken ct = default)
+        string endpoint,
+        TRequest requestBody,
+        IReadOnlyDictionary<string, string>? extraHeaders = null,
+        CancellationToken ct = default)
     {
         var stopwatch = Stopwatch.StartNew();
 
@@ -50,11 +49,14 @@ public class ApiServiceManager : IApiServiceManager
                 Content = JsonContent.Create(requestBody)
             };
 
-            var token = _authManager.GetSession().Token;
+            var token = _sessionManager.GetToken();  // ← Changed
 
             _logger.LogInformation("POST {Endpoint}", endpoint);
 
-            requestMessage.Headers.Add("AuthToken", token);
+            if (!string.IsNullOrEmpty(token))
+            {
+                requestMessage.Headers.Add("AuthToken", token);
+            }
 
             if (extraHeaders != null)
             {
@@ -111,6 +113,4 @@ public class ApiServiceManager : IApiServiceManager
             throw;
         }
     }
-
-
 }

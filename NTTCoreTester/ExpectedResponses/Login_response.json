@@ -1,0 +1,30 @@
+{
+  "Status": "OK",
+  "Message": "Authentication Success",
+  "StatusCode": 0,
+  "RequestID": "sample-request-id",
+  "Responce": null,
+  "ResponceDataObject": {
+    "susertoken": "sample-token",
+    "AuthorizedActivity": null,
+    "values": {},
+    "mws": {},
+    "uname": "test user",
+    "prarr": [ "MIS", "CNC" ],
+    "access_type": [ "TWS", "WEB" ],
+    "uid": "47054457",
+    "orarr": [ "MKT", "LIMIT" ],
+    "email": null,
+    "TOTPEnabled": 0,
+    "IsTOTPSkip": 1,
+    "DealerStatus": 1,
+    "ClientType": 3,
+    "KraStatus": [ 0, 0 ],
+    "Clients": [ "47054457" ],
+    "request_time": "15:30:33:6150 10-02-2026",
+    "status": "Ok",
+    "Result": 0,
+    "Data": {}
+  },
+  "Activity": "Login"
+}

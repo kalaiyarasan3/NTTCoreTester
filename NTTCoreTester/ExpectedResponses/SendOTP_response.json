@@ -1,0 +1,28 @@
+{
+  "Status": "OK",
+  "Message": "OTP sent to ********57 and kal**********@*****.***",
+  "StatusCode": 0,
+  "RequestID": "sample-request-id",
+  "Responce": null,
+  "ResponceDataObject": {
+    "DealerUCC": "47054457",
+    "DealerStatus": 1,
+    "ClientType": 3,
+    "request_time": "15:26:31:4881 10-02-2026",
+    "status": "Ok",
+    "OSId": null,
+    "TypeID": null,
+    "Info": null,
+    "ModelId": null,
+    "Message": "OTP sent",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {
+      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 17 |  Total 18"
+    }
+  },
+  "Activity": "SendOTP",
+  "TypeID": null,
+  "Info": null
+}
