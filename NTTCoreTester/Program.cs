@@ -54,6 +54,7 @@ namespace NTTCoreTester
                 services.AddSingleton<IPlaceholderCache, PlaceholderCache>();
                 services.AddSingleton<ICsvReport, CsvReport>();
                 services.AddSingleton<ResponseChecker>();
+                services.AddSingleton<IConfigRunner, ConfigRunner>();
 
                 // HttpClient with proper decompression
                 services.AddHttpClient<IApiService, ApiService>()
@@ -95,14 +96,14 @@ namespace NTTCoreTester
                 var csvReport = provider.GetRequiredService<ICsvReport>();
                 await csvReport.Save();
 
-                Console.WriteLine("\n✅ Testing completed successfully!");
+                Console.WriteLine("\nTesting completed successfully!");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("\n" + new string('═', 80));
-                Console.WriteLine("❌ FATAL ERROR");
+                Console.WriteLine("FATAL ERROR");
                 Console.WriteLine(new string('═', 80));
                 Console.WriteLine($"\nError: {ex.Message}");
                 Console.WriteLine($"\nStack Trace:\n{ex.StackTrace}");

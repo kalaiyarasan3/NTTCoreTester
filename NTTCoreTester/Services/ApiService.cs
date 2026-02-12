@@ -15,6 +15,7 @@ namespace NTTCoreTester.Services
     {
         Task ExecuteRequest(string requestFileName);
         List<string> GetAvailableRequests();
+        Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest);
     }
 
     public class ApiService : IApiService
@@ -49,6 +50,46 @@ namespace NTTCoreTester.Services
 
             var files = Directory.GetFiles(REQUEST_FOLDER, "*_request.json");
             return files.Select(f => Path.GetFileNameWithoutExtension(f).Replace("_request", "")).ToList();
+        }
+
+        public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest)
+        {
+            Console.WriteLine($"\n{new string('=', 80)}");
+            Console.WriteLine($"Executing: {configRequest.Endpoint}");
+            Console.WriteLine($"{new string('=', 80)}");
+
+            
+            string requestJson = JsonConvert.SerializeObject(configRequest.Payload);
+            Console.WriteLine($" Payload loaded from config");
+
+            
+            requestJson = await ResolvePlaceholders(requestJson, configRequest.Endpoint);
+            if (requestJson == null)
+            {
+                Console.WriteLine(" Failed to resolve placeholders in body");
+                return false;
+            }
+
+            // Resolve placeholders in headers
+            Dictionary<string, string> resolvedHeaders = null;
+            if (configRequest.Headers != null && configRequest.Headers.Count > 0)
+            {
+                resolvedHeaders = new Dictionary<string, string>();
+                foreach (var header in configRequest.Headers)
+                {
+                    string resolvedValue = await ResolvePlaceholderValue(header.Value, configRequest.Endpoint);
+                    if (resolvedValue == null)
+                    {
+                        Console.WriteLine($"❌ Failed to resolve placeholder in header: {header.Key}");
+                        return false;
+                    }
+                    resolvedHeaders[header.Key] = resolvedValue;
+                }
+            }
+
+            Console.WriteLine($"✓ Placeholders resolved");
+
+            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders);
         }
 
         public async Task ExecuteRequest(string requestFileName)
@@ -223,7 +264,7 @@ namespace NTTCoreTester.Services
         }
 
        
-        private async Task CallApi(string endpoint, string requestJson, Dictionary<string, string> customHeaders)
+       /* private async Task CallApi(string endpoint, string requestJson, Dictionary<string, string> customHeaders)
         {
             var timer = Stopwatch.StartNew();
 
@@ -305,6 +346,91 @@ namespace NTTCoreTester.Services
 
                 _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, 0, "ERROR",
                                    $"{{\"error\":\"{ex.Message}\"}}", false, $"Exception: {ex.Message}");
+            }
+        }
+       */
+        private async Task<bool> CallApi(string endpoint, string requestJson, Dictionary<string, string> customHeaders)
+        {
+            var timer = Stopwatch.StartNew();
+            bool success = false;
+
+            try
+            {
+                string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}{endpoint}";
+
+                var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
+                request.Content = new StringContent(requestJson, Encoding.UTF8, "text/plain");
+
+                // Start with default headers from config
+                foreach (var header in _config.DefaultHeaders)
+                {
+                    string lowerKey = header.Key.ToLower();
+                    if (lowerKey == "content-type" || lowerKey == "content-length" || lowerKey == "host")
+                        continue;
+
+                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                }
+
+                // Override with custom headers
+                if (customHeaders != null && customHeaders.Count > 0)
+                {
+                    Console.WriteLine($" Applying {customHeaders.Count} custom header(s):");
+                    foreach (var header in customHeaders)
+                    {
+                        Console.WriteLine($"   {header.Key}: {MaskSensitiveValue(header.Key, header.Value)}");
+                        request.Headers.Remove(header.Key);
+                        request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                    }
+                }
+
+                Console.WriteLine($"\n Calling API: {fullUrl}");
+
+                var response = await _http.SendAsync(request);
+                string respBody = await response.Content.ReadAsStringAsync();
+                timer.Stop();
+
+                Console.WriteLine($" Response Time: {timer.ElapsedMilliseconds}ms");
+                Console.WriteLine($" HTTP Status: {(int)response.StatusCode}");
+
+                bool schemaValid = _checker.Check(endpoint, respBody, out List<string> errors);
+                string validationErrors = string.Join("; ", errors);
+
+                string businessStatus = ExtractBusinessStatus(respBody);
+                success = (businessStatus == "SUCCESS");
+
+                if (endpoint == "Login" && businessStatus == "SUCCESS")
+                {
+                    ExtractAndStoreSession(respBody);
+                }
+
+                if (endpoint == "Logout")
+                {
+                    _sessionManager.ClearSession();
+                    _cache.Clear();
+                }
+
+                _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, (int)response.StatusCode,
+                                   businessStatus, respBody, schemaValid, validationErrors);
+
+                Console.WriteLine($"✓ Business Status: {businessStatus}");
+                Console.WriteLine($"✓ Schema Valid: {(schemaValid ? "YES" : "NO")}");
+
+                if (!schemaValid)
+                {
+                    Console.WriteLine($" Validation Errors: {validationErrors}");
+                }
+
+                return success;
+            }
+            catch (Exception ex)
+            {
+                timer.Stop();
+                Console.WriteLine($"\n ERROR: {ex.Message}");
+
+                _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, 0, "ERROR",
+                                   $"{{\"error\":\"{ex.Message}\"}}", false, $"Exception: {ex.Message}");
+
+                return false;
             }
         }
 
