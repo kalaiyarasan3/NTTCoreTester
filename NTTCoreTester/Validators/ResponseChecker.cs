@@ -62,7 +62,6 @@ namespace NTTCoreTester.Validators
 
         private static void ValidateElement(JsonElement expected, JsonElement actual, string path, List<string> errors)
         {
-            // Allow nulls if both are null
             bool expectedIsNull = expected.ValueKind == JsonValueKind.Null || expected.ValueKind == JsonValueKind.Undefined;
             bool actualIsNull = actual.ValueKind == JsonValueKind.Null || actual.ValueKind == JsonValueKind.Undefined;
 
@@ -76,7 +75,6 @@ namespace NTTCoreTester.Validators
                 return;
             }
 
-            // Type mismatch
             if (expected.ValueKind != actual.ValueKind)
             {
                 string error = $"Type mismatch at {path}. Expected {expected.ValueKind}, got {actual.ValueKind}";
@@ -85,16 +83,16 @@ namespace NTTCoreTester.Validators
                 return;
             }
 
-            // String validation with regex pattern support
+            // String validation and  pattern checking
             if (expected.ValueKind == JsonValueKind.String)
             {
                 var expectedValue = expected.GetString() ?? "";
                 var actualValue = actual.GetString() ?? "";
 
-                // Check for pattern syntax: "value||pattern"
+                // Check for pattern syntax
                 if (!string.IsNullOrEmpty(expectedValue) && expectedValue.Contains("||"))
                 {
-                    var parts = expectedValue.Split(new[] { "||" }, 2, StringSplitOptions.None);
+                    var parts = expectedValue.Split(new[]{ "||" }, 2, StringSplitOptions.None);
 
                     if (parts.Length == 2)
                     {
@@ -106,10 +104,9 @@ namespace NTTCoreTester.Validators
                         {
                             pattern = pattern.Substring(0, pattern.Length - 5);
                             if (string.IsNullOrEmpty(actualValue))
-                                return; // null/empty allowed
+                                return; 
                         }
 
-                        // Validate against pattern
                         try
                         {
                             if (!Regex.IsMatch(actualValue, pattern))
@@ -139,21 +136,19 @@ namespace NTTCoreTester.Validators
                 return;
             }
 
-            // Number validation (type only)
+            // Number 
             if (expected.ValueKind == JsonValueKind.Number)
             {
-                // Type already matched, no value validation needed
                 return;
             }
 
-            // Boolean validation
+            // Boolean 
             if (expected.ValueKind == JsonValueKind.True || expected.ValueKind == JsonValueKind.False)
             {
-                // Type already matched
                 return;
             }
 
-            // Object recursion
+            // Object 
             if (expected.ValueKind == JsonValueKind.Object)
             {
                 // Check for __any__ wildcard template
@@ -177,7 +172,7 @@ namespace NTTCoreTester.Validators
                     ValidateElement(prop.Value, actualProp, $"{path}.{prop.Name}", errors);
                 }
 
-                // If __any__ exists, validate all actual properties not explicitly defined
+                // If __any__ exists, validate all actual properties 
                 if (hasWildcard)
                 {
                     foreach (var actualProp in actual.EnumerateObject())
@@ -198,7 +193,7 @@ namespace NTTCoreTester.Validators
                 return;
             }
 
-            // Array validation (validate ALL elements)
+            // Array validation 
             if (expected.ValueKind == JsonValueKind.Array)
             {
                 if (actual.ValueKind != JsonValueKind.Array)
