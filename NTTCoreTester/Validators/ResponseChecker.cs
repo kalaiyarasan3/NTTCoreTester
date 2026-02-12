@@ -25,12 +25,12 @@ namespace NTTCoreTester.Validators
                 if (!File.Exists(filePath))
                 {
                     string error = $"NO FILE: {filePath}";
-                    Console.WriteLine($"❌ {error}");
+                    Console.WriteLine($" {error}");
                     validationErrors.Add(error);
                     return false;
                 }
 
-                Console.WriteLine(Directory.GetCurrentDirectory()+filePath);
+                Console.WriteLine(Directory.GetCurrentDirectory() + filePath);
 
                 string expectedJson = File.ReadAllText(filePath);
                 using var expectedDoc = JsonDocument.Parse(expectedJson);
@@ -156,10 +156,15 @@ namespace NTTCoreTester.Validators
             // Object recursion
             if (expected.ValueKind == JsonValueKind.Object)
             {
+                // Check for __any__ wildcard template
+                JsonElement wildcardTemplate = default;
+                bool hasWildcard = expected.TryGetProperty("__any__", out wildcardTemplate);
+
+                // First, validate all explicitly defined properties
                 foreach (var prop in expected.EnumerateObject())
                 {
-                    // Skip pattern helper fields
-                    if (prop.Name == "__pattern__" || prop.Name.EndsWith("||pattern"))
+                    // Skip special markers
+                    if (prop.Name == "__any__" || prop.Name == "__pattern__" || prop.Name.EndsWith("||pattern"))
                         continue;
 
                     if (!actual.TryGetProperty(prop.Name, out var actualProp))
@@ -171,6 +176,25 @@ namespace NTTCoreTester.Validators
                     }
                     ValidateElement(prop.Value, actualProp, $"{path}.{prop.Name}", errors);
                 }
+
+                // If __any__ exists, validate all actual properties not explicitly defined
+                if (hasWildcard)
+                {
+                    foreach (var actualProp in actual.EnumerateObject())
+                    {
+                        // Skip if this property was already validated as an explicit property
+                        if (expected.TryGetProperty(actualProp.Name, out _) &&
+                            actualProp.Name != "__any__" &&
+                            actualProp.Name != "__pattern__")
+                        {
+                            continue;
+                        }
+
+                        // Validate against wildcard template
+                        ValidateElement(wildcardTemplate, actualProp.Value, $"{path}.{actualProp.Name}", errors);
+                    }
+                }
+
                 return;
             }
 
