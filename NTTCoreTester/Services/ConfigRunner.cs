@@ -81,7 +81,7 @@ namespace NTTCoreTester.Services
 
                     if (suiteConfig.StopOnFailure)
                     {
-                        Console.WriteLine($"⚠  Stopping suite execution due to failure (stopOnFailure=true)");
+                        Console.WriteLine($" Stopping suite execution due to failure (stopOnFailure=true)");
                         break;
                     }
                 }

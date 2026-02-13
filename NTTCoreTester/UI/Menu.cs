@@ -52,7 +52,7 @@ namespace NTTCoreTester.UI
             // Show session status
             if (_sessionManager.HasSession())
             {
-                Console.WriteLine($"\n✓ LOGGED IN");
+                Console.WriteLine($"\n LOGGED IN");
                 Console.WriteLine($"   User: {_sessionManager.GetUserName()} ({_sessionManager.GetUserId()})");
             }
             else

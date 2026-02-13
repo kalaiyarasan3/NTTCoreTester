@@ -42,7 +42,7 @@ namespace NTTCoreTester.Validators
 
                 if (!hasErrors)
                 {
-                    Console.WriteLine($" {endpoint} STRUCTURE & PATTERN VALIDATION OK ✓");
+                    Console.WriteLine($" {endpoint} STRUCTURE & PATTERN VALIDATION OK ");
                 }
                 else
                 {

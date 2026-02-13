@@ -80,14 +80,14 @@ namespace NTTCoreTester.Services
                     string resolvedValue = await ResolvePlaceholderValue(header.Value, configRequest.Endpoint);
                     if (resolvedValue == null)
                     {
-                        Console.WriteLine($"❌ Failed to resolve placeholder in header: {header.Key}");
+                        Console.WriteLine($" Failed to resolve placeholder in header: {header.Key}");
                         return false;
                     }
                     resolvedHeaders[header.Key] = resolvedValue;
                 }
             }
 
-            Console.WriteLine($"✓ Placeholders resolved");
+            Console.WriteLine($" Placeholders resolved");
 
             return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders);
         }
@@ -377,7 +377,8 @@ namespace NTTCoreTester.Services
                     Console.WriteLine($" Applying {customHeaders.Count} custom header(s):");
                     foreach (var header in customHeaders)
                     {
-                        Console.WriteLine($"   {header.Key}: {MaskSensitiveValue(header.Key, header.Value)}");
+                        //Console.WriteLine($"   {header.Key}: {MaskSensitiveValue(header.Key, header.Value)}");
+                        Console.WriteLine($"   {header.Key}: {header.Value}");
                         request.Headers.Remove(header.Key);
                         request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                     }
@@ -412,8 +413,8 @@ namespace NTTCoreTester.Services
                 _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, (int)response.StatusCode,
                                    businessStatus, respBody, schemaValid, validationErrors);
 
-                Console.WriteLine($"✓ Business Status: {businessStatus}");
-                Console.WriteLine($"✓ Schema Valid: {(schemaValid ? "YES" : "NO")}");
+                Console.WriteLine($" Business Status: {businessStatus}");
+                Console.WriteLine($" Schema Valid: {(schemaValid ? "YES" : "NO")}");
 
                 if (!schemaValid)
                 {
