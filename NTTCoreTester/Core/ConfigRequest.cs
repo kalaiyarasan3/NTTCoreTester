@@ -6,5 +6,7 @@
         public string Method { get; set; }
         public Dictionary<string, string> Headers { get; set; }
         public Dictionary<string, object> Payload { get; set; }
+
+        public string Activity { get; set; }
     }
 }

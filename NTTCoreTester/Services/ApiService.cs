@@ -13,7 +13,7 @@ namespace NTTCoreTester.Services
 {
     public interface IApiService
     {
-        Task ExecuteRequest(string requestFileName);
+        //Task ExecuteRequest(string requestFileName);
         List<string> GetAvailableRequests();
         Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest);
     }
@@ -27,9 +27,10 @@ namespace NTTCoreTester.Services
         private readonly ISessionManager _sessionManager;
         private readonly IPlaceholderCache _cache;
         private const string REQUEST_FOLDER = "Requests";
+        private readonly IActivityExecutor _activityExecutor;
 
         public ApiService(HttpClient http, ApiConfiguration config, ResponseChecker checker,
-                         ICsvReport csvReport, ISessionManager sessionManager, IPlaceholderCache cache)
+                         ICsvReport csvReport, ISessionManager sessionManager, IPlaceholderCache cache, IActivityExecutor activityExecutor)
         {
             _http = http;
             _config = config;
@@ -41,6 +42,7 @@ namespace NTTCoreTester.Services
 
             if (!Directory.Exists(REQUEST_FOLDER))
                 Directory.CreateDirectory(REQUEST_FOLDER);
+            _activityExecutor = activityExecutor;
         }
 
         public List<string> GetAvailableRequests()
@@ -89,84 +91,84 @@ namespace NTTCoreTester.Services
 
             Console.WriteLine($" Placeholders resolved");
 
-            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders);
+            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders,configRequest.Activity);
         }
 
-        public async Task ExecuteRequest(string requestFileName)
-        {
-            string filePath = Path.Combine(REQUEST_FOLDER, $"{requestFileName}_request.json");
+        /* public async Task ExecuteRequest(string requestFileName)
+         {
+             string filePath = Path.Combine(REQUEST_FOLDER, $"{requestFileName}_request.json");
 
-            if (!File.Exists(filePath))
-            {
-                Console.WriteLine($"\n Request file not found: {filePath}");
-                return;
-            }
+             if (!File.Exists(filePath))
+             {
+                 Console.WriteLine($"\n Request file not found: {filePath}");
+                 return;
+             }
 
-            Console.WriteLine($"\n{new string('=', 80)}");
-            Console.WriteLine($"Executing: {requestFileName}");
-            Console.WriteLine($"{new string('=', 80)}");
+             Console.WriteLine($"\n{new string('=', 80)}");
+             Console.WriteLine($"Executing: {requestFileName}");
+             Console.WriteLine($"{new string('=', 80)}");
 
-            string fileContent = await File.ReadAllTextAsync(filePath);
-            Console.WriteLine($" Template loaded from: {filePath}");
+             string fileContent = await File.ReadAllTextAsync(filePath);
+             Console.WriteLine($" Template loaded from: {filePath}");
 
-            // Check if file has headers section (structured format)
-            Dictionary<string, string> customHeaders = null;
-            string requestTemplate;
+             // Check if file has headers section (structured format)
+             Dictionary<string, string> customHeaders = null;
+             string requestTemplate;
 
-            try
-            {
-                var jsonObj = JObject.Parse(fileContent);
+             try
+             {
+                 var jsonObj = JObject.Parse(fileContent);
 
-                if (jsonObj["headers"] != null && jsonObj["body"] != null)
-                {
-                    // Structured format with headers
-                    customHeaders = jsonObj["headers"].ToObject<Dictionary<string, string>>();
-                    requestTemplate = jsonObj["body"].ToString();
-                    Console.WriteLine($" Custom headers detected: {customHeaders.Count}");
-                }
-                else
-                {
-                    // Simple format (just body)
-                    requestTemplate = fileContent;
-                    Console.WriteLine($" Using default headers from appsettings.json");
-                }
-            }
-            catch
-            {
-                // If parsing fails, treat as simple body-only format
-                requestTemplate = fileContent;
-                Console.WriteLine($" Using default headers from appsettings.json");
-            }
+                 if (jsonObj["headers"] != null && jsonObj["body"] != null)
+                 {
+                     // Structured format with headers
+                     customHeaders = jsonObj["headers"].ToObject<Dictionary<string, string>>();
+                     requestTemplate = jsonObj["body"].ToString();
+                     Console.WriteLine($" Custom headers detected: {customHeaders.Count}");
+                 }
+                 else
+                 {
+                     // Simple format (just body)
+                     requestTemplate = fileContent;
+                     Console.WriteLine($" Using default headers from appsettings.json");
+                 }
+             }
+             catch
+             {
+                 // If parsing fails, treat as simple body-only format
+                 requestTemplate = fileContent;
+                 Console.WriteLine($" Using default headers from appsettings.json");
+             }
 
-            // Replace placeholders in body
-            string requestJson = await ResolvePlaceholders(requestTemplate, requestFileName);
-            if (requestJson == null)
-            {
-                Console.WriteLine(" Failed to resolve placeholders in body");
-                return;
-            }
+             // Replace placeholders in body
+             string requestJson = await ResolvePlaceholders(requestTemplate, requestFileName);
+             if (requestJson == null)
+             {
+                 Console.WriteLine(" Failed to resolve placeholders in body");
+                 return;
+             }
 
-            // Replace placeholders in custom headers
-            if (customHeaders != null)
-            {
-                var resolvedHeaders = new Dictionary<string, string>();
-                foreach (var header in customHeaders)
-                {
-                    string resolvedValue = await ResolvePlaceholderValue(header.Value, requestFileName);
-                    if (resolvedValue == null)
-                    {
-                        Console.WriteLine($" Failed to resolve placeholder in header: {header.Key}");
-                        return;
-                    }
-                    resolvedHeaders[header.Key] = resolvedValue;
-                }
-                customHeaders = resolvedHeaders;
-            }
+             // Replace placeholders in custom headers
+             if (customHeaders != null)
+             {
+                 var resolvedHeaders = new Dictionary<string, string>();
+                 foreach (var header in customHeaders)
+                 {
+                     string resolvedValue = await ResolvePlaceholderValue(header.Value, requestFileName);
+                     if (resolvedValue == null)
+                     {
+                         Console.WriteLine($" Failed to resolve placeholder in header: {header.Key}");
+                         return;
+                     }
+                     resolvedHeaders[header.Key] = resolvedValue;
+                 }
+                 customHeaders = resolvedHeaders;
+             }
 
-            Console.WriteLine($" Placeholders resolved");
+             Console.WriteLine($" Placeholders resolved");
 
-            await CallApi(requestFileName, requestJson, customHeaders);
-        }
+             await CallApi(requestFileName, requestJson, customHeaders);
+         }*/
 
         private async Task<string> ResolvePlaceholders(string template, string endpoint)
         {
@@ -349,7 +351,7 @@ namespace NTTCoreTester.Services
             }
         }
        */
-        private async Task<bool> CallApi(string endpoint, string requestJson, Dictionary<string, string> customHeaders)
+        private async Task<bool> CallApi(string endpoint, string requestJson, Dictionary<string, string> customHeaders, string activity = null)
         {
             var timer = Stopwatch.StartNew();
             bool success = false;
@@ -371,13 +373,11 @@ namespace NTTCoreTester.Services
                     request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
 
-                // Override with custom headers
                 if (customHeaders != null && customHeaders.Count > 0)
                 {
                     Console.WriteLine($" Applying {customHeaders.Count} custom header(s):");
                     foreach (var header in customHeaders)
                     {
-                        //Console.WriteLine($"   {header.Key}: {MaskSensitiveValue(header.Key, header.Value)}");
                         Console.WriteLine($"   {header.Key}: {header.Value}");
                         request.Headers.Remove(header.Key);
                         request.Headers.TryAddWithoutValidation(header.Key, header.Value);
@@ -410,6 +410,27 @@ namespace NTTCoreTester.Services
                     _cache.Clear();
                 }
 
+                // Excute activity
+                //---
+                bool activitySuccess = true;
+                if(!string.IsNullOrEmpty(activity))
+                {
+                    if(schemaValid&&businessStatus== "SUCCESS")
+                    {
+                        Console.WriteLine($"\n Executing activity: {activity}");
+                        activitySuccess=_activityExecutor.Execute(activity, respBody, endpoint);
+                        if (activitySuccess)
+                            Console.WriteLine("Activity Executed Succssfully");
+                        else
+                            Console.WriteLine("Activity Execution Failed");
+                    }
+                }
+                else {
+                    Console.WriteLine("skipping activity" + activity);
+                }
+                //---
+
+
                 _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, (int)response.StatusCode,
                                    businessStatus, respBody, schemaValid, validationErrors);
 
@@ -435,15 +456,7 @@ namespace NTTCoreTester.Services
             }
         }
 
-        private string MaskSensitiveValue(string key, string value)
-        {
-            if (key.ToLower() == "authtoken" && value.Length > 10)
-            {
-                return value.Substring(0, 3) + "***" + value.Substring(value.Length - 3);
-            }
-            return value;
-        }
-
+      
         private string ExtractBusinessStatus(string responseJson)
         {
             try

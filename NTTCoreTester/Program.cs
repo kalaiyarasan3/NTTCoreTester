@@ -55,6 +55,7 @@ namespace NTTCoreTester
                 services.AddSingleton<ICsvReport, CsvReport>();
                 services.AddSingleton<ResponseChecker>();
                 services.AddSingleton<IConfigRunner, ConfigRunner>();
+                services.AddSingleton<IActivityExecutor, ActivityExecutor>();
 
                 // HttpClient with proper decompression
                 services.AddHttpClient<IApiService, ApiService>()
