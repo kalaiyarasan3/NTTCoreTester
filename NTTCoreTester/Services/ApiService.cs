@@ -141,19 +141,6 @@ namespace NTTCoreTester.Services
                 string businessStatus = _checker.ExtractBusinessStatus(respBody);
                 success = (businessStatus == "SUCCESS");
 
-                if (endpoint == "Login" && businessStatus == "SUCCESS")
-                {
-                    ExtractAndStoreSession(respBody);
-                }
-
-                if (endpoint == "Logout")
-                {
-                    _cache.Clear();
-                    Console.WriteLine("✓ Session cleared");
-                }
-
-
-
                 // Excute activity
                 //---
                 bool activitySuccess = true;
@@ -200,33 +187,7 @@ namespace NTTCoreTester.Services
             }
         }
 
-        private void ExtractAndStoreSession(string responseJson)
-        {
-            try
-            {
-                var json = JObject.Parse(responseJson);
-                var dataObject = json["ResponceDataObject"];
-
-                if (dataObject != null)
-                {
-                    string token = dataObject["susertoken"]?.Value<string>();
-                    string userId = dataObject["uid"]?.Value<string>();
-                    string userName = dataObject["uname"]?.Value<string>();
-
-                    if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(userId))
-                    {
-                        _cache.Set("token", token);
-                        _cache.Set("userId", userId);
-                        _cache.Set("userName", userName);
-                        Console.WriteLine($" Session saved: {userName} ({userId})");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Could not extract session: {ex.Message}");
-            }
-        }
+     
 
     }
 }
