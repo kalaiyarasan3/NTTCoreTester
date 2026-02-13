@@ -6,12 +6,12 @@ namespace NTTCoreTester.UI
     public class Menu
     {
         private readonly IConfigRunner _configRunner;
-        private readonly ISessionManager _sessionManager;
+        private readonly IPlaceholderCache _cache;
 
-        public Menu(IConfigRunner configRunner, ISessionManager sessionManager)
+        public Menu(IConfigRunner configRunner, IPlaceholderCache cache)
         {
             _configRunner = configRunner;
-            _sessionManager = sessionManager;
+            _cache = cache;
         }
 
         public async Task Start()
@@ -23,7 +23,7 @@ namespace NTTCoreTester.UI
 
                 if (choice == "0")
                 {
-                    Console.WriteLine("\n✓ Exiting... CSV will be saved automatically.");
+                    Console.WriteLine("\n Exiting... CSV will be saved automatically.");
                     return;
                 }
 
@@ -49,15 +49,19 @@ namespace NTTCoreTester.UI
         {
             Console.WriteLine("NTT Core Tester");
 
-            // Show session status
-            if (_sessionManager.HasSession())
+            // Show session status using cache
+            string token = _cache.Get("token");
+            if (!string.IsNullOrEmpty(token))
             {
+                string userName = _cache.Get("userName");
+                string userId = _cache.Get("uid");
+
                 Console.WriteLine($"\n LOGGED IN");
-                Console.WriteLine($"   User: {_sessionManager.GetUserName()} ({_sessionManager.GetUserId()})");
+                Console.WriteLine($"   User: {userName} ({userId})");
             }
             else
             {
-                Console.WriteLine("\n  NO ACTIVE SESSION");
+                Console.WriteLine("\n NO ACTIVE SESSION");
             }
 
             Console.WriteLine($"\n{new string('─', 64)}");

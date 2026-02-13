@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
+using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -263,6 +264,20 @@ namespace NTTCoreTester.Validators
                     ValidateElement(template, actualItem, $"{path}[{elementIndex}]", errors);
                     elementIndex++;
                 }
+            }
+        }
+
+        public string ExtractBusinessStatus(string responseJson)
+        {
+            try
+            {
+                var json = JObject.Parse(responseJson);
+                int statusCode = json["StatusCode"]?.Value<int>() ?? -1;
+                return statusCode == 0 ? "SUCCESS" : "FAILED";
+            }
+            catch
+            {
+                return "UNKNOWN";
             }
         }
     }

@@ -50,7 +50,6 @@ namespace NTTCoreTester
                 services.AddSingleton(reportCfg);
 
                 // Register core services
-                services.AddSingleton<ISessionManager, SessionManager>();
                 services.AddSingleton<IPlaceholderCache, PlaceholderCache>();
                 services.AddSingleton<ICsvReport, CsvReport>();
                 services.AddSingleton<ResponseChecker>();

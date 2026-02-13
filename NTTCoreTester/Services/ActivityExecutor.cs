@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace NTTCoreTester.Services
 {
     public class ActivityExecutor : IActivityExecutor
@@ -39,7 +41,7 @@ namespace NTTCoreTester.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($" Error executing activity method {methodName}: {ex.Message}");
+                Console.WriteLine($" Error executing activity method {methodName}:{ex.Message}");
                 return false;
             }
         }
@@ -55,7 +57,7 @@ namespace NTTCoreTester.Services
         {
             // Extract token from login response and store in cache
             Console.WriteLine($" Executing {endpoint} activity...");
-            return ExtractToken(response, endpoint);
+            return true;
         }
 
 
@@ -65,7 +67,7 @@ namespace NTTCoreTester.Services
 
             var json = JObject.Parse(response);
             string ordno = json["ResponceDataObject"]?["ordno"]?.Value<string>();
-            string cl_ord_id = json["ResponceDataObject"]?["cl_ord_id "]?.Value<string>();
+            string cl_ord_id = json["ResponceDataObject"]?["cl_ord_id"]?.Value<string>();
 
             if(string.IsNullOrEmpty(ordno)|| string.IsNullOrEmpty(cl_ord_id))
             {
