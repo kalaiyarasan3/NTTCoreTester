@@ -146,7 +146,7 @@ namespace NTTCoreTester.Services
                 bool activitySuccess = true;
                 if(!string.IsNullOrEmpty(activity))
                 {
-                    if(schemaValid&&businessStatus== "SUCCESS")
+                    if(businessStatus== "SUCCESS")
                     {
                         Console.WriteLine($"\n Executing activity: {activity}");
                         activitySuccess=_activityExecutor.Execute(activity, respBody, endpoint);
