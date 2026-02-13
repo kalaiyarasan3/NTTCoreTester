@@ -23,7 +23,6 @@ namespace NTTCoreTester.Services
         private readonly ApiConfiguration _config;
         private readonly ResponseChecker _checker;
         private readonly CsvReport _csvReport;
-        private readonly PlaceholderCache _cache;
         private const string REQUEST_FOLDER = "Requests";
         private readonly ActivityExecutor _activityExecutor;
         private readonly PlaceholderResolver _resolver;
@@ -35,7 +34,6 @@ namespace NTTCoreTester.Services
             _config = config;
             _checker = checker;
             _csvReport = csvReport;
-            _cache = cache;
             _http.BaseAddress = new Uri(_config.BaseUrl);
 
             if (!Directory.Exists(REQUEST_FOLDER))
