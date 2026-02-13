@@ -44,6 +44,22 @@ namespace NTTCoreTester.Services
             }
         }
 
+        private bool SendOtp(string response, string endpoint)
+        {
+            // Extract token from login response and store in cache
+            Console.WriteLine(" Executing Login activity...");
+            return true;
+        }
+
+        private bool Login(string response, string endpoint)
+        {
+            // Extract token from login response and store in cache
+            Console.WriteLine($" Executing {endpoint} activity...");
+            return ExtractToken(response, endpoint);
+        }
+
+
+
         private bool ExtractToken(string response, string endponint)
         {
 

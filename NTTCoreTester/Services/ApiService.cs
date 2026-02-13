@@ -170,7 +170,7 @@ namespace NTTCoreTester.Services
              await CallApi(requestFileName, requestJson, customHeaders);
          }*/
 
-        private async Task<string> ResolvePlaceholders(string template, string endpoint)
+        private async Task<string?> ResolvePlaceholders(string template, string endpoint)
         {
             var matches = Regex.Matches(template, @"\{\{(\w+)\}\}");
             var placeholders = matches.Cast<Match>().Select(m => m.Groups[1].Value).Distinct().ToList();
