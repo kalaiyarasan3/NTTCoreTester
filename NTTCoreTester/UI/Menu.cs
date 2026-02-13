@@ -5,10 +5,10 @@ namespace NTTCoreTester.UI
 {
     public class Menu
     {
-        private readonly IConfigRunner _configRunner;
-        private readonly IPlaceholderCache _cache;
+        private readonly ConfigRunner _configRunner;
+        private readonly PlaceholderCache _cache;
 
-        public Menu(IConfigRunner configRunner, IPlaceholderCache cache)
+        public Menu(ConfigRunner configRunner, PlaceholderCache cache)
         {
             _configRunner = configRunner;
             _cache = cache;

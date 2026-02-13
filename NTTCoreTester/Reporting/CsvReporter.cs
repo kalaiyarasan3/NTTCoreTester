@@ -4,15 +4,15 @@ using System.Text;
 
 namespace NTTCoreTester.Reporting
 {
-    public interface ICsvReport
-    {
-        void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
-                      string jsonResponse, bool schemaValid, string validationErrors);
-        Task Save();
-        string GetPath();
-    }
+    //public interface ICsvReport
+    //{
+    //    void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
+    //                  string jsonResponse, bool schemaValid, string validationErrors);
+    //    Task Save();
+    //    string GetPath();
+    //}
 
-    public class CsvReport : ICsvReport
+    public class CsvReport 
     {
         private readonly ReportConfig _cfg;
         private readonly List<CsvReportEntry> _entries;

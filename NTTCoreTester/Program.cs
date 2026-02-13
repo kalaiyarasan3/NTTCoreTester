@@ -50,11 +50,12 @@ namespace NTTCoreTester
                 services.AddSingleton(reportCfg);
 
                 // Register core services
-                services.AddSingleton<IPlaceholderCache, PlaceholderCache>();
-                services.AddSingleton<ICsvReport, CsvReport>();
+                services.AddSingleton<PlaceholderCache, PlaceholderCache>();
+                services.AddSingleton<CsvReport>();
                 services.AddSingleton<ResponseChecker>();
-                services.AddSingleton<IConfigRunner, ConfigRunner>();
-                services.AddSingleton<IActivityExecutor, ActivityExecutor>();
+                services.AddSingleton<ConfigRunner>();
+                services.AddSingleton<ActivityExecutor>();
+                services.AddSingleton<PlaceholderResolver>();
 
                 // HttpClient with proper decompression
                 services.AddHttpClient<IApiService, ApiService>()
@@ -93,7 +94,7 @@ namespace NTTCoreTester
                 Console.WriteLine("Saving CSV Report...");
                 Console.WriteLine(new string('=', 80));
 
-                var csvReport = provider.GetRequiredService<ICsvReport>();
+                var csvReport = provider.GetRequiredService<CsvReport>();
                 await csvReport.Save();
 
                 Console.WriteLine("\nTesting completed successfully!");

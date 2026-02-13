@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Services
 {
-    public class ActivityExecutor : IActivityExecutor
+    public class ActivityExecutor 
     {
-        private readonly IPlaceholderCache _cache;
-        public ActivityExecutor(IPlaceholderCache cache) { _cache = cache; }
+        private readonly PlaceholderCache _cache;
+        public ActivityExecutor(PlaceholderCache cache) { _cache = cache; }
 
         public bool Execute(string methodName, string response, string endpoint)
         {

@@ -22,14 +22,14 @@ namespace NTTCoreTester.Services
         private readonly HttpClient _http;
         private readonly ApiConfiguration _config;
         private readonly ResponseChecker _checker;
-        private readonly ICsvReport _csvReport;
-        private readonly IPlaceholderCache _cache;
+        private readonly CsvReport _csvReport;
+        private readonly PlaceholderCache _cache;
         private const string REQUEST_FOLDER = "Requests";
-        private readonly IActivityExecutor _activityExecutor;
-        private readonly IPlaceholderResolver _resolver;
+        private readonly ActivityExecutor _activityExecutor;
+        private readonly PlaceholderResolver _resolver;
 
         public ApiService(HttpClient http, ApiConfiguration config, ResponseChecker checker,
-                         ICsvReport csvReport, IPlaceholderCache cache, IActivityExecutor activityExecutor, IPlaceholderResolver resolver)
+                         CsvReport csvReport, PlaceholderCache cache, ActivityExecutor activityExecutor, PlaceholderResolver resolver)
         {
             _http = http;
             _config = config;

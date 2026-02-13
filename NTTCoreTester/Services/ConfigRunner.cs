@@ -4,13 +4,8 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Services
 {
-    public interface IConfigRunner
-    {
-        Task RunSuite(string configFileName);
-        List<string> GetAvailableSuites();
-    }
-
-    public class ConfigRunner : IConfigRunner
+  
+    public class ConfigRunner 
     {
         private readonly IApiService _apiService;
         private const string CONFIG_FOLDER = "Configs";

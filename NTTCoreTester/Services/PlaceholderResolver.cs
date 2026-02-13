@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Services
 {
-    public class PlaceholderResolver : IPlaceholderResolver
+    public class PlaceholderResolver 
     {
-        private readonly IPlaceholderCache _cache;
+        private readonly PlaceholderCache _cache;
 
-        public PlaceholderResolver(IPlaceholderCache cache)
+        public PlaceholderResolver(PlaceholderCache cache)
         {
             _cache = cache;
         }
