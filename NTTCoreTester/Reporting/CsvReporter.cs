@@ -87,21 +87,16 @@ namespace NTTCoreTester.Reporting
             if (string.IsNullOrEmpty(value))
                 return "";
 
-            
-            value = value.Replace("\"", "\"\"")      
-                         .Replace("\r\n", " ")
-                         .Replace("\n", " ")          
-                         .Replace("\r", " ")          
-                         .Replace("\t", " ");       
+            value = value.Replace("\r\n", " ")
+                         .Replace("\n", " ")
+                         .Replace("\r", " ")
+                         .Replace("\t", " ");
 
-            
-            if (value.Contains(",") || value.Contains("\""))
-            {
-                return $"\"{value}\"";
-            }
+            value = value.Replace("\"", "\"\"");
 
-            return value;
+            return $"\"{value}\"";
         }
+
 
     }
 }

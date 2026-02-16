@@ -13,6 +13,7 @@
     <None Remove="Configs\Order_request.json" />
     <None Remove="ExpectedResponses\CheckLogin_response.json" />
     <None Remove="ExpectedResponses\GetClientBankInfo_response.json" />
+    <None Remove="ExpectedResponses\GetLastOrderStatus_response.json" />
     <None Remove="ExpectedResponses\GetOrderMargin_response.json" />
     <None Remove="ExpectedResponses\GetSecurityInfo_response.json" />
     <None Remove="ExpectedResponses\Login_response.json" />
@@ -36,6 +37,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\GetClientBankInfo_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\GetLastOrderStatus_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\GetOrderMargin_response.json">
