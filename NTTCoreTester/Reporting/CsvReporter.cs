@@ -4,14 +4,7 @@ using System.Text;
 
 namespace NTTCoreTester.Reporting
 {
-    //public interface ICsvReport
-    //{
-    //    void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
-    //                  string jsonResponse, bool schemaValid, string validationErrors);
-    //    Task Save();
-    //    string GetPath();
-    //}
-
+    
     public class CsvReport 
     {
         private readonly ReportConfig _cfg;
@@ -60,18 +53,18 @@ namespace NTTCoreTester.Reporting
 
             // CSV Header
             sb.AppendLine("Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,Message,BusinessStatus,SchemaValid,ValidationErrors,JsonResponse");
-
             foreach (var entry in _entries)
             {
                 string escapedJson = EscapeForCsv(entry.JsonResponse);
                 string escapedErrors = EscapeForCsv(entry.ValidationErrors);
+                string escapedMessage = EscapeForCsv(entry.Message ?? "");
 
                 sb.AppendLine($"{entry.Timestamp:yyyy-MM-dd HH:mm:ss}," +
                              $"{entry.Endpoint}," +
                              $"{entry.ResponseTimeMs}," +
                              $"{entry.PerformanceStatus}," +
                              $"{entry.HttpStatusCode}," +
-                             $"{entry.Message}," +
+                             $"{escapedMessage}," +
                              $"{entry.BusinessStatus}," +
                              $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
                              $"{escapedErrors}," +
@@ -94,11 +87,21 @@ namespace NTTCoreTester.Reporting
             if (string.IsNullOrEmpty(value))
                 return "";
 
-            return value.Replace("\"", "\"\"")
-                       .Replace("\r\n", " ")
-                       .Replace("\n", " ")
-                       .Replace("\r", " ")
-                       .Replace("\t", " ");
+            
+            value = value.Replace("\"", "\"\"")      
+                         .Replace("\r\n", " ")
+                         .Replace("\n", " ")          
+                         .Replace("\r", " ")          
+                         .Replace("\t", " ");       
+
+            
+            if (value.Contains(",") || value.Contains("\""))
+            {
+                return $"\"{value}\"";
+            }
+
+            return value;
         }
+
     }
 }
