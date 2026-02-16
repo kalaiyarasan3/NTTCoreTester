@@ -53,7 +53,7 @@ namespace NTTCoreTester.Reporting
 
             _entries.Add(entry);
         }
-
+        
         public async Task Save()
         {
             var sb = new StringBuilder();
@@ -74,8 +74,8 @@ namespace NTTCoreTester.Reporting
                              $"{entry.Message}," +
                              $"{entry.BusinessStatus}," +
                              $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
-                             $"\"{escapedErrors}\"," +
-                             $"\"{escapedJson}\"");
+                             $"{escapedErrors}," +
+                             $"{escapedJson}");
             }
 
             await File.WriteAllTextAsync(_fullPath, sb.ToString());
