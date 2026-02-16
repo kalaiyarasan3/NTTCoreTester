@@ -1,17 +1,19 @@
 ﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core;
+using NTTCoreTester.Core.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 
 
 namespace NTTCoreTester.Services
 {
-    public class ActivityExecutor 
+    public class ActivityExecutor
     {
         private readonly PlaceholderCache _cache;
         public ActivityExecutor(PlaceholderCache cache) { _cache = cache; }
@@ -34,7 +36,7 @@ namespace NTTCoreTester.Services
 
                 //Invoke the method
 
-                var result=method.Invoke(this,new Object[] { response, endpoint });
+                var result = method.Invoke(this, new Object[] { response, endpoint });
 
                 return (bool)result;
 
@@ -82,6 +84,42 @@ namespace NTTCoreTester.Services
             }
         }
 
+
+        private bool GetLastOrderStatus(string response, string endpoint)
+        {
+            try
+            {
+                Task.Delay(5000).Wait(); // Simulate delay for order processing
+                var data = JsonSerializer.Deserialize<LastOrderStatus>(response);
+
+                if (data?.ResponceDataObject?.AllOrders == null ||
+                    !data.ResponceDataObject.AllOrders.Any())
+                {
+                    return false;
+                }
+
+                var key = _cache.Get(Constans.ClientOrdId);
+
+                if (string.IsNullOrEmpty(key))
+                    return false;
+
+                var lastOrder = data.ResponceDataObject.AllOrders
+                    .FirstOrDefault(x => x.cl_ord_id == key);
+
+                if (lastOrder == null)
+                    return false;
+
+                _cache.Set(Constans.OrderNumber, lastOrder.ordno);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($" Error in GetLastOrderStatus: {ex.Message}");
+                return false;
+            }
+        }
+
         private bool SendOtp(string response, string endpoint)
         {
             // Extract token from login response and store in cache
@@ -98,24 +136,38 @@ namespace NTTCoreTester.Services
 
 
 
-        private bool ExtractToken(string response, string endponint)
+        private bool ExtractClientOrdId(string response, string endponint)
         {
 
             var json = JObject.Parse(response);
-            string ordno = json["ResponceDataObject"]?["ordno"]?.Value<string>();
             string cl_ord_id = json["ResponceDataObject"]?["cl_ord_id"]?.Value<string>();
 
-            if(string.IsNullOrEmpty(ordno)|| string.IsNullOrEmpty(cl_ord_id))
+            if (string.IsNullOrEmpty(cl_ord_id))
             {
                 return false;
             }
 
-            _cache.Set("ordno", ordno);
-                _cache.Set("cl_ord_id", cl_ord_id);
+            _cache.Set("cl_ord_id", cl_ord_id);
 
 
             return true;
         }
     }
+    class LastOrderStatus
+    {
+        public ResponseData ResponceDataObject { get; set; }
+    }
+
+    class ResponseData
+    {
+        public List<OrderDetails> AllOrders { get; set; }
+    }
+
+    class OrderDetails
+    {
+        public string ordno { get; set; }
+        public string cl_ord_id { get; set; }
+    }
+
 }
 
