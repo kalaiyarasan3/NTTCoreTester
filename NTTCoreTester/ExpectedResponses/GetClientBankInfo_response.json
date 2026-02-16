@@ -1,0 +1,36 @@
+{
+    "ResponceDataObject": {
+        "BankList": [
+            {
+                "BankInfoId": 0,
+                "BankId": 0,
+                "ClientId": 0,
+                "ClientUCC": "90255961||^\\d+$",
+                "BankName": "INDIAN BANK||^.+$",
+                "BankBranchName": "MANAPPARAI||^.+$",
+                "AccountNumber": "6830387320||^\\d+$",
+                "BankIfscCode": "IDIB000M131||^.+$",
+                "AccountType": "Savings||^.+$",
+                "BankCity": "MANAPPARAI||^.+$",
+                "CustomerId": "",
+                "BankCityPincode": "621306||^\\d{6}$",
+                "IsDeleted": 0,
+                "IsPrimary": 0
+            }
+        ],
+        "request_time": "10:37:08:3500 11-02-2026",
+        "status": "Ok",
+        "OSId": null,
+        "TypeID": null,
+        "Info": null,
+        "ModelId": null,
+        "Message": "Bank Details Fetched Successfully",
+        "Result": 0,
+        "CTA": null,
+        "Action": null,
+        "Data": {
+            "APITimeTaken": "Auth 1 | Access 0 | LMod 0 | Invo 30 | ",
+            "TimeTaken": "ReadStreamD 2 | BeforePro 0 | AfterPro 32 |  Total 34"
+        }
+    }
+}

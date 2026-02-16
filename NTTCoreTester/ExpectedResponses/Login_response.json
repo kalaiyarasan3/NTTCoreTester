@@ -1,0 +1,67 @@
+﻿{
+  "Status": "OK||^(OK|Ok|Failed)$",
+  "Message": "Authentication Success",
+  "StatusCode": 0,
+  "RequestID": "71c64ca4||^[0-9a-fA-F-]{36}$",
+  "Responce": null,
+  "ResponceDataObject": {
+    "susertoken": "token||^[A-Za-z0-9+/=]+$",
+    "AuthorizedActivity": null,
+    "values": {
+      "__any__": "watchlist||^.+$"
+    },
+    "mws": {
+      "__any__": [
+        {
+          "MarketWatchId": 0,
+          "MarketWatchName": "watchlist1||^[A-Za-z0-9_ ]+$",
+          "exch": "NSE||^(BSE|NSE|NFO|MCX|CDS|BFO|IND)$",
+          "token": 0,
+          "tsym": "SYMBOL||^[A-Z0-9#_-]+$",
+          "Segment": "1||^-?\\d+$",
+          "instname": "EQ||^[A-Z]{1,3}$|null",
+          "pp": "0||^[+-]?\\d+\\.?\\d*$|null",
+          "ls": "1||^\\d+$|null",
+          "ti": "1||^\\d+$|null",
+          "SymbolInfos": null
+        }
+      ]
+    },
+    "uname": "USERNAME||^.+$",
+    "prarr": [
+      "MIS||^.+$"
+    ],
+    "access_type": [
+      "TWS||^.+$"
+    ],
+    "uid": "ADMIN||^[A-Z0-9]+$",
+    "orarr": [
+      "MKT||^.+$"
+    ],
+    "email": null,
+    "TOTPEnabled": 0,
+    "IsTOTPSkip": 0,
+    "DealerStatus": 1,
+    "ClientType": 3,
+    "KraStatus": [],
+    "Clients": [
+      "90255961||^[A-Z0-9]+$"
+    ],
+    "request_time": "14:06:28:1234 11-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
+    "status": "Ok||^(Ok|OK)$",
+    "OSId": null,
+    "TypeID": null,
+    "Info": null,
+    "ModelId": null,
+    "Message": "Authentication Success",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {
+      "__any__": "value||^.+$"
+    }
+  },
+  "Activity": "Login",
+  "TypeID": null,
+  "Info": null
+}

@@ -1,0 +1,62 @@
+{
+  "suiteName": "Live Demo",
+  "description": "   ",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "SendOTP",
+      "method": "POST",
+      "headers": {},
+      "activity": "SendOtp",
+      "payload": {
+        "uid": "{{uid}}",
+        "pwd": "{{pwd}}"
+      }
+    },
+    {
+      "endpoint": "Login",
+      "method": "POST",
+      "headers": {},
+      "activity": "ExtractSession",
+      "payload": {
+        "uid": "{{uid}}",
+        "pwd": "{{pwd}}",
+        "otp": "{{otp}}",
+        "TwoFA": 1
+      }
+    },
+    {
+      "endpoint": "CheckLogin",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "Login",
+      "payload": {}
+    },
+    {
+      "endpoint": "GetClientBankInfo",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "Login",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "Logout",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}"
+      },
+      "activity": "Login",
+      "payload": {}
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+    "ResponceDataObject": {
+        "Remarks": null,
+        "cash": null,
+        "marginused": null,
+        "ordermargin": 0.0,
+        "marginusedprev": 0.0,
+        "charges": 0.0,
+        "chargesdetail": "<li>...</li>||^.+$",
+        "MTFMarginPercentage": 0.0,
+        "DeliveryMargin": 0.0,
+        "ExposureMargin": 0.0,
+        "AdditionalMargin": 0.0,
+        "SpanMargin": 0.0,
+        "AvailableMargin": 0.0,
+        "NetPremium": 0.0,
+        "IsAccess": true,
+        "request_time": "12:19:14:7161 09-02-2026||^.+$",
+        "status": "Ok||^.+$",
+        "OSId": null,
+        "TypeID": null,
+        "Info": null,
+        "ModelId": null,
+        "Message": "Margin Fetched Successfully||^.+$",
+        "Result": 0,
+        "CTA": null,
+        "Action": null,
+        "Data": {
+            "APITimeTaken": "Auth 1 | Access 0 | LMod 0 | Invo 1 | ||^.+$",
+            "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 3 |  Total 3||^.+$"
+        }
+    }
+}

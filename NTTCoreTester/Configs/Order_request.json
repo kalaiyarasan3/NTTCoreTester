@@ -1,0 +1,162 @@
+{
+  "suiteName": "Order Flow Suite",
+  "description": "Complete order lifecycle test",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "Login",
+      "method": "POST",
+      "headers": {},
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "pwd": "{{pwd}}",
+        "otp": "{{otp}}",
+        "TwoFA": 1
+      }
+    },
+    {
+      "endpoint": "GetSecurityInfo",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "exch": "BSE",
+        "token": "530965"
+      },
+      "activity": ""
+    },
+    {
+      "endpoint": "GetOrderMargin",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "BSE",
+        "tsym": "IOC-A",
+        "qty": "10",
+        "trantype": "Buy",
+        "ordno": "0",
+        "prc": 514.1,
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "ordersource": "Web",
+        "blprc": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0",
+        "snonum": "0"
+      },
+      "activity": ""
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "NSE",
+        "trantype": "Buy",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "IOC-EQ",
+        "qty": 1,
+        "prc": "176.16",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
+      }
+    },
+    {
+      "endpoint": "ModifyOrder",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "exch": "NSE",
+        "ordno": "{{ordno}}",
+        "prctyp": "LMT",
+        "prc": "176.16",
+        "qty": 100,
+        "tsym": "IOC-EQ",
+        "ret": "",
+        "mkt_protection": "0",
+        "trgprc": "0.00",
+        "dscqty": 0,
+        "ext_remarks": "",
+        "cl_ord_id": "180274053",
+        "uid": "47054457",
+        "actid": "47054457",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ordersource": "Web",
+        "orderactivity": 2,
+        "prd": "CNC",
+        "tqty": 100
+      }
+    },
+    {
+      "endpoint": "CancelOrder",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "ordno": "{{ordno}}",
+        "cl_ord_id": "{{cl_ord_id}}"
+      }
+    }
+  ]
+}
+
+
