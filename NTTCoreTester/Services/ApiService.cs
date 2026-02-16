@@ -90,18 +90,21 @@ namespace NTTCoreTester.Services
 
                 var validation = _checker.Validate(result);
 
-                bool activitySuccess = true;
+                ActivityResult activityResult = true.Result();
 
                 if (validation.IsSuccess && !string.IsNullOrEmpty(activity))
                 {
                     Console.WriteLine($"\n Executing activity: {activity}");
-                    activitySuccess = _activityExecutor.Execute(
+                    activityResult = _activityExecutor.Execute(
                         activity,
                         result,
                         result.Endpoint);
                 }
 
-                bool finalSuccess = validation.IsSuccess && activitySuccess;
+                bool finalSuccess = validation.IsSuccess && activityResult.IsSuccess;
+
+                if (!string.IsNullOrWhiteSpace(activityResult.Message))
+                    validation.Message = activityResult.Message;
 
                 _csvReport.AddEntry(
                     result.Endpoint,
