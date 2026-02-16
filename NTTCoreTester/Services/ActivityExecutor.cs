@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace NTTCoreTester.Services
         private readonly PlaceholderCache _cache;
         public ActivityExecutor(PlaceholderCache cache) { _cache = cache; }
 
-        public bool Execute(string methodName, string response, string endpoint)
+        public bool Execute(string methodName, ApiExecutionResult response, string endpoint)
         {
             if (string.IsNullOrEmpty(methodName))
                 return false;
@@ -85,26 +86,24 @@ namespace NTTCoreTester.Services
         }
 
 
-        private bool GetLastOrderStatus(string response, string endpoint)
+        private bool GetLastOrderStatus(ApiExecutionResult result, string endpoint)
         {
             try
             {
-                Task.Delay(5000).Wait(); // Simulate delay for order processing
-                var data = JsonSerializer.Deserialize<LastOrderStatus>(response);
+                var dataObject = result.Json["ResponceDataObject"];
 
-                if (data?.ResponceDataObject?.AllOrders == null ||
-                    !data.ResponceDataObject.AllOrders.Any())
-                {
+                if (dataObject == null)
                     return false;
-                }
+
+                var orders = dataObject["AllOrders"]
+                    .ToObject<List<OrderDetails>>();
+
+                if (orders == null || !orders.Any())
+                    return false;
 
                 var key = _cache.Get(Constans.ClientOrdId);
 
-                if (string.IsNullOrEmpty(key))
-                    return false;
-
-                var lastOrder = data.ResponceDataObject.AllOrders
-                    .FirstOrDefault(x => x.cl_ord_id == key);
+                var lastOrder = orders.FirstOrDefault(x => x.cl_ord_id == key);
 
                 if (lastOrder == null)
                     return false;
@@ -119,6 +118,7 @@ namespace NTTCoreTester.Services
                 return false;
             }
         }
+
 
         private bool SendOtp(string response, string endpoint)
         {
@@ -153,12 +153,8 @@ namespace NTTCoreTester.Services
             return true;
         }
     }
+ 
     class LastOrderStatus
-    {
-        public ResponseData ResponceDataObject { get; set; }
-    }
-
-    class ResponseData
     {
         public List<OrderDetails> AllOrders { get; set; }
     }

@@ -13,7 +13,7 @@ namespace NTTCoreTester.Services
 {
     public interface IApiService
     {
-        List<string> GetAvailableRequests();
+        
         Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest);
     }
 
@@ -22,8 +22,7 @@ namespace NTTCoreTester.Services
         private readonly HttpClient _http;
         private readonly ApiConfiguration _config;
         private readonly ResponseChecker _checker;
-        private readonly CsvReport _csvReport;
-        private const string REQUEST_FOLDER = "Requests";
+        private readonly CsvReport _csvReport; 
         private readonly ActivityExecutor _activityExecutor;
         private readonly PlaceholderResolver _resolver;
 
@@ -34,21 +33,9 @@ namespace NTTCoreTester.Services
             _config = config;
             _checker = checker;
             _csvReport = csvReport;
-            _http.BaseAddress = new Uri(_config.BaseUrl);
-
-            if (!Directory.Exists(REQUEST_FOLDER))
-                Directory.CreateDirectory(REQUEST_FOLDER);
+            _http.BaseAddress = new Uri(_config.BaseUrl);             
             _activityExecutor = activityExecutor;
             _resolver = resolver;
-        }
-
-        public List<string> GetAvailableRequests()
-        {
-            if (!Directory.Exists(REQUEST_FOLDER))
-                return new List<string>();
-
-            var files = Directory.GetFiles(REQUEST_FOLDER, "*_request.json");
-            return files.Select(f => Path.GetFileNameWithoutExtension(f).Replace("_request", "")).ToList();
         }
 
         public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest)
@@ -57,11 +44,11 @@ namespace NTTCoreTester.Services
             Console.WriteLine($"Executing: {configRequest.Endpoint}");
             Console.WriteLine($"{new string('=', 80)}");
 
-            
+
             string requestJson = JsonConvert.SerializeObject(configRequest.Payload);
             Console.WriteLine($" Payload loaded from config");
 
-            
+
             requestJson = await _resolver.ResolvePlaceholders(requestJson, configRequest.Endpoint);
             if (requestJson == null)
             {
@@ -88,104 +75,100 @@ namespace NTTCoreTester.Services
 
             Console.WriteLine($" Placeholders resolved");
 
-            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders,configRequest.Activity);
+            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity);
         }
 
-        private async Task<bool> CallApi(string endpoint, string requestJson, Dictionary<string, string> customHeaders, string activity = null)
+        private async Task<bool> CallApi(
+            string endpoint,
+            string requestJson,
+            Dictionary<string, string> headers,
+            string activity)
         {
-            var timer = Stopwatch.StartNew();
-            bool success = false;
-
             try
             {
-                string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}{endpoint}";
+                var result = await SendRequest(endpoint, requestJson, headers);
 
+                var validation = _checker.Validate(result);
+
+                bool activitySuccess = true;
+
+                if (validation.IsSuccess && !string.IsNullOrEmpty(activity))
+                {
+                    Console.WriteLine($"\n Executing activity: {activity}");
+                    activitySuccess = _activityExecutor.Execute(
+                        activity,
+                        result,
+                        result.Endpoint);
+                }
+
+                bool finalSuccess = validation.IsSuccess && activitySuccess;
+
+                _csvReport.AddEntry(
+                    result.Endpoint,
+                    result.ResponseTime,
+                    result.StatusCode,
+                    validation.BusinessStatus,
+                    result.ResponseBody,
+                    validation.IsSuccess,
+                    string.Join("; ", validation.Errors));
+
+                return finalSuccess;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($" ERROR: {ex.Message}");
+                return false;
+            }
+        }
+
+        private async Task<ApiExecutionResult> SendRequest(
+             string endpoint,
+             string requestJson,
+             Dictionary<string, string> headers)
+        {
+            try
+            {
+                var timer = Stopwatch.StartNew();
+
+                string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}{endpoint}";
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
                 request.Content = new StringContent(requestJson, Encoding.UTF8, "text/plain");
 
-                // Start with default headers from config
                 foreach (var header in _config.DefaultHeaders)
-                {
-                    string lowerKey = header.Key.ToLower();
-                    if (lowerKey == "content-type" || lowerKey == "content-length" || lowerKey == "host")
-                        continue;
-
                     request.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                }
 
-                if (customHeaders != null && customHeaders.Count > 0)
+                if (headers != null)
                 {
-                    Console.WriteLine($" Applying {customHeaders.Count} custom header(s):");
-                    foreach (var header in customHeaders)
+                    foreach (var header in headers)
                     {
-                        Console.WriteLine($"   {header.Key}: {header.Value}");
                         request.Headers.Remove(header.Key);
                         request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                     }
                 }
 
-                Console.WriteLine($"\n Calling API: {fullUrl}");
-
                 var response = await _http.SendAsync(request);
-                string respBody = await response.Content.ReadAsStringAsync();
+                string body = await response.Content.ReadAsStringAsync();
+
                 timer.Stop();
 
-                Console.WriteLine($" Response Time: {timer.ElapsedMilliseconds}ms");
-                Console.WriteLine($" HTTP Status: {(int)response.StatusCode}");
-
-                bool schemaValid = _checker.Check(endpoint, respBody, out List<string> errors);
-                string validationErrors = string.Join("; ", errors);
-
-                string businessStatus = _checker.ExtractBusinessStatus(respBody);
-                success = (businessStatus == "SUCCESS");
-
-                // Excute activity
-                //---
-                bool activitySuccess = true;
-                if(!string.IsNullOrEmpty(activity))
+                return new ApiExecutionResult
                 {
-                    if(businessStatus== "SUCCESS")
-                    {
-                        Console.WriteLine($"\n Executing activity: {activity}");
-                        activitySuccess=_activityExecutor.Execute(activity, respBody, endpoint);
-                        if (activitySuccess)
-                            Console.WriteLine("Activity Executed Succssfully");
-                        else
-                            Console.WriteLine("Activity Execution Failed");
-                    }
-                }
-                else {
-                    Console.WriteLine($"skipping activity {activity} response not valid" );
-                }
-                //---
-
-
-                _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, (int)response.StatusCode,
-                                   businessStatus, respBody, schemaValid, validationErrors);
-
-                Console.WriteLine($" Business Status: {businessStatus}");
-                Console.WriteLine($" Schema Valid: {(schemaValid ? "YES" : "NO")}");
-
-                if (!schemaValid)
-                {
-                    Console.WriteLine($" Validation Errors: {validationErrors}");
-                }
-
-                return success && activitySuccess;
+                    Endpoint = endpoint,
+                    StatusCode = (int)response.StatusCode,
+                    ResponseBody = body,
+                    ResponseTime = timer.ElapsedMilliseconds
+                };
             }
             catch (Exception ex)
             {
-                timer.Stop();
-                Console.WriteLine($"\n ERROR: {ex.Message}");
-
-                _csvReport.AddEntry(endpoint, timer.ElapsedMilliseconds, 0, "ERROR",
-                                   $"{{\"error\":\"{ex.Message}\"}}", false, $"Exception: {ex.Message}");
-
-                return false;
+                Console.WriteLine(ex.ToString());
+                throw;
             }
+
         }
 
-     
-
+         
     }
 }
+//90470544
+//

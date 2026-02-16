@@ -1,8 +1,12 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NTTCoreTester.Models;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using ValidationResult = NTTCoreTester.Models.ValidationResult;
 
 namespace NTTCoreTester.Validators
 {
@@ -15,6 +19,75 @@ namespace NTTCoreTester.Validators
             if (!Directory.Exists(_expectedFolder))
                 Directory.CreateDirectory(_expectedFolder);
         }
+        public ValidationResult Validate(ApiExecutionResult result)
+        {
+            var validation = new ValidationResult();
+            try
+            {
+                var json = JObject.Parse(result.ResponseBody);
+                if (result.StatusCode != 200)
+                {
+                    validation.IsSuccess = false;
+                    validation.Errors.Add($"HTTP Status not 200: {result.StatusCode}");
+                    validation.BusinessStatus = "HTTP_FAILED";
+                    return validation;
+                }
+
+                int businessCode = -1;
+
+                try
+                { 
+                    businessCode = json["StatusCode"]?.Value<int>() ?? -1;
+                }
+                catch
+                {
+                    validation.IsSuccess = false;
+                    validation.Errors.Add("Invalid JSON format");
+                    validation.BusinessStatus = "INVALID_JSON";
+                    return validation;
+                }
+
+                if (businessCode != 0)
+                {
+                    validation.IsSuccess = false;
+                    validation.BusinessStatus = "FAILED";
+                    validation.Errors.Add($"Business StatusCode: {businessCode}");
+                    return validation;
+                }
+
+                bool schemaValid = Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
+
+                if (!schemaValid)
+                {
+                    validation.IsSuccess = false;
+                    validation.BusinessStatus = "SCHEMA_FAILED";
+                    validation.Errors.AddRange(schemaErrors);
+                    return validation;
+                }
+
+                validation.IsSuccess = true;
+                validation.BusinessStatus = "SUCCESS";
+
+                return validation;
+            }
+            catch (JsonReaderException)
+            {
+                validation.IsSuccess = false;
+                validation.BusinessStatus = "INVALID_JSON";
+                validation.Errors.Add("Response is not valid JSON");
+                Console.WriteLine(" Response is not JSON (probably HTML error page).");
+                return validation;
+            } 
+            catch (Exception ex)
+            {
+                validation.IsSuccess = false;
+                validation.BusinessStatus = "Exception Caught";
+                validation.Errors.Add($"Response is not valid JSON {ex.Message}");
+                Console.WriteLine($" JSON parsing failed: {ex.Message}");
+                return validation;
+            }
+        }
+
 
         public bool Check(string endpoint, string responseJson, out List<string> validationErrors)
         {

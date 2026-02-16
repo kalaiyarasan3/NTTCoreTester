@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace NTTCoreTester.Models
+{
+    public class ValidationResult
+    {
+        public bool IsSuccess { get; set; }
+        public string BusinessStatus { get; set; }
+        public List<string> Errors { get; set; } = new();
+    }
+
+}
