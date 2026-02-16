@@ -7,7 +7,7 @@
                 "ClientId": 0,
                 "ClientUCC": "90255961||^\\d+$",
                 "BankName": "INDIAN BANK||^.+$",
-                "BankBranchName": "MANAPPARAI||^.+$",
+                "BankBranchName": "MANAPPARAI||^.+$|null",
                 "AccountNumber": "6830387320||^\\d+$",
                 "BankIfscCode": "IDIB000M131||^.+$",
                 "AccountType": "Savings||^.+$",

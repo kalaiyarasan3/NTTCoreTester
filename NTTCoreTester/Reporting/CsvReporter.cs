@@ -35,7 +35,7 @@ namespace NTTCoreTester.Reporting
         }
 
         public void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
-                            string jsonResponse, bool schemaValid, string validationErrors)
+                            string jsonResponse, bool schemaValid, string validationErrors,string? meaaage = null)
         {
             var entry = new CsvReportEntry
             {
@@ -47,7 +47,8 @@ namespace NTTCoreTester.Reporting
                 BusinessStatus = businessStatus,
                 JsonResponse = jsonResponse,
                 SchemaValid = schemaValid,
-                ValidationErrors = validationErrors ?? ""
+                ValidationErrors = validationErrors ?? "",
+                Message = meaaage
             };
 
             _entries.Add(entry);
@@ -58,7 +59,7 @@ namespace NTTCoreTester.Reporting
             var sb = new StringBuilder();
 
             // CSV Header
-            sb.AppendLine("Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,BusinessStatus,SchemaValid,ValidationErrors,JsonResponse");
+            sb.AppendLine("Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,Message,BusinessStatus,SchemaValid,ValidationErrors,JsonResponse");
 
             foreach (var entry in _entries)
             {
@@ -70,6 +71,7 @@ namespace NTTCoreTester.Reporting
                              $"{entry.ResponseTimeMs}," +
                              $"{entry.PerformanceStatus}," +
                              $"{entry.HttpStatusCode}," +
+                             $"{entry.Message}," +
                              $"{entry.BusinessStatus}," +
                              $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
                              $"\"{escapedErrors}\"," +

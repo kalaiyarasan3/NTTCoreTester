@@ -24,7 +24,7 @@ namespace NTTCoreTester.Validators
             var validation = new ValidationResult();
             try
             {
-                var json = JObject.Parse(result.ResponseBody);
+
                 if (result.StatusCode != 200)
                 {
                     validation.IsSuccess = false;
@@ -33,19 +33,34 @@ namespace NTTCoreTester.Validators
                     return validation;
                 }
 
-                int businessCode = -1;
-
-                try
-                { 
-                    businessCode = json["StatusCode"]?.Value<int>() ?? -1;
-                }
-                catch
+                if (!result.ResponseBody.TrimStart().StartsWith("{"))
                 {
                     validation.IsSuccess = false;
-                    validation.Errors.Add("Invalid JSON format");
-                    validation.BusinessStatus = "INVALID_JSON";
+                    validation.BusinessStatus = "NOT_JSON";
+                    validation.Errors.Add("Response is not JSON");
                     return validation;
                 }
+
+                int businessCode = -1;
+                JObject json;
+
+                try
+                {
+                    json = JObject.Parse(result.ResponseBody);
+                }
+                catch (JsonReaderException)
+                {
+                    validation.IsSuccess = false;
+                    validation.BusinessStatus = "INVALID_JSON";
+                    validation.Errors.Add("Response is not valid JSON");
+                    return validation;
+                }
+                result.Json = json;
+
+                businessCode = json["StatusCode"]?.Value<int>() ?? -1;
+                validation.Message = json["Message"]?.Value<string>() ?? "";
+
+
 
                 if (businessCode != 0)
                 {
@@ -70,14 +85,7 @@ namespace NTTCoreTester.Validators
 
                 return validation;
             }
-            catch (JsonReaderException)
-            {
-                validation.IsSuccess = false;
-                validation.BusinessStatus = "INVALID_JSON";
-                validation.Errors.Add("Response is not valid JSON");
-                Console.WriteLine(" Response is not JSON (probably HTML error page).");
-                return validation;
-            } 
+
             catch (Exception ex)
             {
                 validation.IsSuccess = false;
@@ -149,6 +157,12 @@ namespace NTTCoreTester.Validators
                 return;
             }
 
+            if ((expected.ValueKind == JsonValueKind.True || expected.ValueKind == JsonValueKind.False) &&
+                (actual.ValueKind == JsonValueKind.True || actual.ValueKind == JsonValueKind.False))
+            {
+                return; 
+            }
+
             if (expected.ValueKind != actual.ValueKind)
             {
                 string error = $"Type mismatch at {path}. Expected {expected.ValueKind}, got {actual.ValueKind}";
@@ -166,7 +180,7 @@ namespace NTTCoreTester.Validators
                 // Check for pattern syntax
                 if (!string.IsNullOrEmpty(expectedValue) && expectedValue.Contains("||"))
                 {
-                    var parts = expectedValue.Split(new[]{ "||" }, 2, StringSplitOptions.None);
+                    var parts = expectedValue.Split(new[] { "||" }, 2, StringSplitOptions.None);
 
                     if (parts.Length == 2)
                     {
@@ -178,7 +192,7 @@ namespace NTTCoreTester.Validators
                         {
                             pattern = pattern.Substring(0, pattern.Length - 5);
                             if (string.IsNullOrEmpty(actualValue))
-                                return; 
+                                return;
                         }
 
                         try
@@ -212,12 +226,6 @@ namespace NTTCoreTester.Validators
 
             // Number 
             if (expected.ValueKind == JsonValueKind.Number)
-            {
-                return;
-            }
-
-            // Boolean 
-            if (expected.ValueKind == JsonValueKind.True || expected.ValueKind == JsonValueKind.False)
             {
                 return;
             }
@@ -340,18 +348,6 @@ namespace NTTCoreTester.Validators
             }
         }
 
-        public string ExtractBusinessStatus(string responseJson)
-        {
-            try
-            {
-                var json = JObject.Parse(responseJson);
-                int statusCode = json["StatusCode"]?.Value<int>() ?? -1;
-                return statusCode == 0 ? "SUCCESS" : "FAILED";
-            }
-            catch
-            {
-                return "UNKNOWN";
-            }
-        }
+       
     }
 }

@@ -13,7 +13,7 @@ namespace NTTCoreTester.Services
 {
     public interface IApiService
     {
-        
+
         Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest);
     }
 
@@ -22,7 +22,7 @@ namespace NTTCoreTester.Services
         private readonly HttpClient _http;
         private readonly ApiConfiguration _config;
         private readonly ResponseChecker _checker;
-        private readonly CsvReport _csvReport; 
+        private readonly CsvReport _csvReport;
         private readonly ActivityExecutor _activityExecutor;
         private readonly PlaceholderResolver _resolver;
 
@@ -33,7 +33,7 @@ namespace NTTCoreTester.Services
             _config = config;
             _checker = checker;
             _csvReport = csvReport;
-            _http.BaseAddress = new Uri(_config.BaseUrl);             
+            _http.BaseAddress = new Uri(_config.BaseUrl);
             _activityExecutor = activityExecutor;
             _resolver = resolver;
         }
@@ -110,7 +110,8 @@ namespace NTTCoreTester.Services
                     validation.BusinessStatus,
                     result.ResponseBody,
                     validation.IsSuccess,
-                    string.Join("; ", validation.Errors));
+                    string.Join("; ", validation.Errors),
+                    validation.Message);
 
                 return finalSuccess;
             }
@@ -167,7 +168,7 @@ namespace NTTCoreTester.Services
 
         }
 
-         
+
     }
 }
 //90470544

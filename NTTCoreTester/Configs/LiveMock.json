@@ -4,16 +4,6 @@
   "stopOnFailure": true,
   "requests": [
     {
-      "endpoint": "SendOTP",
-      "method": "POST",
-      "headers": {},
-      "activity": "SendOtp",
-      "payload": {
-        "uid": "{{uid}}",
-        "pwd": "{{pwd}}"
-      }
-    },
-    {
       "endpoint": "Login",
       "method": "POST",
       "headers": {},
@@ -32,7 +22,7 @@
         "AuthToken": "{{token}}",
         "Module": "OrderService"
       },
-      "activity": "Login",
+      "activity": "",
       "payload": {}
     },
     {
@@ -43,7 +33,7 @@
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "Login",
+      "activity": "",
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}"

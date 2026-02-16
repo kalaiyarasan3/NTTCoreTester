@@ -10,6 +10,7 @@ namespace NTTCoreTester.Models
     {
         public bool IsSuccess { get; set; }
         public string BusinessStatus { get; set; }
+        public string? Message { get; set; }
         public List<string> Errors { get; set; } = new();
     }
 

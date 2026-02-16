@@ -13,8 +13,10 @@ namespace NTTCoreTester.Models
         public int StatusCode { get; set; }
         public string ResponseBody { get; set; }
         public JObject Json { get; set; }
-        public JObject DataObject { get; set; }
         public long ResponseTime { get; set; }
+
+        public JObject DataObject => Json?["ResponceDataObject"] as JObject;
     }
+
 
 }
