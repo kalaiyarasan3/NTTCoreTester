@@ -20,8 +20,8 @@
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
-        "uid": "{{uid}}",
-        "pwd": "{{pwd}}",
+        "uid": "47054457",
+        "pwd": "Uat@47054457",
         "otp": "{{otp}}",
         "TwoFA": 1
       }
@@ -50,7 +50,41 @@
         "actid": "{{uid}}"
       }
     },
-   
+    {
+      "endpoint": "AddMarketWatchName",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "activity": "ExtractMarketWatchId",
+      "payload": {
+        "MarketWatchName": "Test"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchName",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "activity": "",
+      "payload": {
+        "MarketWatchId": "{{MarketWatchId}}",
+        "IsDeleted": 1,
+        "MarketWatchName": "{{MarketWatchName}}"
+      }
+    },
+
+
+
+
+
+
+
 
     {
       "endpoint": "PlaceOrder",
