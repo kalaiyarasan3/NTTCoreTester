@@ -110,7 +110,7 @@
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractClientOrdId",
       "payload": {
         "exch": "NSE",
         "ordno": "{{ordno}}",

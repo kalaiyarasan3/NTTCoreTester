@@ -70,7 +70,7 @@ namespace NTTCoreTester.Validators
                 {
                     validation.IsSuccess = false;
                     validation.Errors.Add($"Business StatusCode: {businessCode}");
-                    Console.WriteLine($"Business failed: {businessCode} : {message}");
+                    Console.WriteLine($"Business status: {status} : {message}");
                     return validation;
                 }
 
