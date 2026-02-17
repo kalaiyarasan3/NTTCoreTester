@@ -90,7 +90,7 @@ namespace NTTCoreTester.Services
 
                 var validation = _checker.Validate(result);
 
-                ActivityResult activityResult = true.Result(true);
+                ActivityResult activityResult = ActivityResult.Success();
 
                 if (validation.IsSuccess && !string.IsNullOrEmpty(activity))
                 {

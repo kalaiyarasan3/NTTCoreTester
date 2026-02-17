@@ -120,7 +120,7 @@ namespace NTTCoreTester.Services
                 if (lastOrder == null)
                 {
                     Console.WriteLine($"Matching order not found in {endpoint}");
-                    return ActivityResult.SoftFail("Order not found in normal status");
+                    return ActivityResult.HardFail("Order not found in normal status");
                 }
 
                 if (lastOrder.Status != "1111")
