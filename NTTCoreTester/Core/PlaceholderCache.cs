@@ -1,14 +1,6 @@
 ﻿namespace NTTCoreTester.Core
 {
-    public interface IPlaceholderCache
-    {
-        void Set(string key, string value);
-        string Get(string key);
-        bool Has(string key);
-        void Clear();
-    }
-
-    public class PlaceholderCache : IPlaceholderCache
+    public class PlaceholderCache 
     {
         private readonly Dictionary<string, string> _cache;
 
@@ -35,7 +27,7 @@
         public void Clear()
         {
             _cache.Clear();
-            Console.WriteLine("🗑️  Input cache cleared");
+            Console.WriteLine("  Input cache cleared");
         }
     }
 }

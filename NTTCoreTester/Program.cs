@@ -50,10 +50,12 @@ namespace NTTCoreTester
                 services.AddSingleton(reportCfg);
 
                 // Register core services
-                services.AddSingleton<ISessionManager, SessionManager>();
-                services.AddSingleton<IPlaceholderCache, PlaceholderCache>();
-                services.AddSingleton<ICsvReport, CsvReport>();
+                services.AddSingleton<PlaceholderCache, PlaceholderCache>();
+                services.AddSingleton<CsvReport>();
                 services.AddSingleton<ResponseChecker>();
+                services.AddSingleton<ConfigRunner>();
+                services.AddSingleton<ActivityExecutor>();
+                services.AddSingleton<PlaceholderResolver>();
 
                 // HttpClient with proper decompression
                 services.AddHttpClient<IApiService, ApiService>()
@@ -72,14 +74,12 @@ namespace NTTCoreTester
 
                 // Display startup info
                 Console.Clear();
-                Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
-                Console.WriteLine("║          NTT Core Tester - File-Driven Testing              ║");
-                Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+                Console.WriteLine(" NTT Core Tester - File-Driven Testing");
                 Console.WriteLine();
-                Console.WriteLine($"📡 Server: {apiCfg.BaseUrl}");
-                Console.WriteLine($"📊 Performance Threshold: 100ms");
-                Console.WriteLine($"📁 Report Folder: {reportCfg.OutputFolder}");
-                Console.WriteLine($"📂 Request Files: Requests/");
+                Console.WriteLine($"Server: {apiCfg.BaseUrl}");
+                Console.WriteLine($"Performance Threshold: 100ms");
+                Console.WriteLine($"Report Folder: {reportCfg.OutputFolder}");
+                Console.WriteLine($"Request Files: Requests/");
                 Console.WriteLine();
                 Console.WriteLine("Press any key to start testing...");
                 Console.ReadKey();
@@ -94,17 +94,17 @@ namespace NTTCoreTester
                 Console.WriteLine("Saving CSV Report...");
                 Console.WriteLine(new string('=', 80));
 
-                var csvReport = provider.GetRequiredService<ICsvReport>();
+                var csvReport = provider.GetRequiredService<CsvReport>();
                 await csvReport.Save();
 
-                Console.WriteLine("\n✅ Testing completed successfully!");
+                Console.WriteLine("\nTesting completed successfully!");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("\n" + new string('═', 80));
-                Console.WriteLine("❌ FATAL ERROR");
+                Console.WriteLine("FATAL ERROR");
                 Console.WriteLine(new string('═', 80));
                 Console.WriteLine($"\nError: {ex.Message}");
                 Console.WriteLine($"\nStack Trace:\n{ex.StackTrace}");

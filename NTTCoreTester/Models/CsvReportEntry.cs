@@ -11,6 +11,7 @@
         public string JsonResponse { get; set; }
         public bool SchemaValid { get; set; }
         public string ValidationErrors { get; set; }
+        public string? Message { get; set; }
 
         public CsvReportEntry()
         {

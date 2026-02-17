@@ -9,15 +9,70 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
+    <None Remove="Configs\LiveMock.json" />
+    <None Remove="Configs\Order_request.json" />
+    <None Remove="ExpectedResponses\CheckLogin_response.json" />
+    <None Remove="ExpectedResponses\GetClientBankInfo_response.json" />
+    <None Remove="ExpectedResponses\GetLastOrderStatus_response.json" />
+    <None Remove="ExpectedResponses\GetOrderMargin_response.json" />
+    <None Remove="ExpectedResponses\GetSecurityInfo_response.json" />
+    <None Remove="ExpectedResponses\Login_response.json" />
+    <None Remove="ExpectedResponses\Logout_response.json" />
+    <None Remove="ExpectedResponses\ModifyOrder_response.json" />
+    <None Remove="ExpectedResponses\PlaceOrder_response.json" />
+    <None Remove="ExpectedResponses\SendOTP_response.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Configs\Uat.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\LiveMock.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Order_request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\AddMarketWatchName_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\CheckLogin_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\GetClientBankInfo_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\GetLastOrderStatus_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\GetOrderMargin_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\GetSecurityInfo_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\Login_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\Logout_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\ModifyOrder_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\PlaceOrder_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\SendOTP_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />

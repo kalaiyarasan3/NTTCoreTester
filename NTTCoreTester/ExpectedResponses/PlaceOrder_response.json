@@ -1,0 +1,20 @@
+{
+    "ResponceDataObject": {
+        "cl_ord_id": "120265973||^\\d+$",
+        "OrderRequestId": null,
+        "request_time": "12:21:54:3604 09-02-2026",
+        "status": "Ok",
+        "OSId": null,
+        "TypeID": null,
+        "Info": null,
+        "ModelId": null,
+        "Message": "Sent to IG Successfully",
+        "Result": 0,
+        "CTA": null,
+        "Action": null,
+        "Data": {
+            "APITimeTaken": "Auth 5 | Access 0 | LMod 0 | Invo 17 | ",
+            "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 23 |  Total 23"
+        }
+    }
+}

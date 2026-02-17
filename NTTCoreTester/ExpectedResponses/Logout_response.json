@@ -1,15 +1,23 @@
-{
-  "Status": "Ok",
-  "Message": "Logout Successfully",
-  "StatusCode": 0,
-  "RequestID": "sample-id",
-  "Responce": null,
-  "ResponceDataObject": {
-    "request_time": "15:30:34:3593 10-02-2026",
-    "status": "Ok",
+﻿{
+    "Status": "Ok||^(OK|Ok|Failed)$",
     "Message": "Logout Successfully",
-    "Result": 0,
-    "Data": {}
-  },
-  "Activity": "Logout"
+    "StatusCode": 0,
+    "RequestID": "sample-uuid||^[0-9a-fA-F-]{36}$",
+    "Responce": null,
+    "ResponceDataObject": {
+        "request_time": "16:36:45:8672 11-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
+        "status": "Ok||^(Ok|OK)$",
+        "OSId": null,
+        "TypeID": null,
+        "Info": null,
+        "ModelId": null,
+        "Message": "Logout Successfully",
+        "Result": 0,
+        "CTA": null,
+        "Action": null,
+        "Data": {}
+    },
+    "Activity": "Logout",
+    "TypeID": null,
+    "Info": null
 }

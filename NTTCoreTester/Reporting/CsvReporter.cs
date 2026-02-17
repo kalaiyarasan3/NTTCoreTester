@@ -1,18 +1,14 @@
-﻿using NTTCoreTester.Configuration;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using NTTCoreTester.Configuration;
 using NTTCoreTester.Models;
+using System.Globalization;
 using System.Text;
 
 namespace NTTCoreTester.Reporting
 {
-    public interface ICsvReport
-    {
-        void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
-                      string jsonResponse, bool schemaValid, string validationErrors);
-        Task Save();
-        string GetPath();
-    }
-
-    public class CsvReport : ICsvReport
+    
+    public class CsvReport 
     {
         private readonly ReportConfig _cfg;
         private readonly List<CsvReportEntry> _entries;
@@ -35,7 +31,7 @@ namespace NTTCoreTester.Reporting
         }
 
         public void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
-                            string jsonResponse, bool schemaValid, string validationErrors)
+                            string jsonResponse, bool schemaValid, string validationErrors,string? meaaage = null)
         {
             var entry = new CsvReportEntry
             {
@@ -47,56 +43,83 @@ namespace NTTCoreTester.Reporting
                 BusinessStatus = businessStatus,
                 JsonResponse = jsonResponse,
                 SchemaValid = schemaValid,
-                ValidationErrors = validationErrors ?? ""
+                ValidationErrors = validationErrors ?? "",
+                Message = meaaage
             };
 
             _entries.Add(entry);
         }
 
-        public async Task Save()
-        {
-            var sb = new StringBuilder();
+        //public async Task Save()
+        //{
+        //    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        //    {
+        //        HasHeaderRecord = true,
+        //    };
 
-            // CSV Header
-            sb.AppendLine("Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,BusinessStatus,SchemaValid,ValidationErrors,JsonResponse");
+        //    using (var writer = new StreamWriter(_fullPath))
+        //    using (var csv = new CsvWriter(writer, config))
+        //    {
+        //        // Write records directly - CsvHelper handles all escaping
+        //        await csv.WriteRecordsAsync(_entries);
+        //    }
 
-            foreach (var entry in _entries)
-            {
-                string escapedJson = EscapeForCsv(entry.JsonResponse);
-                string escapedErrors = EscapeForCsv(entry.ValidationErrors);
+        //    Console.WriteLine($"\n CSV Report saved: {_fullPath}");
+        //    Console.WriteLine($"   Total Entries: {_entries.Count}");
+        //    Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
+        //}
 
-                sb.AppendLine($"{entry.Timestamp:yyyy-MM-dd HH:mm:ss}," +
-                             $"{entry.Endpoint}," +
-                             $"{entry.ResponseTimeMs}," +
-                             $"{entry.PerformanceStatus}," +
-                             $"{entry.HttpStatusCode}," +
-                             $"{entry.BusinessStatus}," +
-                             $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
-                             $"\"{escapedErrors}\"," +
-                             $"\"{escapedJson}\"");
-            }
+         public async Task Save()
+         {
+             var sb = new StringBuilder();
 
-            await File.WriteAllTextAsync(_fullPath, sb.ToString());
-            Console.WriteLine($"\n✅ CSV Report saved: {_fullPath}");
-            Console.WriteLine($"   Total Entries: {_entries.Count}");
-            Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
-        }
+             // CSV Header
+             sb.AppendLine("Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,Message,BusinessStatus,SchemaValid,ValidationErrors,JsonResponse");
+             foreach (var entry in _entries)
+             {
+                 string escapedJson = EscapeForCsv(entry.JsonResponse);
+                 string escapedErrors = EscapeForCsv(entry.ValidationErrors);
+                 string escapedMessage = EscapeForCsv(entry.Message ?? "");
 
-        public string GetPath()
-        {
-            return _fullPath;
-        }
+                 sb.AppendLine($"{entry.Timestamp:yyyy-MM-dd HH:mm:ss}," +
+                              $"{entry.Endpoint}," +
+                              $"{entry.ResponseTimeMs}," +
+                              $"{entry.PerformanceStatus}," +
+                              $"{entry.HttpStatusCode}," +
+                              $"{escapedMessage}," +
+                              $"{entry.BusinessStatus}," +
+                              $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
+                              $"{escapedErrors}," +
+                              $"{escapedJson}");
+             }
 
-        private string EscapeForCsv(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-                return "";
+             await File.WriteAllTextAsync(_fullPath, sb.ToString());
+             Console.WriteLine($"\n CSV Report saved: {_fullPath}");
+             Console.WriteLine($"   Total Entries: {_entries.Count}");
+             Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
+         }
 
-            return value.Replace("\"", "\"\"")
-                       .Replace("\r\n", " ")
-                       .Replace("\n", " ")
-                       .Replace("\r", " ")
-                       .Replace("\t", " ");
-        }
+         public string GetPath()
+         {
+             return _fullPath;
+         }
+
+         private string EscapeForCsv(string value)
+         {
+             if (string.IsNullOrEmpty(value))
+                 return "";
+
+             value = value.Replace("\r\n", " ")
+                          .Replace("\n", " ")
+                          .Replace("\r", " ")
+                          .Replace("\t", " ");
+
+             value = value.Replace("\"", "\"\"");
+
+             return $"\"{value}\"";
+         }
+        
+
+
     }
 }

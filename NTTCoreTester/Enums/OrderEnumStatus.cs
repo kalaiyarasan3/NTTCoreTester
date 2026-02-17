@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NTTCoreTester.Requests
+namespace NTTCoreTester.Enums
 {
-    class ValOTPStPwd_request
-    {
-    }
+    //public enum OrderEnumStatus
+    //{
+    //    0001
+    //}
 }
