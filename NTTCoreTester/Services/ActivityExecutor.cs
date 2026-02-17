@@ -151,6 +151,19 @@ namespace NTTCoreTester.Services
             return ActivityResult.Success();
         }
 
+        private ActivityResult ExtractMarketWatchId(ApiExecutionResult result, string endpoint)
+        {
+            string? mw_id = result.DataObject?["MarketWatchId"]?.Value<string>();
+            string? mw_name = result.DataObject?["MarketWatchName"]?.Value<string>();
+
+            if (string.IsNullOrEmpty(mw_id) && string.IsNullOrEmpty(mw_name))
+                return ActivityResult.HardFail("MarketWatchId or MarketWatchName not found");
+
+            _cache.Set("MarketWatchId", mw_id);
+            _cache.Set("MarketWatchName", mw_name);
+
+            return ActivityResult.Success();
+        }
     }
 }
 
