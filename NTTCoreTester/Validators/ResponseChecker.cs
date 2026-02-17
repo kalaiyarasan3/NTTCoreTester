@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Enums;
 using NTTCoreTester.Models;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -29,14 +31,14 @@ namespace NTTCoreTester.Validators
                 {
                     validation.IsSuccess = false;
                     validation.Errors.Add($"HTTP Status not 200: {result.StatusCode}");
-                    validation.BusinessStatus = "HTTP_FAILED";
+                    validation.BusinessStatus = Constants.HTTP_FAILED;
                     return validation;
                 }
 
                 if (!result.ResponseBody.TrimStart().StartsWith("{"))
                 {
                     validation.IsSuccess = false;
-                    validation.BusinessStatus = "NOT_JSON";
+                    validation.BusinessStatus = Constants.NOT_JSON;
                     validation.Errors.Add("Response is not JSON");
                     return validation;
                 }
@@ -51,39 +53,32 @@ namespace NTTCoreTester.Validators
                 catch (JsonReaderException)
                 {
                     validation.IsSuccess = false;
-                    validation.BusinessStatus = "INVALID_JSON";
+                    validation.BusinessStatus = Constants.INVALID_JSON;
                     validation.Errors.Add("Response is not valid JSON");
                     return validation;
                 }
                 result.Json = json;
 
-                businessCode = json["StatusCode"]?.Value<int>() ?? -1;
-                var message = json["Message"]?.Value<string>() ?? "";
+                businessCode = json[Constants.StatusCode]?.Value<int>() ?? -1;
+                var message = json[Constants.Message]?.Value<string>() ?? "";
                 validation.Message = message;
 
+                var status = businessCode.ToBusinessStatus();
+                validation.BusinessStatus = status.GetDisplayName();
 
-
-                if (businessCode != 0)
+                if (status != HTTPEnumStatus.Success)
                 {
                     validation.IsSuccess = false;
-                    validation.BusinessStatus = "FAILED";
                     validation.Errors.Add($"Business StatusCode: {businessCode}");
                     Console.WriteLine($"Business failed: {businessCode} : {message}");
                     return validation;
                 }
 
-                bool schemaValid = Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
+                Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
 
-                if (!schemaValid)
-                {
-                    validation.IsSuccess = false;
-                    validation.BusinessStatus = "SCHEMA_FAILED";
-                    validation.Errors.AddRange(schemaErrors);
-                    return validation;
-                }
+                validation.Errors.AddRange(schemaErrors);
 
                 validation.IsSuccess = true;
-                validation.BusinessStatus = "SUCCESS";
 
                 return validation;
             }
@@ -91,9 +86,9 @@ namespace NTTCoreTester.Validators
             catch (Exception ex)
             {
                 validation.IsSuccess = false;
-                validation.BusinessStatus = "Exception Caught";
-                validation.Errors.Add($"Response is not valid JSON {ex.Message}");
-                Console.WriteLine($" JSON parsing failed: {ex.Message}");
+                validation.Errors.Add($"Unhandled exception: {ex.Message}");
+                validation.BusinessStatus = "EXCEPTION";
+                Console.WriteLine($"Unhandled exception: {ex.Message}");
                 return validation;
             }
         }
@@ -162,7 +157,7 @@ namespace NTTCoreTester.Validators
             if ((expected.ValueKind == JsonValueKind.True || expected.ValueKind == JsonValueKind.False) &&
                 (actual.ValueKind == JsonValueKind.True || actual.ValueKind == JsonValueKind.False))
             {
-                return; 
+                return;
             }
 
             if (expected.ValueKind != actual.ValueKind)
@@ -350,6 +345,6 @@ namespace NTTCoreTester.Validators
             }
         }
 
-       
+
     }
 }

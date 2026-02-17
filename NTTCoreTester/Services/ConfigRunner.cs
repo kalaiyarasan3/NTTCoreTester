@@ -84,7 +84,7 @@ namespace NTTCoreTester.Services
                 // Small delay between requests
                 if (i < suiteConfig.Requests.Count - 1)
                 {
-                    await Task.Delay(500);
+                    await Task.Delay(2000);
                 }
             }
 
