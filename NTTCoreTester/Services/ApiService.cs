@@ -90,7 +90,7 @@ namespace NTTCoreTester.Services
 
                 var validation = _checker.Validate(result);
 
-                ActivityResult activityResult = true.Result();
+                ActivityResult activityResult = true.Result(true);
 
                 if (validation.IsSuccess && !string.IsNullOrEmpty(activity))
                 {
@@ -115,8 +115,17 @@ namespace NTTCoreTester.Services
                     validation.IsSuccess,
                     string.Join("; ", validation.Errors),
                     validation.Message);
+                 
+                if (!validation.IsSuccess)
+                    return false;
+                 
+                if (!activityResult.IsSuccess)
+                { 
+                    if (!activityResult.ContinueExecution)
+                        return false;
+                } 
+                return true;
 
-                return finalSuccess;
             }
             catch (Exception ex)
             {

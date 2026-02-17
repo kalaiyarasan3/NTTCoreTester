@@ -58,7 +58,8 @@ namespace NTTCoreTester.Validators
                 result.Json = json;
 
                 businessCode = json["StatusCode"]?.Value<int>() ?? -1;
-                validation.Message = json["Message"]?.Value<string>() ?? "";
+                var message = json["Message"]?.Value<string>() ?? "";
+                validation.Message = message;
 
 
 
@@ -67,6 +68,7 @@ namespace NTTCoreTester.Validators
                     validation.IsSuccess = false;
                     validation.BusinessStatus = "FAILED";
                     validation.Errors.Add($"Business StatusCode: {businessCode}");
+                    Console.WriteLine($"Business failed: {businessCode} : {message}");
                     return validation;
                 }
 

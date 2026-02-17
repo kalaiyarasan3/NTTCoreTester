@@ -22,16 +22,24 @@ namespace NTTCoreTester.Services
         public ActivityResult Execute(string methodName, ApiExecutionResult response, string endpoint)
         {
             if (string.IsNullOrWhiteSpace(methodName))
-                return false.Result("");
+                return ActivityResult.Success();
 
             try
             {
-                var method = GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+                var method = GetType().GetMethod(
+                    methodName,
+                    BindingFlags.NonPublic | BindingFlags.Instance);
 
-                if (method == null || method.ReturnType != typeof(ActivityResult))
+                if (method == null)
                 {
-                    Console.WriteLine($" Activity Method {methodName} not found.");
-                    return false.Result("");
+                    Console.WriteLine($"Activity Method '{methodName}' not found.");
+                    return ActivityResult.HardFail($"Activity '{methodName}' not found.");
+                }
+
+                if (method.ReturnType != typeof(ActivityResult))
+                {
+                    return ActivityResult.HardFail(
+                        $"Activity '{methodName}' must return ActivityResult.");
                 }
 
                 var parameters = method.GetParameters();
@@ -40,44 +48,48 @@ namespace NTTCoreTester.Services
                     parameters[0].ParameterType != typeof(ApiExecutionResult) ||
                     parameters[1].ParameterType != typeof(string))
                 {
-                    return false.Result("");
-                }                 
+                    return ActivityResult.HardFail(
+                        $"Activity '{methodName}' has invalid signature.");
+                }
 
-                var result = method.Invoke(this, new Object[] { response, endpoint });
+                var result = method.Invoke(this, new object[] { response, endpoint });
 
                 if (result is ActivityResult activityResult)
                     return activityResult;
 
-                return false.Result("Activity did not return ActivityResult.");
-
+                return ActivityResult.HardFail(
+                    $"Activity '{methodName}' did not return ActivityResult.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($" Error executing activity method {methodName}:{ex.Message}");
-                return false.Result("");
+                Console.WriteLine($"Error executing activity '{methodName}': {ex.Message}");
+                return ActivityResult.HardFail(
+                    $"Exception in activity '{methodName}': {ex.Message}");
             }
         }
+
 
         private ActivityResult ExtractSession(ApiExecutionResult result, string endpoint)
         {
             var dataObject = result.DataObject;
 
             if (dataObject == null)
-                return false.Result("dataObject is null");
+                return ActivityResult.HardFail("DataObject is null");
 
             string? token = dataObject["susertoken"]?.Value<string>();
             string? userId = dataObject["uid"]?.Value<string>();
             string? userName = dataObject["uname"]?.Value<string>();
 
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
-                return false.Result("");
+                return ActivityResult.HardFail("Invalid login response");
 
             _cache.Set(Constants.SUserToken, token);
             _cache.Set(Constants.UId, userId);
             _cache.Set(Constants.UName, userName);
 
-            return true.Result("");
+            return ActivityResult.Success();
         }
+
 
         private ActivityResult GetLastOrderStatus(ApiExecutionResult result, string endpoint)
         {
@@ -86,57 +98,44 @@ namespace NTTCoreTester.Services
                 var dataObject = result.DataObject;
 
                 if (dataObject == null)
-                {
-                    Console.WriteLine("ResponceDataObject not found.");
-                    return false.Result("");
-                }
-                 
+                    return ActivityResult.HardFail("ResponseDataObject not found");
+
                 var allOrdersToken = dataObject["AllOrders"];
 
                 if (allOrdersToken == null || allOrdersToken.Type != JTokenType.Array)
-                {
-                    Console.WriteLine("AllOrders not found or invalid.");
-                    return false.Result("");
-                }
+                    return ActivityResult.HardFail("AllOrders not found or invalid");
 
                 var orders = allOrdersToken.ToObject<List<OrderDetails>>();
 
                 if (orders == null || !orders.Any())
-                {
-                    Console.WriteLine("No orders returned.");
-                    return false.Result("No orders returned.");
-                }
-                 
+                    return ActivityResult.HardFail("No orders returned");
+
                 var key = _cache.Get(Constants.ClientOrdId);
 
                 if (string.IsNullOrEmpty(key))
-                {
-                    Console.WriteLine("   ClientOrdId not found in cache.");
-                    return false.Result("");
-                }
-                 
+                    return ActivityResult.HardFail("ClientOrdId not found in cache");
+
                 var lastOrder = orders.FirstOrDefault(x => x.ClientOrderId == key);
 
                 if (lastOrder == null)
                 {
-                    Console.WriteLine("Matching order not found.");
-                    return false.Result("");
+                    Console.WriteLine($"Matching order not found in {endpoint}");
+                    return ActivityResult.SoftFail("Order not found in normal status");
                 }
 
-                if(lastOrder.Status != "1111")
+                if (lastOrder.Status != "1111")
                 {
-                    Console.WriteLine($"{lastOrder.Remarks}.");
-                    return false.Result(lastOrder.Remarks ??"");
+                    Console.WriteLine(lastOrder.Remarks);
+                    return ActivityResult.HardFail(lastOrder.Remarks ?? "Order rejected");
                 }
-                 
+
                 _cache.Set(Constants.OrderNumber, lastOrder.OrderNumber);
 
-                return true.Result("");
+                return ActivityResult.Success();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"   Error in GetLastOrderStatus: {ex.Message}");
-                return false.Result("");
+                return ActivityResult.HardFail($"Error in GetLastOrderStatus: {ex.Message}");
             }
         }
 
@@ -145,11 +144,13 @@ namespace NTTCoreTester.Services
             string? cl_ord_id = result.DataObject?["cl_ord_id"]?.Value<string>();
 
             if (string.IsNullOrEmpty(cl_ord_id))
-                return false.Result("");
+                return ActivityResult.HardFail("cl_ord_id not found");
 
             _cache.Set(Constants.ClientOrdId, cl_ord_id);
-            return true.Result("");
+
+            return ActivityResult.Success();
         }
+
     }
 }
 
