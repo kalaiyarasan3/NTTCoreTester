@@ -36,6 +36,9 @@
     <Content Include="Configs\Order_request.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ExpectedResponses\AddMarketWatchSymbols_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ExpectedResponses\AddMarketWatchName_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
