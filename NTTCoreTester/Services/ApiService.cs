@@ -23,11 +23,11 @@ namespace NTTCoreTester.Services
         private readonly ApiConfiguration _config;
         private readonly ResponseChecker _checker;
         private readonly CsvReport _csvReport;
-        private readonly ActivityExecutor _activityExecutor;
-        private readonly PlaceholderResolver _resolver;
+        private readonly ActivityExecutor _activityExecutor; 
+        private readonly PlaceholderCache _cache;
 
         public ApiService(HttpClient http, ApiConfiguration config, ResponseChecker checker,
-                         CsvReport csvReport, PlaceholderCache cache, ActivityExecutor activityExecutor, PlaceholderResolver resolver)
+                         CsvReport csvReport, PlaceholderCache cache, ActivityExecutor activityExecutor)
         {
             _http = http;
             _config = config;
@@ -35,7 +35,7 @@ namespace NTTCoreTester.Services
             _csvReport = csvReport;
             _http.BaseAddress = new Uri(_config.BaseUrl);
             _activityExecutor = activityExecutor;
-            _resolver = resolver;
+            _cache = cache; 
         }
 
         public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest)
@@ -48,28 +48,30 @@ namespace NTTCoreTester.Services
             string requestJson = JsonConvert.SerializeObject(configRequest.Payload);
             Console.WriteLine($" Payload loaded from config");
 
+            var variableResult = _cache.ReplaceVariables(requestJson);
 
-            requestJson = await _resolver.ResolvePlaceholders(requestJson, configRequest.Endpoint);
-            if (requestJson == null)
+            if (!variableResult.IsSuccess)
             {
-                Console.WriteLine(" Failed to resolve placeholders in body");
+                Console.WriteLine($" Failed to resolve placeholders: {variableResult.Error}");
                 return false;
             }
 
-            // Resolve placeholders in headers
+            requestJson = variableResult.Text;
+
+
             Dictionary<string, string> resolvedHeaders = null;
             if (configRequest.Headers != null && configRequest.Headers.Count > 0)
             {
                 resolvedHeaders = new Dictionary<string, string>();
                 foreach (var header in configRequest.Headers)
                 {
-                    string resolvedValue = await _resolver.ResolvePlaceholderValue(header.Value, configRequest.Endpoint);
-                    if (resolvedValue == null)
+                    var headerVariable = _cache.ReplaceVariables(header.Value);
+                    if (!headerVariable.IsSuccess)
                     {
                         Console.WriteLine($" Failed to resolve placeholder in header: {header.Key}");
                         return false;
                     }
-                    resolvedHeaders[header.Key] = resolvedValue;
+                    resolvedHeaders[header.Key] = headerVariable.Text;
                 }
             }
 
@@ -115,15 +117,15 @@ namespace NTTCoreTester.Services
                     validation.IsSuccess,
                     string.Join("; ", validation.Errors),
                     validation.Message);
-                 
+
                 if (!validation.IsSuccess)
                     return false;
-                 
+
                 if (!activityResult.IsSuccess)
-                { 
+                {
                     if (!activityResult.ContinueExecution)
                         return false;
-                } 
+                }
                 return true;
 
             }
@@ -145,7 +147,7 @@ namespace NTTCoreTester.Services
 
                 string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}{endpoint}";
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
-                request.Content = new StringContent(requestJson, Encoding.UTF8, "text/plain");
+                request.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
                 foreach (var header in _config.DefaultHeaders)
                     request.Headers.TryAddWithoutValidation(header.Key, header.Value);
@@ -158,7 +160,7 @@ namespace NTTCoreTester.Services
                         request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                     }
                 }
-
+                timer.Restart();
                 var response = await _http.SendAsync(request);
                 string body = await response.Content.ReadAsStringAsync();
 

@@ -1,6 +1,9 @@
-﻿namespace NTTCoreTester.Core
+﻿using NTTCoreTester.Models;
+using System.Text.RegularExpressions;
+
+namespace NTTCoreTester.Core
 {
-    public class PlaceholderCache 
+    public class PlaceholderCache
     {
         private readonly Dictionary<string, string> _cache;
 
@@ -29,5 +32,28 @@
             _cache.Clear();
             Console.WriteLine("  Input cache cleared");
         }
+        public VariableReplaceResult ReplaceVariables(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text.VariableReplace(true);
+
+            var matches = Regex.Matches(text, @"\{\{(.*?)\}\}");
+
+            foreach (Match match in matches)
+            {
+                var key = match.Groups[1].Value;
+
+                if (!_cache.ContainsKey(key))
+                {
+                    return text.VariableReplace(false, $"Variable '{key}' not found in cache");
+
+                }
+
+                text = text.Replace(match.Value, _cache[key]);
+            }
+            return text.VariableReplace(true);
+        }
+
+
     }
 }
