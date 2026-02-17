@@ -57,13 +57,18 @@ namespace NTTCoreTester.Enums
             return statusCode switch
             {
                 0 => HTTPEnumStatus.Success,
+                1 => HTTPEnumStatus.Error,
+                2 => HTTPEnumStatus.Exception,
+                3 => HTTPEnumStatus.Invalid,
                 5 => HTTPEnumStatus.InvalidData,
                 6 => HTTPEnumStatus.SessionExpired,
                 7 => HTTPEnumStatus.AuthendicationFailed,
                 8 => HTTPEnumStatus.AuthorizationFailed,
+                9 => HTTPEnumStatus.MoreActionRequired,
                 _ => HTTPEnumStatus.Failed
             };
         }
+
 
     }
 }
