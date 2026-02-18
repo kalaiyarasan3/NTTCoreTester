@@ -45,6 +45,8 @@ namespace NTTCoreTester.Core
 
                 if (!_cache.ContainsKey(key))
                 {
+
+
                     return text.VariableReplace(false, $"Variable '{key}' not found in cache");
 
                 }

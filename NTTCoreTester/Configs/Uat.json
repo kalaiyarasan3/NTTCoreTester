@@ -4,13 +4,25 @@
   "stopOnFailure": true,
   "requests": [
     {
+      "endpoint": "SendOTP",
+      "method": "POST",
+      "headers": {},
+      "activity": "ExtractOTP",
+      "payload": {
+        "uid": "{{uid}}",
+        "pwd": "{{pwd}}"
+       
+      }
+    },
+    {
       "endpoint": "Login",
       "method": "POST",
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
-        "uid": "47054457",
-        "pwd": "Uat@47054457",
+        "uid": "{{uid}}",
+        "pwd": "{{pwd}}",
+        "otp": "{{otp}}",
         "TwoFA": 1
       }
     },
@@ -38,62 +50,7 @@
         "actid": "{{uid}}"
       }
     },
-    {
-      "endpoint": "AddMarketWatchName",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
-      "activity": "ExtractMarketWatchId",
-      "payload": {
-        "MarketWatchName": "Test"
-      }
-    },
-    {
-      "endpoint": "AddMarketWatchName",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
-      "activity": "ExtractMarketWatchId",
-      "payload": {
-        "MarketWatchId": "{{MarketWatchId}}",
-        "IsDeleted": 1,
-        "MarketWatchName": "{{MarketWatchName}}"
-      }
-    },
-    {
-      "endpoint": "AddMarketWatchSymbols",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
-      "activity": "",
-      "payload": {
-        "wlid": "{{wlid}}",
-        "scrips": "NSE|913"
-      }
-    },
-    {
-      "endpoint": "AddMarketWatchSymbols",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
-      "activity": "",
-      "payload": {
-        "wlid": "{{wlid}}",
-        "scrips": "NSE|13501"
-      }
-    },
+   
 
     {
       "endpoint": "PlaceOrder",

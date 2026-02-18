@@ -9,13 +9,15 @@ namespace NTTCoreTester.Services
     {
         private readonly IApiService _apiService;
         private const string CONFIG_FOLDER = "Configs";
+        private readonly PlaceholderCache _cache;
 
-        public ConfigRunner(IApiService apiService)
+        public ConfigRunner(IApiService apiService, PlaceholderCache cache)
         {
             _apiService = apiService;
 
             if (!Directory.Exists(CONFIG_FOLDER))
                 Directory.CreateDirectory(CONFIG_FOLDER);
+            _cache = cache;
         }
 
         public List<string> GetAvailableSuites()
@@ -55,6 +57,18 @@ namespace NTTCoreTester.Services
             Console.WriteLine($"{new string('═', 80)}\n");
 
             int passed = 0, failed = 0;
+           
+            if (suiteConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP")))
+            {
+                Console.Write("Enter Uid: ");
+                var uid = Console.ReadLine();
+                Console.Write("Enter pwd: ");
+                var pwd = Console.ReadLine();
+                
+                _cache.Set("uid", uid);
+                _cache.Set("pwd", pwd);
+                
+            }
 
             for (int i = 0; i < suiteConfig.Requests.Count; i++)
             {
@@ -93,6 +107,7 @@ namespace NTTCoreTester.Services
             Console.WriteLine($"  SUITE COMPLETE: {suiteConfig.SuiteName}");
             Console.WriteLine($"   Passed: {passed}");
             Console.WriteLine($"   Failed: {failed}");
+            _cache.Clear();
             Console.WriteLine($"{new string('═', 80)}\n");
         }
     }
