@@ -6,7 +6,8 @@ namespace NTTCoreTester.Core
     public class PlaceholderCache
     {
         private readonly Dictionary<string, string> _cache;
-
+        private static readonly Regex _variableRegex = new Regex(@"\{\{(.*?)\}\}", RegexOptions.Compiled);
+      
         public PlaceholderCache()
         {
             _cache = new Dictionary<string, string>();
@@ -32,28 +33,34 @@ namespace NTTCoreTester.Core
             _cache.Clear();
             Console.WriteLine("  Input cache cleared");
         }
+
         public VariableReplaceResult ReplaceVariables(string text)
         {
-            if (string.IsNullOrEmpty(text))
-                return text.VariableReplace(true);
+            if (string.IsNullOrWhiteSpace(text))
+                return VariableReplaceResult.Success(text);
 
-            var matches = Regex.Matches(text, @"\{\{(.*?)\}\}");
+            var missingVariables = new List<string>();
 
-            foreach (Match match in matches)
+            string result = _variableRegex.Replace(text, match =>
             {
                 var key = match.Groups[1].Value;
 
-                if (!_cache.ContainsKey(key))
-                {
-                    return text.VariableReplace(false, $"Variable '{key}' not found in cache");
+                if (_cache.TryGetValue(key, out var value))
+                    return value;
 
-                }
+                missingVariables.Add(key);
+                return match.Value;  
+            });
 
-                text = text.Replace(match.Value, _cache[key]);
+            if (missingVariables.Any())
+            {
+                return VariableReplaceResult.Failure(
+                    result,
+                    $"Missing variables: {string.Join(", ", missingVariables)}"
+                );
             }
-            return text.VariableReplace(true);
+
+            return VariableReplaceResult.Success(result);
         }
-
-
     }
 }
