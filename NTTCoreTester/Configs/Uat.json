@@ -22,6 +22,7 @@
       "payload": {
         "uid": "{{uid}}",
         "pwd": "{{pwd}}",
+        "otp": "{{otp}}",
         "TwoFA": 1
       }
     },
@@ -59,15 +60,59 @@
       },
       "activity": "ExtractSecurityInfo",
       "payload": {
+        "exch": "BSE",
+        "token": "532749"
+      }
+    },
+    {
+      "endpoint": "GetOrderMargin",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
-        "exch": "NSE",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "{{qty}}",
+        "trantype": "Buy",
+        "ordno": "0",
+        "prc": "{{lp}}",
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "ordersource": "Web",
+        "blprc": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0",
+        "snonum": "0"
+      },
+      "activity": "GetLastOrderStatus"
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
         "trantype": "Buy",
         "norenordno": "0",
         "segment": "EQ",
-        "tsym": "ALLCARGO-EQ",
-        "qty": 1,
-        "prc": "7.29",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "{{ordermargin}}",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -98,21 +143,6 @@
       }
     },
     {
-      "endpoint": "GetOrderMargin",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
-      "payload": {
-        "uid": "{{uid}}",
-        "actid": "{{uid}}",
-        "status": "ALL"
-      },
-      "activity": "GetLastOrderStatus"
-    },
-    {
       "endpoint": "ModifyOrder",
       "method": "POST",
       "headers": {
@@ -125,7 +155,7 @@
         "exch": "NSE",
         "ordno": "{{ordno}}",
         "prctyp": "LMT",
-        "prc": "8.1",
+        "prc": "{{lp}}",
         "qty": 1,
         "tsym": "ALLCARGO-EQ",
         "ret": "",
