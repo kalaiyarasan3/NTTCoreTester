@@ -24,6 +24,7 @@ namespace NTTCoreTester.Activities
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
             var clOrdId = result.DataObject?["cl_ord_id"]?.Value<string>();
+            
 
             if (string.IsNullOrWhiteSpace(clOrdId))
                 return ActivityResult.HardFail("cl_ord_id not found");

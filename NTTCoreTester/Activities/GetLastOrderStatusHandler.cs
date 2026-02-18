@@ -43,6 +43,14 @@ namespace NTTCoreTester.Activities
             if (order == null)
                 return ActivityResult.HardFail("Order not found");
 
+            if (order.Status != "1111")
+            {
+                Console.WriteLine(order.Remarks);
+                return ActivityResult.HardFail(order.Remarks ?? "Order rejected");
+            }
+
+            _cache.Set(Constants.OrderNumber, order.OrderNumber);
+
             return ActivityResult.Success();
         }
     }

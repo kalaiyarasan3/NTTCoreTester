@@ -92,7 +92,7 @@
         "orgtrgprc": "0",
         "snonum": "0"
       },
-      "activity": "GetLastOrderStatus"
+      "activity": "ExtractGetOrderMargin"
     },
     {
       "endpoint": "PlaceOrder",
@@ -102,7 +102,7 @@
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
@@ -111,7 +111,7 @@
         "norenordno": "0",
         "segment": "EQ",
         "tsym": "{{tsym}}",
-        "qty": 10,
+        "qty": 2,
         "prc": "{{ordermargin}}",
         "trgprc": "0",
         "dscqty": 0,
@@ -143,6 +143,21 @@
       }
     },
     {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "GetLastOrderStatus"
+    },
+    {
       "endpoint": "ModifyOrder",
       "method": "POST",
       "headers": {
@@ -152,7 +167,7 @@
       },
       "activity": "",
       "payload": {
-        "exch": "NSE",
+        "exch": "{{exch}}",
         "ordno": "{{ordno}}",
         "prctyp": "LMT",
         "prc": "{{lp}}",
