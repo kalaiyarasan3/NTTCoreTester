@@ -58,10 +58,11 @@ namespace NTTCoreTester
                 services.AddSingleton<ActivityExecutor>();
                // services.AddSingleton<PlaceholderResolver>();
 
-                services.AddSingleton<IActivityHandler, ExtractSessionHandler>();
-                services.AddSingleton<IActivityHandler, ExtractOTPHandler>();
-                services.AddSingleton<IActivityHandler, ExtractClientOrdIdHandler>();
-                services.AddSingleton<IActivityHandler, GetLastOrderStatusHandler>();
+                services.AddTransient<IActivityHandler, ExtractSessionHandler>();
+                services.AddTransient<IActivityHandler, ExtractOTPHandler>();
+                services.AddTransient<IActivityHandler, ExtractClientOrdIdHandler>();
+                services.AddTransient<IActivityHandler, GetLastOrderStatusHandler>();
+                services.AddTransient<IActivityHandler, ExtractSecurityInfoHandler>();
 
                 // HttpClient with proper decompression
                 services.AddHttpClient<IApiService, ApiService>()
