@@ -5,22 +5,25 @@ namespace NTTCoreTester.Core
 {
     public class PlaceholderCache
     {
-        private readonly Dictionary<string, string> _cache;
+        private readonly Dictionary<string, object> _cache;
         private static readonly Regex _variableRegex = new Regex(@"\{\{(.*?)\}\}", RegexOptions.Compiled);
       
         public PlaceholderCache()
         {
-            _cache = new Dictionary<string, string>();
+            _cache = new Dictionary<string, object>();
         }
 
-        public void Set(string key, string value)
+        public void Set<T>(string key, T value)
         {
-            _cache[key] = value;
+            _cache[key] = value!;
         }
 
-        public string Get(string key)
+        public T? Get<T>(string key)
         {
-            return _cache.ContainsKey(key) ? _cache[key] : null;
+            if (_cache.TryGetValue(key, out var value))
+                return (T)value;
+
+            return default;
         }
 
         public bool Has(string key)
@@ -46,7 +49,7 @@ namespace NTTCoreTester.Core
                 var key = match.Groups[1].Value;
 
                 if (_cache.TryGetValue(key, out var value))
-                    return value;
+                    return value?.ToString() ?? string.Empty;
 
                 missingVariables.Add(key);
                 return match.Value;  

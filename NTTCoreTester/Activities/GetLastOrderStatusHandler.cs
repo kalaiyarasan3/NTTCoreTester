@@ -35,7 +35,7 @@ namespace NTTCoreTester.Activities
 
             var orders = ordersToken.ToObject<List<OrderDetails>>();
 
-            var key = _cache.Get(Constants.ClientOrdId);
+            var key = _cache.Get<string>(Constants.ClientOrdId);
 
             var order = orders?.FirstOrDefault(x => x.ClientOrderId == key);
 

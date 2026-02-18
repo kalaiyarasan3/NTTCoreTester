@@ -50,11 +50,11 @@ namespace NTTCoreTester.UI
             Console.WriteLine("NTT Core Tester");
 
             // Show session status using cache
-            string token = _cache.Get("token");
+            string? token = _cache.Get<string>("token");
             if (!string.IsNullOrEmpty(token))
             {
-                string userName = _cache.Get("userName");
-                string userId = _cache.Get("uid");
+                string? userName = _cache.Get<string>("userName");
+                string? userId = _cache.Get<string>("uid");
 
                 Console.WriteLine($"\n LOGGED IN");
                 Console.WriteLine($"   User: {userName} ({userId})");
