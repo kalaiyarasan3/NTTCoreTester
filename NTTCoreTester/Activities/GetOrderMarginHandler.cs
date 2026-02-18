@@ -17,7 +17,7 @@ namespace NTTCoreTester.Activities
     {
         private readonly PlaceholderCache _cache = cache;
 
-        public string Name => "GetOrderMargin";
+        public string Name => "ExtractGetOrderMargin";
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
@@ -32,6 +32,9 @@ namespace NTTCoreTester.Activities
 
                 if (margin == null)
                     return ActivityResult.HardFail("Failed to parse OrderMargin");
+
+                string? ordermargin=dataObject["ordermargin"]?.Value<string>();
+                _cache.Set("ordermargin", ordermargin);
 
                 _cache.Set(Constants.GetOrderMargin, new OrderMarginDetails
                 {

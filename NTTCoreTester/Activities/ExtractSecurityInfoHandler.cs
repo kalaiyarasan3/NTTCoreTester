@@ -1,4 +1,5 @@
 ﻿using NTTCoreTester.Core;
+using NTTCoreTester.Core.Models;
 using NTTCoreTester.Models;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,10 @@ namespace NTTCoreTester.Activities
             _cache.Set("exch", exch);
             _cache.Set("tsym", tsym);
             _cache.Set("lp", lp);
+
+            Console.Write($"Enter qty: ");
+            int? qty = Convert.ToInt32(Console.ReadLine());
+            _cache.Set("qty", qty);
 
             return ActivityResult.Success("Security info extracted and stored in cache");
         }

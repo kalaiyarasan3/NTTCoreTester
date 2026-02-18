@@ -70,10 +70,12 @@ namespace NTTCoreTester.Services
                 
             }
 
+           
+
             for (int i = 0; i < suiteConfig.Requests.Count; i++)
             {
                 var request = suiteConfig.Requests[i];
-
+                
                 Console.WriteLine($"\n[{i + 1}/{suiteConfig.Requests.Count}] {request.Endpoint}");
 
                 bool success = await _apiService.ExecuteRequestFromConfig(request);
@@ -98,7 +100,7 @@ namespace NTTCoreTester.Services
                 // Small delay between requests
                 if (i < suiteConfig.Requests.Count - 1)
                 {
-                    await Task.Delay(2000);
+                    await Task.Delay(500);
                 }
             }
 

@@ -11,7 +11,7 @@
       "payload": {
         "uid": "{{uid}}",
         "pwd": "{{pwd}}"
-       
+
       }
     },
     {
@@ -73,38 +73,24 @@
       },
       "activity": "",
       "payload": {
-          "uid": "{{uid}}",
-          "actid": "{{actid}}",
-          "exch": "{{exch}}",
-          "tsym": "{{tsym}}",
-          "qty": "{{qty}}",
-          "trantype": "Buy",
-          "ordno": "0",
-          "prc": "{{prc}}",
-          "trgprc": "0",
-          "dscqty": "0",
-          "prd": "CNC",
-          "prctyp": "Limit",
-          "ordersource": "Web",
-          "blprc": "0",
-          "filshares": "0",
-          "rorgqty": "0",
-          "orgtrgprc": "0",
-          "snonum": "0"
-        }
-      },
-    {
-      "endpoint": "GetSecurityInfo",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
-      "activity": "ExtractSecurityInfo",
-      "payload": {
-        "exch": "BSE",
-        "token": "532749"
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "{{qty}}",
+        "trantype": "Buy",
+        "ordno": "0",
+        "prc": "{{lp}}",
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "ordersource": "Web",
+        "blprc": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0",
+        "snonum": "0"
       }
     },
     {
@@ -115,27 +101,75 @@
         "Module": "OrderService",
         "Source": "WEB"
       },
+      "activity": "ExtractGetOrderMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "{{qty}}",
+        "trantype": "Buy",
+        "ordno": "0",
+        "prc": "{{lp}}",
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "ordersource": "Web",
+        "blprc": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0",
+        "snonum": "0"
+      }
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
       "activity": "",
       "payload": {
-          "uid": "{{uid}}",
-          "actid": "{{actid}}",
-          "exch": "{{exch}}",
-          "tsym": "{{tsym}}",
-          "qty": "{{qty}}",
-          "trantype": "Buy",
-          "ordno": "0",
-          "prc": "{{lp}}",
-          "trgprc": "0",
-          "dscqty": "0",
-          "prd": "CNC",
-          "prctyp": "Limit",
-          "ordersource": "Web",
-          "blprc": "0",
-          "filshares": "0",
-          "rorgqty": "0",
-          "orgtrgprc": "0",
-          "snonum": "0"
-        }
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Buy",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "{{ordermargin}}",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
       }
+    }
   ]
 }
