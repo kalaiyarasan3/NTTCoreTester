@@ -45,6 +45,9 @@
     <Content Include="ExpectedResponses\GetClientBankInfo_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ExpectedResponses\ActivityOrderBook_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ExpectedResponses\GetLastOrderStatus_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
