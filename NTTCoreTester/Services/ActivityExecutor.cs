@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NTTCoreTester.Activities;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Models;
@@ -10,11 +11,29 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-
-
 namespace NTTCoreTester.Services
 {
     public class ActivityExecutor
+    {
+        private readonly Dictionary<string, IActivityHandler> _handlers;
+
+        public ActivityExecutor(IEnumerable<IActivityHandler> handlers)
+        {
+            _handlers = handlers.ToDictionary(h => h.Name, h => h);
+        }
+
+        public ActivityResult Execute(string activityName, ApiExecutionResult result, string endpoint)
+        {
+            if (string.IsNullOrWhiteSpace(activityName))
+                return ActivityResult.Success();
+
+            if (!_handlers.TryGetValue(activityName, out var handler))
+                return ActivityResult.HardFail($"Activity '{activityName}' not found.");
+
+            return handler.Execute(result, endpoint);
+        }
+    }
+ /*   public class ActivityExecutor
     {
         private readonly PlaceholderCache _cache;
         public ActivityExecutor(PlaceholderCache cache) { _cache = cache; }
@@ -175,5 +194,6 @@ namespace NTTCoreTester.Services
             return ActivityResult.Success();
         }
     }
+*/
 }
 

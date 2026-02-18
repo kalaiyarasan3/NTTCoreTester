@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NTTCoreTester.Activities;
 using NTTCoreTester.Configuration;
 using NTTCoreTester.Core;
 using NTTCoreTester.Reporting;
@@ -56,6 +57,11 @@ namespace NTTCoreTester
                 services.AddSingleton<ConfigRunner>();
                 services.AddSingleton<ActivityExecutor>();
                 services.AddSingleton<PlaceholderResolver>();
+
+                services.AddSingleton<IActivityHandler, ExtractSessionHandler>();
+                services.AddSingleton<IActivityHandler, ExtractOTPHandler>();
+                services.AddSingleton<IActivityHandler, ExtractClientOrdIdHandler>();
+                services.AddSingleton<IActivityHandler, GetLastOrderStatusHandler>();
 
                 // HttpClient with proper decompression
                 services.AddHttpClient<IApiService, ApiService>()
