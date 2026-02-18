@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,19 +12,18 @@ namespace NTTCoreTester.Models
         public string Text { get; set; } = "";
         public bool IsSuccess { get; set; }
         public string? Error { get; set; }
-
-       
-    }
-    public static class VariableReplaceResultExtension
-    {
-        public static VariableReplaceResult VariableReplace(this string text, bool isSuccess, string? error = null)
+        private VariableReplaceResult(string value, bool success, string? error)
         {
-            return new VariableReplaceResult
-            {
-                Text = text,
-                IsSuccess = isSuccess,
-                Error = error
-            };
+            Text = value;
+            IsSuccess = success;
+            Error = error;
         }
+
+        public static VariableReplaceResult Success(string value)
+            => new VariableReplaceResult(value, true, null);
+
+        public static VariableReplaceResult Failure(string value, string error)
+            => new VariableReplaceResult(value, false, error);
+
     }
 }
