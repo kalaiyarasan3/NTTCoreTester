@@ -1,4 +1,5 @@
-﻿using NTTCoreTester.Models;
+﻿using NTTCoreTester.Core.Models;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace NTTCoreTester.Core
@@ -49,7 +50,7 @@ namespace NTTCoreTester.Core
                 var key = match.Groups[1].Value;
 
                 if (_cache.TryGetValue(key, out var value))
-                    return value?.ToString() ?? string.Empty;
+                return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
 
                 missingVariables.Add(key);
                 return match.Value;  

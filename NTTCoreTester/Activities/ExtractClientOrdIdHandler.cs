@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
-using NTTCoreTester.Models;
+using NTTCoreTester.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

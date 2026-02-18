@@ -5,20 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using NTTCoreTester.Core; 
+using NTTCoreTester.Core;
+using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Core.Models;
 
 
 namespace NTTCoreTester.Activities
 {
-   
-    public class GetOrderMarginHandler : IActivityHandler
-    {
-        private readonly PlaceholderCache _cache;
 
-        public GetOrderMarginHandler(PlaceholderCache cache)
-        {
-            _cache = cache;
-        }
+    public class GetOrderMarginHandler(PlaceholderCache cache) : IActivityHandler
+    {
+        private readonly PlaceholderCache _cache = cache;
 
         public string Name => "GetOrderMargin";
 
@@ -29,18 +26,20 @@ namespace NTTCoreTester.Activities
                 var dataObject = result.DataObject;
 
                 if (dataObject == null)
-                    return ActivityResult.HardFail("DataObject is null");
+                    return ActivityResult.HardFail("GetOrderMargin DataObject is null");
 
                 var margin = dataObject.ToObject<OrderMarginDetails>();
 
                 if (margin == null)
                     return ActivityResult.HardFail("Failed to parse OrderMargin");
 
-                // Store in cache
-                _cache.Set("AvailableMargin", margin.AvailableMargin.ToString());
-                _cache.Set("OrderMargin", margin.OrderMargin.ToString());
-                _cache.Set("MarginUsedPrev", margin.MarginUsedPrev.ToString());
-                _cache.Set("Charges", margin.Charges.ToString());
+                _cache.Set(Constants.GetOrderMargin, new OrderMarginDetails
+                {
+                    Charges = margin.Charges,
+                    OrderMargin = margin.OrderMargin,
+                    MarginUsedPrev = margin.MarginUsedPrev,
+                    AvailableMargin = margin.AvailableMargin
+                });
 
                 return ActivityResult.Success();
             }

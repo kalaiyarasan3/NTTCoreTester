@@ -2,13 +2,13 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Core.Models;
 using NTTCoreTester.Enums;
-using NTTCoreTester.Models;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using ValidationResult = NTTCoreTester.Models.ValidationResult;
+using ValidationResult = NTTCoreTester.Core.Models.ValidationResult;
 
 namespace NTTCoreTester.Validators
 {

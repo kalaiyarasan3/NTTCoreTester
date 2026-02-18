@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NTTCoreTester.Models
+namespace NTTCoreTester.Core.Models
 {
     public class VariableReplaceResult
     {

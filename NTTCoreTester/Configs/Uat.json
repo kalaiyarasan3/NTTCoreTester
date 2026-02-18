@@ -20,8 +20,8 @@
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
-        "uid": "47054457",
-        "pwd": "Uat@47054457",
+        "uid": "{{uid}}",
+        "pwd": "{{pwd}}",
         "TwoFA": 1
       }
     },

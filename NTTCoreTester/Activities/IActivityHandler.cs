@@ -1,4 +1,4 @@
-﻿using NTTCoreTester.Models;
+﻿using NTTCoreTester.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

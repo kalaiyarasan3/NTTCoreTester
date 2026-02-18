@@ -1,5 +1,4 @@
 ﻿using NTTCoreTester.Configuration;
-using NTTCoreTester.Models;
 using NTTCoreTester.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,6 +7,7 @@ using System.Text;
 using NTTCoreTester.Validators;
 using NTTCoreTester.Reporting;
 using System.Text.RegularExpressions;
+using NTTCoreTester.Core.Models;
 
 namespace NTTCoreTester.Services
 {
