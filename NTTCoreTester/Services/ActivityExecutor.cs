@@ -68,6 +68,16 @@ namespace NTTCoreTester.Services
             }
         }
 
+        private ActivityResult ExtractOTP (ApiExecutionResult result, string endpoint)
+        {
+            Console.Write($"Enter Opt: ");
+            string otp=Console.ReadLine();
+            if (string.IsNullOrEmpty(otp))
+                return ActivityResult.HardFail("OTP cannot be empty");
+            _cache.Set("otp", otp);
+            return ActivityResult.Success();
+        }
+
 
         private ActivityResult ExtractSession(ApiExecutionResult result, string endpoint)
         {
