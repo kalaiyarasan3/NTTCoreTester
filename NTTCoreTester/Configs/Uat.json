@@ -4,25 +4,14 @@
   "stopOnFailure": true,
   "requests": [
     {
-      "endpoint": "SendOTP",
-      "method": "POST",
-      "headers": {},
-      "activity": "ExtractOTP",
-      "payload": {
-        "uid": "{{uid}}",
-        "pwd": "{{pwd}}"
-
-      }
-    },
-    {
       "endpoint": "Login",
       "method": "POST",
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
-        "uid": "{{uid}}",
-        "pwd": "{{pwd}}",
-        "otp": "{{otp}}",
+        "uid": "90470544",
+        "pwd": "Live@90470544",
+        "otp": "7657768",
         "TwoFA": 1
       }
     },
@@ -51,6 +40,67 @@
       }
     },
     {
+      "endpoint": "GetLastOrderStatus",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": "",
+        "status": "ORDER"
+      }
+    },
+    {
+      "endpoint": "TradeBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "Holdings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
       "endpoint": "GetSecurityInfo",
       "method": "POST",
       "headers": {
@@ -62,6 +112,20 @@
       "payload": {
         "exch": "BSE",
         "token": "532749"
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
       }
     },
     {
@@ -77,7 +141,7 @@
         "actid": "{{uid}}",
         "exch": "{{exch}}",
         "tsym": "{{tsym}}",
-        "qty": "{{qty}}",
+        "qty": "2",
         "trantype": "Buy",
         "ordno": "0",
         "prc": "{{lp}}",
@@ -112,7 +176,7 @@
         "segment": "EQ",
         "tsym": "{{tsym}}",
         "qty": 2,
-        "prc": "{{ordermargin}}",
+        "prc": "16.40",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -170,7 +234,7 @@
         "exch": "{{exch}}",
         "ordno": "{{ordno}}",
         "prctyp": "LMT",
-        "prc": "{{lp}}",
+        "prc": "8",
         "qty": 1,
         "tsym": "ALLCARGO-EQ",
         "ret": "",

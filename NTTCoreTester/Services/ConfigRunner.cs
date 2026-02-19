@@ -58,17 +58,17 @@ namespace NTTCoreTester.Services
 
             int passed = 0, failed = 0;
            
-            if (suiteConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP")))
-            {
-                Console.Write("Enter Uid: ");
-                var uid = Console.ReadLine();
-                Console.Write("Enter pwd: ");
-                var pwd = Console.ReadLine();
+            //if (suiteConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP")))
+            //{
+            //    Console.Write("Enter Uid: ");
+            //    var uid = Console.ReadLine();
+            //    Console.Write("Enter pwd: ");
+            //    var pwd = Console.ReadLine();
                 
-                _cache.Set("uid", uid);
-                _cache.Set("pwd", pwd);
+            //    _cache.Set("uid", uid);
+            //    _cache.Set("pwd", pwd);
                 
-            }
+            //}
 
            
 

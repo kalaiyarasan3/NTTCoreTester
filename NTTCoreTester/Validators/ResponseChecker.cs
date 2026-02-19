@@ -32,6 +32,7 @@ namespace NTTCoreTester.Validators
                     validation.IsSuccess = false;
                     validation.Errors.Add($"HTTP Status not 200: {result.StatusCode}");
                     validation.BusinessStatus = Constants.HTTP_FAILED;
+                    Console.WriteLine($"HTTP request failed with status code: {result.StatusCode}");
                     return validation;
                 }
 

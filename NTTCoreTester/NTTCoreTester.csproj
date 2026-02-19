@@ -16,10 +16,14 @@
     <None Remove="ExpectedResponses\GetLastOrderStatus_response.json" />
     <None Remove="ExpectedResponses\GetOrderMargin_response.json" />
     <None Remove="ExpectedResponses\GetSecurityInfo_response.json" />
+    <None Remove="ExpectedResponses\Holdings_response.json" />
+    <None Remove="ExpectedResponses\Limits_response.json" />
     <None Remove="ExpectedResponses\Login_response.json" />
     <None Remove="ExpectedResponses\Logout_response.json" />
     <None Remove="ExpectedResponses\ModifyOrder_response.json" />
+    <None Remove="ExpectedResponses\OrderBook_response.json" />
     <None Remove="ExpectedResponses\PlaceOrder_response.json" />
+    <None Remove="ExpectedResponses\PositionBook_response.json" />
     <None Remove="ExpectedResponses\SendOTP_response.json" />
   </ItemGroup>
 
@@ -60,6 +64,12 @@
     <Content Include="ExpectedResponses\GetSecurityInfo_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ExpectedResponses\Holdings_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\Limits_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ExpectedResponses\Login_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -69,10 +79,19 @@
     <Content Include="ExpectedResponses\ModifyOrder_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ExpectedResponses\OrderBook_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ExpectedResponses\PlaceOrder_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ExpectedResponses\PositionBook_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ExpectedResponses\SendOTP_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\TradeBook_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
