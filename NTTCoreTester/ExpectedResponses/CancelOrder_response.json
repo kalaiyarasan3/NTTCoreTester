@@ -1,0 +1,18 @@
+﻿{
+  "ResponceDataObject": {
+    "request_time": "12:38:27:5524 09-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
+    "status": "Ok||^(Ok|OK)$",
+    "OSId": null,
+    "TypeID": null,
+    "Info": null,
+    "ModelId": null,
+    "Message": "Sent to IG Successfully||^[A-Za-z ]+$",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {
+      "APITimeTaken": "Auth 2 | Access 0 | LMod 0 | Invo 1 | ",
+      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 4 |  Total 5"
+    }
+  }
+}

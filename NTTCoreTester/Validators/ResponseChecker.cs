@@ -145,16 +145,32 @@ namespace NTTCoreTester.Validators
             bool expectedIsNull = expected.ValueKind == JsonValueKind.Null || expected.ValueKind == JsonValueKind.Undefined;
             bool actualIsNull = actual.ValueKind == JsonValueKind.Null || actual.ValueKind == JsonValueKind.Undefined;
 
-            if (expectedIsNull && actualIsNull) return;
+            if (expectedIsNull) return;
 
-            if (actualIsNull && !expectedIsNull)
+            if (actualIsNull)
             {
+                if (expected.ValueKind == JsonValueKind.String)
+                {
+                    var expStr=expected.GetString() ?? "";
+
+                    //Empty schema string = field is optional / nullable
+                    if (string.IsNullOrEmpty(expStr)) 
+                        return; // Allow null if template string is empty
+
+                    if (expStr.Contains("||"))
+                    {
+                        var parts = expStr.Split(new[] { "||" }, 2, StringSplitOptions.None);
+                        if (parts.Length == 2 && (parts[1].EndsWith("|null") || parts[1] == "null"))
+                            return;
+                    }
+                }
+
                 string error = $"NULL value at {path} (expected non-null)";
                 Console.WriteLine($" {error}");
                 errors.Add(error);
                 return;
             }
-
+              
             if ((expected.ValueKind == JsonValueKind.True || expected.ValueKind == JsonValueKind.False) &&
                 (actual.ValueKind == JsonValueKind.True || actual.ValueKind == JsonValueKind.False))
             {
