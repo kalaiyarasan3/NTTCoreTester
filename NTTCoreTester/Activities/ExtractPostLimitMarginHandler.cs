@@ -86,6 +86,14 @@ namespace NTTCoreTester.Activities
                         $"Charges mismatch. Expected: {expectedCharges}, Actual: {postLimit.Charges}");
                 }
 
+                // UsedMargin internal consistency
+                if (Normalize(postLimit.UsedMargin) !=
+                    Normalize(postLimit.UsedMarginWithoutCharges + postLimit.Charges))
+                {
+                    return ActivityResult.SoftFail("UsedMargin internal calculation mismatch");
+                }
+
+
                 //Transferable & Withdrawable check
 
                 if (Normalize(postLimit.TransferableAmount) !=
@@ -100,13 +108,19 @@ namespace NTTCoreTester.Activities
                     return ActivityResult.SoftFail("WithdrawableAmount mismatch");
                 }
 
-                //Percentage check (Reference only)
+                //Percentage check
 
                 decimal calculatedUsedPercent =
                     Normalize((postLimit.UsedMargin / postLimit.TotalCash) * 100);
 
                 Console.WriteLine($"[INFO] UsedMarginPercentage API: {postLimit.UsedMarginPercentage}");
                 Console.WriteLine($"[INFO] UsedMarginPercentage CALC: {calculatedUsedPercent}");
+
+
+                if (Normalize(preLimit.TotalCash) != Normalize(postLimit.TotalCash))
+                {
+                    return ActivityResult.SoftFail("TotalCash changed unexpectedly");
+                }
 
                 //if mismatch report
 
