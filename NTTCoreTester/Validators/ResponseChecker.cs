@@ -110,7 +110,6 @@ namespace NTTCoreTester.Validators
                     return false;
                 }
 
-                Console.WriteLine(Directory.GetCurrentDirectory() + filePath);
 
                 string expectedJson = File.ReadAllText(filePath);
                 using var expectedDoc = JsonDocument.Parse(expectedJson);
