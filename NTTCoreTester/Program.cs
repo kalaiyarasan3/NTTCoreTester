@@ -64,6 +64,8 @@ namespace NTTCoreTester
                 services.AddTransient<IActivityHandler, GetLastOrderStatusHandler>();
                 services.AddTransient<IActivityHandler, ExtractSecurityInfoHandler>();
                 services.AddTransient<IActivityHandler, GetOrderMarginHandler>();
+                services.AddTransient<IActivityHandler, ExtractPostLimitMarginHandler>();
+                services.AddTransient<IActivityHandler, ExtractPreLimitMarginHandler>();
 
 
                 // HttpClient with proper decompression

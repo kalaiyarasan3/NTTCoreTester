@@ -114,7 +114,7 @@ namespace NTTCoreTester.Services
                     result.StatusCode,
                     validation.BusinessStatus,
                     result.ResponseBody,
-                    validation.IsSuccess,
+                    validation.IsSchemaValid,
                     string.Join("; ", validation.Errors),
                     validation.Message);
 

@@ -122,7 +122,7 @@
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractPreLimitMargin",
       "payload": {
         "actid": "{{uid}}",
         "uid": "{{uid}}"
@@ -176,7 +176,7 @@
         "segment": "EQ",
         "tsym": "{{tsym}}",
         "qty": 2,
-        "prc": "16.40",
+        "prc": "8.1",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -222,6 +222,20 @@
       "activity": "GetLastOrderStatus"
     },
     {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
       "endpoint": "ModifyOrder",
       "method": "POST",
       "headers": {
@@ -229,7 +243,7 @@
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractClientOrdId",
       "payload": {
         "exch": "{{exch}}",
         "ordno": "{{ordno}}",

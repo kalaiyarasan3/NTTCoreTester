@@ -10,6 +10,7 @@ namespace NTTCoreTester.Core.Models
     public class ValidationResult
     {
         public bool IsSuccess { get; set; }
+        public bool IsSchemaValid { get; set; }
         public string BusinessStatus { get; set; }
         public HTTPEnumStatus StatusCode { get; set; }
         public string? Message { get; set; }

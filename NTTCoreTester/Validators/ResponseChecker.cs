@@ -75,8 +75,8 @@ namespace NTTCoreTester.Validators
                     return validation;
                 }
 
-                Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
-
+                validation.IsSchemaValid = Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
+                 
                 validation.Errors.AddRange(schemaErrors);
 
                 validation.IsSuccess = true;
