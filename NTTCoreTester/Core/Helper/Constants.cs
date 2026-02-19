@@ -12,10 +12,14 @@ namespace NTTCoreTester.Core.Helper
         public const string OrderNumber = "ordno";
         public const string SUserToken = "token";
         public const string GetOrderMargin = "GetOrderMargin";
+        public const string PreLimitMargin = "PreLimitMargin";
         public const string UId = "uid";
         public const string UName = "uname";
+        // Common response keys
         public const string StatusCode = "StatusCode";
         public const string Message = "Message";
+        public const string AllMargins = "AllMargins";
+        public const string TemplateId = "TemplateId";
 
         // Report related constants
         public const string SCHEMA_FAILED = "SCHEMA_FAILED";
