@@ -1,5 +1,5 @@
 {
-  "suiteName": "Uat",
+  "suiteName": "Live_AllCargo",
   "description": "   ",
   "stopOnFailure": true,
   "requests": [
@@ -9,8 +9,8 @@
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
-        "uid": "47054457",
-        "pwd": "Uat@47054457",
+        "uid": "90470544",
+        "pwd": "Live@90470544",
         "otp": "7657768",
         "TwoFA": 1
       }
@@ -110,8 +110,8 @@
       },
       "activity": "ExtractSecurityInfo",
       "payload": {
-        "exch": "NSE",
-        "token": "1624"
+        "exch": "BSE",
+        "token": "532749"
       }
     },
     {
@@ -175,8 +175,8 @@
         "norenordno": "0",
         "segment": "EQ",
         "tsym": "{{tsym}}",
-        "qty": 15,
-        "prc": "176.16",
+        "qty": 2,
+        "prc": "8.1",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -248,8 +248,8 @@
         "exch": "{{exch}}",
         "ordno": "{{ordno}}",
         "prctyp": "LMT",
-        "prc": "{{lp}}",
-        "qty": 10,
+        "prc": "8",
+        "qty": 1,
         "tsym": "ALLCARGO-EQ",
         "ret": "",
         "mkt_protection": "0",
@@ -283,21 +283,6 @@
         "actid": "{{uid}}",
         "ext_remarks": "remarks",
         "cl_ord_id": "{{cl_ord_id}}"
-      }
-    },
-    {
-      "endpoint": "PositionSquareOff",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
-      "activity": "",
-      "payload": {
-        "actid": "{{uid}}",
-        "ClientType": "ALL",
-        "uid": "{{uid}}"
       }
     },
     {
