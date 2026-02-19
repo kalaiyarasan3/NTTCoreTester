@@ -11,6 +11,7 @@
     <None Remove="appsettings.json" />
     <None Remove="Configs\LiveMock.json" />
     <None Remove="Configs\Order_request.json" />
+    <None Remove="ExpectedResponses\CancelOrder_response.json" />
     <None Remove="ExpectedResponses\CheckLogin_response.json" />
     <None Remove="ExpectedResponses\GetClientBankInfo_response.json" />
     <None Remove="ExpectedResponses\GetLastOrderStatus_response.json" />
@@ -44,6 +45,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\AddMarketWatchName_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\CancelOrder_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\CheckLogin_response.json">
