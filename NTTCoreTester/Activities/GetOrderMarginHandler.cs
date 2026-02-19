@@ -33,16 +33,10 @@ namespace NTTCoreTester.Activities
                 if (margin == null)
                     return ActivityResult.HardFail("Failed to parse OrderMargin");
 
-                string? ordermargin=dataObject["ordermargin"]?.Value<string>();
+                string? ordermargin = dataObject["ordermargin"]?.Value<string>();
                 _cache.Set("ordermargin", ordermargin);
 
-                _cache.Set(Constants.GetOrderMargin, new OrderMarginDetails
-                {
-                    Charges = margin.Charges,
-                    OrderMargin = margin.OrderMargin,
-                    MarginUsedPrev = margin.MarginUsedPrev,
-                    AvailableMargin = margin.AvailableMargin
-                });
+                _cache.Set(Constants.GetOrderMargin, margin);
 
                 return ActivityResult.Success();
             }
