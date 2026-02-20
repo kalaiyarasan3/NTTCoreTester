@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NTTCoreTester.Activities;
 using NTTCoreTester.Core;
+using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Reporting;
 using NTTCoreTester.Services;
 using NTTCoreTester.UI;
@@ -24,6 +25,7 @@ namespace NTTCoreTester
             services.AddSingleton<ResponseChecker>();
             services.AddSingleton<ConfigRunner>();
             services.AddSingleton<ActivityExecutor>();
+            services.AddSingleton<CsvService>();
 
             services.AddTransient<IActivityHandler, ExtractSessionHandler>();
             services.AddTransient<IActivityHandler, ExtractOTPHandler>();
