@@ -26,12 +26,12 @@ namespace NTTCoreTester.Activities
                 var dataObject = result.DataObject;
 
                 if (dataObject == null)
-                    return ActivityResult.HardFail("GetOrderMargin DataObject is null");
+                    return "GetOrderMargin DataObject is null".FailWithLog();
 
                 var margin = dataObject.ToObject<OrderMarginDetails>();
 
                 if (margin == null)
-                    return ActivityResult.HardFail("Failed to parse OrderMargin");
+                    return "Failed to parse OrderMargin".FailWithLog();
 
                 string? ordermargin = dataObject["ordermargin"]?.Value<string>();
                 _cache.Set("ordermargin", ordermargin);
@@ -42,8 +42,7 @@ namespace NTTCoreTester.Activities
             }
             catch (Exception ex)
             {
-                return ActivityResult.HardFail(
-                    $"Error in GetOrderMarginHandler: {ex.Message}");
+                return $"Error in GetOrderMarginHandler: {ex.Message}".FailWithLog();
             }
         }
     }

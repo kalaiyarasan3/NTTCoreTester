@@ -25,7 +25,7 @@ namespace NTTCoreTester.Activities
             var otp = Console.ReadLine();
 
             if (string.IsNullOrWhiteSpace(otp))
-                return ActivityResult.HardFail("OTP cannot be empty");
+                return  "OTP cannot be empty".FailWithLog();
 
             _cache.Set("otp", otp);
 

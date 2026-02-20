@@ -1,5 +1,6 @@
-﻿using NTTCoreTester.Services;
-using NTTCoreTester.Core;
+﻿using NTTCoreTester.Core;
+using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Services;
 
 namespace NTTCoreTester.UI
 {
@@ -19,11 +20,11 @@ namespace NTTCoreTester.UI
             while (true)
             {
                 ShowMenu();
-                string choice = Console.ReadLine()?.Trim();
+                string? choice = Console.ReadLine()?.Trim();
 
                 if (choice == "0")
                 {
-                    Console.WriteLine("\n Exiting... CSV will be saved automatically.");
+                    "\nExiting... CSV will be saved automatically.".Info();
                     return;
                 }
 
@@ -36,55 +37,62 @@ namespace NTTCoreTester.UI
                 }
                 else
                 {
-                    Console.WriteLine("\n Invalid option!");
+                    "\nInvalid option!".Error();
                 }
 
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
+                "\nPress any key to continue...".Info();
+                Console.ReadKey(true);
                 Console.Clear();
             }
         }
 
         private void ShowMenu()
         {
-            Console.WriteLine("NTT Core Tester");
+            "NTT Core Tester".Success();  
 
             // Show session status using cache
             string? token = _cache.Get<string>("token");
+
             if (!string.IsNullOrEmpty(token))
             {
                 string? userName = _cache.Get<string>("userName");
                 string? userId = _cache.Get<string>("uid");
 
-                Console.WriteLine($"\n LOGGED IN");
-                Console.WriteLine($"   User: {userName} ({userId})");
+                "\nLOGGED IN".Success();
+                $"User: {userName} ({userId})".Info();
             }
             else
             {
-                Console.WriteLine("\n NO ACTIVE SESSION");
+                "\nNO ACTIVE SESSION".Warn();
             }
 
-            Console.WriteLine($"\n{new string('─', 64)}");
-            Console.WriteLine("AVAILABLE TEST SUITES:");
-            Console.WriteLine(new string('─', 64));
+            Console.WriteLine(); // empty line for readability
+
+            $"{new string('─', 64)}".Info();
+
+            "AVAILABLE TEST SUITES:".Info();
+            $"{new string('─', 64)}".Info();
 
             var suites = _configRunner.GetAvailableSuites();
 
             if (suites.Count == 0)
             {
-                Console.WriteLine("No config files found in Configs/ folder");
+                "No config files found in Configs/ folder".Warn();
             }
             else
             {
                 for (int i = 0; i < suites.Count; i++)
                 {
-                    Console.WriteLine($"  {i + 1}. {suites[i]}");
+                    $" {i + 1}. {suites[i]}".Info();
                 }
             }
 
-            Console.WriteLine($"\n  0. Exit (Auto-save CSV Report)");
-            Console.WriteLine(new string('─', 64));
-            Console.Write("\nChoose option: ");
+            Console.WriteLine();
+
+            " 0. Exit (Auto-save CSV Report)".Info();
+            $"{new string('─', 64)}".Info();
+
+            "\nChoose option: ".Info();   // note: no newline at the end → user types right after
         }
     }
 }

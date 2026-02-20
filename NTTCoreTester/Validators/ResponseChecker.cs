@@ -50,6 +50,7 @@ namespace NTTCoreTester.Validators
 
             validation.IsSuccess = false;
             validation.BusinessStatus = Constants.HTTP_FAILED;
+            $"HTTP Status not 200: {result.StatusCode}".Error();
             validation.Errors.Add($"HTTP Status not 200: {result.StatusCode}");
             return false;
         }
@@ -94,6 +95,7 @@ namespace NTTCoreTester.Validators
 
             validation.IsSuccess = false;
             validation.Errors.Add($"Business StatusCode: {businessCode}");
+            $"Business StatusCode: {businessCode}, Meassage: {message}".Error();
             return false;
         }
 
@@ -119,9 +121,10 @@ namespace NTTCoreTester.Validators
                 ValidateElement(expectedDoc.RootElement, actualDoc.RootElement, endpoint, validationErrors);
 
                 bool passed = validationErrors.Count == 0;
-                Console.WriteLine(passed
-                    ? $"{endpoint} — VALIDATION OK"
-                    : $"{endpoint} — VALIDATION FAILED ({validationErrors.Count} error(s))");
+
+                if (passed) $"{endpoint} — VALIDATION OK".Debug();
+                else $"{endpoint} — VALIDATION FAILED ({validationErrors.Count} error(s))".Error();
+
 
                 return passed;
             }

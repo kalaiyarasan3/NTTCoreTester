@@ -19,16 +19,15 @@ namespace NTTCoreTester.Activities
                 var margin = GetPrimaryLimitMargin(result);
 
                 if (margin == null)
-                    return ActivityResult.HardFail("Failed to parse LimitMarginDetails");
-                 
-                _cache.Set(Constants.PreLimitMargin, margin);                 
+                    return "Failed to parse LimitMarginDetails".FailWithLog();
+
+                _cache.Set(Constants.PreLimitMargin, margin);
 
                 return ActivityResult.Success();
             }
             catch (Exception ex)
             {
-                return ActivityResult.HardFail(
-                    $"Error in ExtractPreLimitMarginHandler: {ex.Message}");
+                return $"Error in ExtractPreLimitMarginHandler: {ex.Message}".FailWithLog();
             }
         }
 

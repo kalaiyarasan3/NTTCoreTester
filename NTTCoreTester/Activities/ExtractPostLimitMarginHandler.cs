@@ -19,16 +19,16 @@ namespace NTTCoreTester.Activities
                 var postLimit = GetPrimaryLimitMargin(result);
 
                 if (postLimit == null)
-                    return ActivityResult.HardFail("Post Limit margin not found");
+                    return "Post Limit margin not found".FailWithLog();
 
                 var preLimit = _cache.Get<LimitMarginDetails>(Constants.PreLimitMargin);
                 var orderMargin = _cache.Get<OrderMarginDetails>(Constants.GetOrderMargin);
 
                 if (preLimit == null)
-                    return ActivityResult.HardFail("PreLimitMargin missing");
+                    return "PreLimitMargin missing".FailWithLog();
 
                 if (orderMargin == null)
-                    return ActivityResult.HardFail("OrderMargin missing");
+                    return "OrderMargin missing".FailWithLog();
 
                 decimal Normalize(decimal value) =>
                     Math.Round(value, 2, MidpointRounding.AwayFromZero);
@@ -45,8 +45,7 @@ namespace NTTCoreTester.Activities
 
                 if (actualRemainingReduction != expectedTotalDeduction)
                 {
-                    return ActivityResult.SoftFail(
-                        $"RemainingMargin mismatch. Expected: {expectedTotalDeduction}, Actual: {actualRemainingReduction}");
+                    return $"RemainingMargin mismatch. Expected: {expectedTotalDeduction}, Actual: {actualRemainingReduction}".FailWithLog(false);
                 }
 
                 //UsedMargin check
@@ -56,8 +55,8 @@ namespace NTTCoreTester.Activities
 
                 if (actualUsedIncrease != expectedTotalDeduction)
                 {
-                    return ActivityResult.SoftFail(
-                        $"UsedMargin mismatch. Expected: {expectedTotalDeduction}, Actual: {actualUsedIncrease}");
+                    return 
+                        $"UsedMargin mismatch. Expected: {expectedTotalDeduction}, Actual: {actualUsedIncrease}".FailWithLog(false);
                 }
 
                 //UsedMarginWithoutCharges check
@@ -71,8 +70,8 @@ namespace NTTCoreTester.Activities
 
                 if (actualWithoutChargesIncrease != expectedWithoutCharges)
                 {
-                    return ActivityResult.SoftFail(
-                        $"UsedMarginWithoutCharges mismatch. Expected: {expectedWithoutCharges}, Actual: {actualWithoutChargesIncrease}");
+                    return  
+                        $"UsedMarginWithoutCharges mismatch. Expected: {expectedWithoutCharges}, Actual: {actualWithoutChargesIncrease}".FailWithLog(false);
                 }
 
                 //Charges cumulative check
@@ -82,15 +81,15 @@ namespace NTTCoreTester.Activities
 
                 if (Normalize(postLimit.Charges) != expectedCharges)
                 {
-                    return ActivityResult.SoftFail(
-                        $"Charges mismatch. Expected: {expectedCharges}, Actual: {postLimit.Charges}");
+                    return  
+                        $"Charges mismatch. Expected: {expectedCharges}, Actual: {postLimit.Charges}".FailWithLog(false);
                 }
 
                 // UsedMargin internal consistency
                 if (Normalize(postLimit.UsedMargin) !=
                     Normalize(postLimit.UsedMarginWithoutCharges + postLimit.Charges))
                 {
-                    return ActivityResult.SoftFail("UsedMargin internal calculation mismatch");
+                    return "UsedMargin internal calculation mismatch".FailWithLog(false);
                 }
 
 
@@ -99,13 +98,13 @@ namespace NTTCoreTester.Activities
                 if (Normalize(postLimit.TransferableAmount) !=
                     Normalize(postLimit.RemainingMargin))
                 {
-                    return ActivityResult.SoftFail("TransferableAmount mismatch");
+                    return  "TransferableAmount mismatch".FailWithLog(false);
                 }
 
                 if (Normalize(postLimit.WithdrawableAmount) !=
                     Normalize(postLimit.RemainingMargin))
                 {
-                    return ActivityResult.SoftFail("WithdrawableAmount mismatch");
+                    return "WithdrawableAmount mismatch".FailWithLog(false);
                 }
 
                 //Percentage check
@@ -119,7 +118,7 @@ namespace NTTCoreTester.Activities
 
                 if (Normalize(preLimit.TotalCash) != Normalize(postLimit.TotalCash))
                 {
-                    return ActivityResult.SoftFail("TotalCash changed unexpectedly");
+                    return "TotalCash changed unexpectedly".FailWithLog(false);
                 }
 
                 //if mismatch report
@@ -130,8 +129,7 @@ namespace NTTCoreTester.Activities
             }
             catch (Exception ex)
             {
-                return ActivityResult.HardFail(
-                    $"Error in ExtractPostLimitMarginHandler: {ex.Message}");
+                return $"Error in ExtractPostLimitMarginHandler: {ex.Message}".FailWithLog();
             }
         }
 

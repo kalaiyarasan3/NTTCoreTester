@@ -33,18 +33,18 @@ public static class ConsoleColorExtensions
     }
 
     public static void Success(this string message)
-    => ConsoleColor.Green.WriteLine($"[SUCCESS] {message}");
+    => ConsoleColor.Green.WriteLine(message);
 
     public static void Info(this string message)
-        => ConsoleColor.Cyan.WriteLine($"[INFO]    {message}");
+        => ConsoleColor.Cyan.WriteLine(message);
 
     public static void Warn(this string message)
-        => ConsoleColor.Yellow.WriteLine($"[WARN]    {message}");
+        => ConsoleColor.Yellow.WriteLine(message);
 
     public static void Error(this string message)
-        => ConsoleColor.Red.WriteLine($"[ERROR]   {message}");
+        => ConsoleColor.Red.WriteLine(message);
 
     public static void Debug(this string message)
-        => ConsoleColor.DarkGray.WriteLine($"[DEBUG]   {message}");
-     
+        => ConsoleColor.DarkGray.WriteLine(message);
+
 }

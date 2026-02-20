@@ -27,12 +27,12 @@ namespace NTTCoreTester.Activities
             var dataObject = result.DataObject;
 
             if (dataObject == null)
-                return ActivityResult.HardFail("ResponseDataObject not found");
+                return "ResponseDataObject not found".FailWithLog();
 
             var ordersToken = dataObject["AllOrders"];
 
             if (ordersToken == null || ordersToken.Type != JTokenType.Array)
-                return ActivityResult.HardFail("AllOrders not found");
+                return "AllOrders not found".FailWithLog();
 
             var orders = ordersToken.ToObject<List<OrderDetails>>();
 
@@ -41,12 +41,11 @@ namespace NTTCoreTester.Activities
             var order = orders?.FirstOrDefault(x => x.ClientOrderId == key);
 
             if (order == null)
-                return ActivityResult.HardFail("Order not found");
+                return "Order not found".FailWithLog();
 
             if (order.Status != "1111")
             {
-                Console.WriteLine(order.Remarks);
-                return ActivityResult.HardFail(order.Remarks ?? "Order rejected");
+                return $"status: {order.Status}, Remarks: {order.Remarks}".FailWithLog();
             }
 
             _cache.Set(Constants.OrderNumber, order.OrderNumber);

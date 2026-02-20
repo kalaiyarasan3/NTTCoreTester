@@ -26,7 +26,7 @@ namespace NTTCoreTester.Activities
             var dataObject = result.DataObject;
 
             if (dataObject == null)
-                return ActivityResult.HardFail("DataObject is null");
+                return "DataObject is null".FailWithLog();
 
             string? exch = dataObject["exch"]?.ToString();
             string? tsym = dataObject["tsym"]?.ToString();

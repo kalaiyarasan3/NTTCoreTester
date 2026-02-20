@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NTTCoreTester.Core;
+using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Services
@@ -35,7 +36,7 @@ namespace NTTCoreTester.Services
 
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"\n Config file not found: {filePath}");
+                $"\n Config file not found: {filePath}".Error();
                 return;
             }
 
@@ -45,24 +46,24 @@ namespace NTTCoreTester.Services
 
             if (suiteConfig == null || suiteConfig.Requests == null || suiteConfig.Requests.Count == 0)
             {
-                Console.WriteLine($"\n Invalid config or no requests found");
+                $"\n Invalid config or no requests found".Error();
                 return;
             }
 
-            Console.WriteLine($"\n{new string('═', 80)}");
-            Console.WriteLine($"  TEST SUITE: {suiteConfig.SuiteName}");
-            Console.WriteLine($"  Description: {suiteConfig.Description}");
-            Console.WriteLine($"  Total Requests: {suiteConfig.Requests.Count}");
-            Console.WriteLine($"  Stop on Failure: {suiteConfig.StopOnFailure}");
-            Console.WriteLine($"{new string('═', 80)}\n");
+            $"\n{new string('═', 80)}".Success();
+            $"  TEST SUITE: {suiteConfig.SuiteName}".Info();
+            $"  Description: {suiteConfig.Description}".Info();
+            $"  Total Requests: {suiteConfig.Requests.Count}".Info();
+            $"  Stop on Failure: {suiteConfig.StopOnFailure}".Info();
+            $"{new string('═', 80)}\n".Success();
 
             int passed = 0, failed = 0;
            
-            //if (suiteConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP")))
+            //if (suiteConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP".Info()))
             //{
-            //    Console.Write("Enter Uid: ");
+            //    Console.Write("Enter Uid: ".Info();
             //    var uid = Console.ReadLine();
-            //    Console.Write("Enter pwd: ");
+            //    Console.Write("Enter pwd: ".Info();
             //    var pwd = Console.ReadLine();
                 
             //    _cache.Set("uid", uid);
@@ -76,23 +77,23 @@ namespace NTTCoreTester.Services
             {
                 var request = suiteConfig.Requests[i];
                 
-                Console.WriteLine($"\n[{i + 1}/{suiteConfig.Requests.Count}] {request.Endpoint}");
+                $"\n[{i + 1}/{suiteConfig.Requests.Count}] {request.Endpoint}".Info();
 
                 bool success = await _apiService.ExecuteRequestFromConfig(request);
-
+                    
                 if (success)
                 {
                     passed++;
-                    Console.WriteLine($" {request.Endpoint} PASSED\n");
+                    $" {request.Endpoint} PASSED\n".Debug();
                 }
                 else
                 {
                     failed++;
-                    Console.WriteLine($" {request.Endpoint} FAILED\n");
+                    $" {request.Endpoint} FAILED\n".Error();
 
                     if (suiteConfig.StopOnFailure)
                     {
-                        Console.WriteLine($" Stopping suite execution due to failure (stopOnFailure=true)");
+                        $" Stopping suite execution due to failure (stopOnFailure=true)".Error();
                         break;
                     }
                 }
@@ -105,12 +106,12 @@ namespace NTTCoreTester.Services
             }
 
             // Summary
-            Console.WriteLine($"\n{new string('═', 80)}");
-            Console.WriteLine($"  SUITE COMPLETE: {suiteConfig.SuiteName}");
-            Console.WriteLine($"   Passed: {passed}");
-            Console.WriteLine($"   Failed: {failed}");
+            $"\n{new string('═', 80)}".Success();
+            $"  SUITE COMPLETE: {suiteConfig.SuiteName}".Info();
+            $"   Passed: {passed}".Info();
+            $"   Failed: {failed}".Info();
             _cache.Clear();
-            Console.WriteLine($"{new string('═', 80)}\n");
+            $"{new string('═', 80)}\n".Success();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTTCoreTester.Core.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace NTTCoreTester.Core.Models
 
         public static ActivityResult HardFail(string message) =>
             new ActivityResult { IsSuccess = false, ContinueExecution = false, Message = message };
+        
 
     }
     public static class ActivityResultExtesnion
@@ -32,15 +34,14 @@ namespace NTTCoreTester.Core.Models
                 Message = message
             };
         }
-        public static ActivityResult Success(string message = "") =>new()
-    { IsSuccess = true, ContinueExecution = true, Message = message };
-
-        public static ActivityResult SoftFail(string message) =>
-            new ActivityResult { IsSuccess = false, ContinueExecution = true, Message = message };
-
-        public static ActivityResult HardFail(string message) =>
-            new ActivityResult { IsSuccess = false, ContinueExecution = false, Message = message };
-
+        public static ActivityResult FailWithLog(this string message, bool hardFail = true)
+        {
+            message.Error();
+            return hardFail
+                ? ActivityResult.HardFail(message)
+                : ActivityResult.SoftFail(message);
+        }
+       
     }
 
 }

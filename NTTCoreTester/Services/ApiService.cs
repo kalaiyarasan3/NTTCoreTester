@@ -1,13 +1,14 @@
-﻿using NTTCoreTester.Configuration;
-using NTTCoreTester.Core;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NTTCoreTester.Configuration;
+using NTTCoreTester.Core;
+using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Core.Models;
+using NTTCoreTester.Reporting;
+using NTTCoreTester.Validators;
 using System.Diagnostics;
 using System.Text;
-using NTTCoreTester.Validators;
-using NTTCoreTester.Reporting;
 using System.Text.RegularExpressions;
-using NTTCoreTester.Core.Models;
 
 namespace NTTCoreTester.Services
 {
@@ -40,19 +41,19 @@ namespace NTTCoreTester.Services
 
         public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest)
         {
-            Console.WriteLine($"\n{new string('=', 80)}");
-            Console.WriteLine($"Executing: {configRequest.Endpoint}");
-            Console.WriteLine($"{new string('=', 80)}");
+            $"\n{new string('=', 80)}".Debug();
+            $"Executing Api: {configRequest.Endpoint}".Debug();
+            $"{new string('=', 80)}".Debug();
 
 
             string requestJson = JsonConvert.SerializeObject(configRequest.Payload);
-            Console.WriteLine($" Payload loaded from config");
+            $" Payload loaded from config".Debug();
 
             var variableResult = _cache.ReplaceVariables(requestJson);
 
             if (!variableResult.IsSuccess)
             {
-                Console.WriteLine($" Failed to resolve placeholders: {variableResult.Error}");
+                $" Failed to resolve placeholders: {variableResult.Error}".Error(); 
                 return false;
             }
 
@@ -68,14 +69,14 @@ namespace NTTCoreTester.Services
                     var headerVariable = _cache.ReplaceVariables(header.Value);
                     if (!headerVariable.IsSuccess)
                     {
-                        Console.WriteLine($" Failed to resolve placeholder in header: {header.Key}");
+                       $" Failed to resolve placeholder in header: {header.Key}".Error();
                         return false;
                     }
                     resolvedHeaders[header.Key] = headerVariable.Text;
                 }
             }
 
-            Console.WriteLine($" Placeholders resolved");
+            $" Placeholders resolved".Debug();
 
             return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity);
         }
@@ -96,7 +97,7 @@ namespace NTTCoreTester.Services
 
                 if (validation.IsSuccess && !string.IsNullOrEmpty(activity))
                 {
-                    Console.WriteLine($"\n Executing activity: {activity}");
+                   $"\n Executing activity: {activity}".Debug();
                     activityResult = _activityExecutor.Execute(
                         activity,
                         result,
@@ -131,7 +132,7 @@ namespace NTTCoreTester.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($" ERROR: {ex.Message}");
+                $" ERROR in Api service: {ex.Message}".Error();
                 return false;
             }
         }
@@ -176,7 +177,7 @@ namespace NTTCoreTester.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                ex.ToString().Error();
                 throw;
             }
 

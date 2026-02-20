@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NTTCoreTester.Activities;
 using NTTCoreTester.Configuration;
-using NTTCoreTester.Core;
+using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Reporting;
-using NTTCoreTester.Services;
 using NTTCoreTester.UI;
-using NTTCoreTester.Validators;
-using System.Net;
 
 namespace NTTCoreTester
 {
@@ -17,7 +13,6 @@ namespace NTTCoreTester
         {
             try
             {
-                // Load config
                 var config = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -37,62 +32,30 @@ namespace NTTCoreTester
 
                 if (apiCfg == null)
                 {
-                    Console.WriteLine("ERROR: ApiConfiguration is null!");
-                    Console.WriteLine("Press any key to exit...");
+                    "ERROR: ApiConfiguration is null!".Info();
+                    "Press any key to exit...".Info();
                     Console.ReadKey();
                     return;
                 }
-
-                // Setup DI
+                 
                 var services = new ServiceCollection();
 
                 // Register configurations
                 services.AddSingleton(apiCfg);
                 services.AddSingleton(reportCfg);
-
-                // Register core services
-                services.AddSingleton<PlaceholderCache, PlaceholderCache>();
-                services.AddSingleton<CsvReport>();
-                services.AddSingleton<ResponseChecker>();
-                services.AddSingleton<ConfigRunner>();
-                services.AddSingleton<ActivityExecutor>();
-               // services.AddSingleton<PlaceholderResolver>();
-
-                services.AddTransient<IActivityHandler, ExtractSessionHandler>();
-                services.AddTransient<IActivityHandler, ExtractOTPHandler>();
-                services.AddTransient<IActivityHandler, ExtractClientOrdIdHandler>();
-                services.AddTransient<IActivityHandler, GetLastOrderStatusHandler>();
-                services.AddTransient<IActivityHandler, ExtractSecurityInfoHandler>();
-                services.AddTransient<IActivityHandler, GetOrderMarginHandler>();
-                services.AddTransient<IActivityHandler, ExtractPostLimitMarginHandler>();
-                services.AddTransient<IActivityHandler, ExtractPreLimitMarginHandler>();
-
-
-                // HttpClient with proper decompression
-                services.AddHttpClient<IApiService, ApiService>()
-                    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-                    {
-                        AutomaticDecompression = DecompressionMethods.GZip
-                                               | DecompressionMethods.Deflate
-                                               | DecompressionMethods.Brotli,
-                        UseCookies = false
-                    });
-
-                // Register UI
-                services.AddSingleton<Menu>();
+                services.RegisterServices();
 
                 var provider = services.BuildServiceProvider();
-
-                // Display startup info
+                 
                 Console.Clear();
-                Console.WriteLine(" NTT Core Tester - File-Driven Testing");
-                Console.WriteLine();
-                Console.WriteLine($"Server: {apiCfg.BaseUrl}");
-                Console.WriteLine($"Performance Threshold: 100ms");
-                Console.WriteLine($"Report Folder: {reportCfg.OutputFolder}");
-                Console.WriteLine($"Request Files: Requests/");
-                Console.WriteLine();
-                Console.WriteLine("Press any key to start testing...");
+                " NTT Core Tester - File-Driven Testing".Info();
+                 
+                $"Server: {apiCfg.BaseUrl}".Info();
+                $"Performance Threshold: 100ms".Info();
+                $"Report Folder: {reportCfg.OutputFolder}".Info();
+                $"Request Files: Requests\n".Info();
+                 
+                "Press any key to start testing...".Info();
                 Console.ReadKey();
                 Console.Clear();
 
@@ -101,26 +64,21 @@ namespace NTTCoreTester
                 await menu.Start();
 
                 // Save CSV report at the end
-                Console.WriteLine("\n" + new string('=', 80));
-                Console.WriteLine("Saving CSV Report...");
-                Console.WriteLine(new string('=', 80));
+                $"{ new string('=', 80)}".Info();
+                "Saving CSV Report...".Info();
+                $"{new string('=', 80)}".Info();
 
                 var csvReport = provider.GetRequiredService<CsvReport>();
                 await csvReport.Save();
 
-                Console.WriteLine("\nTesting completed successfully!");
-                Console.WriteLine("Press any key to exit...");
+                "\nTesting completed successfully!".Info();
+                "Press any key to exit...".Info();
                 Console.ReadKey();
             }
             catch (Exception ex)
-            {
-                Console.WriteLine("\n" + new string('═', 80));
-                Console.WriteLine("FATAL ERROR");
-                Console.WriteLine(new string('═', 80));
-                Console.WriteLine($"\nError: {ex.Message}");
-                Console.WriteLine($"\nStack Trace:\n{ex.StackTrace}");
-                Console.WriteLine("\n" + new string('═', 80));
-                Console.WriteLine("Press any key to exit...");
+            {                
+                $"\nError: {ex.Message}".Error();
+                $"\nStack Trace:\n{ex.StackTrace}".Error();                
                 Console.ReadKey();
             }
         }

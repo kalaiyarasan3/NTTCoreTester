@@ -26,13 +26,13 @@ namespace NTTCoreTester.Activities
             var dataObject = result.DataObject;
 
             if (dataObject == null)
-                return ActivityResult.HardFail("DataObject is null");
+                return "DataObject is null".FailWithLog();
 
             string? token = dataObject["susertoken"]?.Value<string>();
             string? userId = dataObject["uid"]?.Value<string>();
 
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
-                return ActivityResult.HardFail("Invalid login response");
+                return "Invalid login response".FailWithLog();
 
             _cache.Set(Constants.SUserToken, token);
             _cache.Set(Constants.UId, userId);
