@@ -1,11 +1,7 @@
-﻿using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
 using NTTCoreTester.Enums;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using ValidationResult = NTTCoreTester.Core.Models.ValidationResult;
@@ -18,82 +14,90 @@ namespace NTTCoreTester.Validators
 
         public ResponseChecker()
         {
-            if (!Directory.Exists(_expectedFolder))
-                Directory.CreateDirectory(_expectedFolder);
         }
+
+
         public ValidationResult Validate(ApiExecutionResult result)
         {
             var validation = new ValidationResult();
+
             try
             {
-
-                if (result.StatusCode != 200)
-                {
-                    validation.IsSuccess = false;
-                    validation.Errors.Add($"HTTP Status not 200: {result.StatusCode}");
-                    validation.BusinessStatus = Constants.HTTP_FAILED;
-                    Console.WriteLine($"HTTP request failed with status code: {result.StatusCode}");
-                    return validation;
-                }
-
-                if (!result.ResponseBody.TrimStart().StartsWith("{"))
-                {
-                    validation.IsSuccess = false;
-                    validation.BusinessStatus = Constants.NOT_JSON;
-                    validation.Errors.Add("Response is not JSON");
-                    return validation;
-                }
-
-                int businessCode = -1;
-                JObject json;
-
-                try
-                {
-                    json = JObject.Parse(result.ResponseBody);
-                }
-                catch (JsonReaderException)
-                {
-                    validation.IsSuccess = false;
-                    validation.BusinessStatus = Constants.INVALID_JSON;
-                    validation.Errors.Add("Response is not valid JSON");
-                    return validation;
-                }
-                result.Json = json;
-
-                businessCode = json[Constants.StatusCode]?.Value<int>() ?? -1;
-                var message = json[Constants.Message]?.Value<string>() ?? "";
-                validation.Message = message;
-
-                var status = businessCode.ToBusinessStatus();
-                validation.BusinessStatus = status.GetDisplayName();
-
-                if (status != HTTPEnumStatus.Success)
-                {
-                    validation.IsSuccess = false;
-                    validation.Errors.Add($"Business StatusCode: {businessCode}");
-                    Console.WriteLine($"Business status: {status} : {message}");
-                    return validation;
-                }
+                if (!IsHttpSuccess(result, validation)) return validation;
+                if (!IsJsonResponse(result, validation)) return validation;
+                if (!TryParseJson(result, validation)) return validation;
+                if (!IsBusinessSuccess(result, validation)) return validation;
 
                 validation.IsSchemaValid = Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
-                 
                 validation.Errors.AddRange(schemaErrors);
-
                 validation.IsSuccess = true;
-
-                return validation;
             }
-
             catch (Exception ex)
             {
                 validation.IsSuccess = false;
-                validation.Errors.Add($"Unhandled exception: {ex.Message}");
                 validation.BusinessStatus = "EXCEPTION";
-                Console.WriteLine($"Unhandled exception: {ex.Message}");
-                return validation;
+                validation.Errors.Add($"Unhandled exception: {ex.Message}");
+            }
+
+            return validation;
+        }
+
+        // ─── Validate() Helpers
+
+        private bool IsHttpSuccess(ApiExecutionResult result, ValidationResult validation)
+        {
+            if (result.StatusCode == 200) return true;
+
+            validation.IsSuccess = false;
+            validation.BusinessStatus = Constants.HTTP_FAILED;
+            validation.Errors.Add($"HTTP Status not 200: {result.StatusCode}");
+            return false;
+        }
+
+        private bool IsJsonResponse(ApiExecutionResult result, ValidationResult validation)
+        {
+            if (result.ResponseBody.TrimStart().StartsWith("{")) return true;
+
+            validation.IsSuccess = false;
+            validation.BusinessStatus = Constants.NOT_JSON;
+            validation.Errors.Add("Response is not JSON");
+            return false;
+        }
+
+        private bool TryParseJson(ApiExecutionResult result, ValidationResult validation)
+        {
+            try
+            {
+                result.Json = JObject.Parse(result.ResponseBody);
+                return true;
+            }
+            catch
+            {
+                validation.IsSuccess = false;
+                validation.BusinessStatus = Constants.INVALID_JSON;
+                validation.Errors.Add("Response is not valid JSON");
+                return false;
             }
         }
 
+        private bool IsBusinessSuccess(ApiExecutionResult result, ValidationResult validation)
+        {
+            var json = result.Json;
+            int businessCode = json[Constants.StatusCode]?.Value<int>() ?? -1;
+            string message = json[Constants.Message]?.Value<string>() ?? "";
+
+            var status = businessCode.ToBusinessStatus();
+            validation.Message = message;
+            validation.BusinessStatus = status.GetDisplayName();
+
+            if (status == HTTPEnumStatus.Success) return true;
+
+            validation.IsSuccess = false;
+            validation.Errors.Add($"Business StatusCode: {businessCode}");
+            return false;
+        }
+
+        // ─── Schema Check ────────────────────────────────────────────────────────
 
         public bool Check(string endpoint, string responseJson, out List<string> validationErrors)
         {
@@ -102,265 +106,204 @@ namespace NTTCoreTester.Validators
             try
             {
                 string filePath = Path.Combine(_expectedFolder, $"{endpoint}_response.json");
+
                 if (!File.Exists(filePath))
                 {
-                    string error = $"NO FILE: {filePath}";
-                    Console.WriteLine($" {error}");
-                    validationErrors.Add(error);
+                    validationErrors.Add($"NO FILE: {filePath}");
                     return false;
                 }
 
-
-                string expectedJson = File.ReadAllText(filePath);
-                using var expectedDoc = JsonDocument.Parse(expectedJson);
+                using var expectedDoc = JsonDocument.Parse(File.ReadAllText(filePath));
                 using var actualDoc = JsonDocument.Parse(responseJson);
 
                 ValidateElement(expectedDoc.RootElement, actualDoc.RootElement, endpoint, validationErrors);
 
-                bool hasErrors = validationErrors.Count > 0;
+                bool passed = validationErrors.Count == 0;
+                Console.WriteLine(passed
+                    ? $"{endpoint} — VALIDATION OK"
+                    : $"{endpoint} — VALIDATION FAILED ({validationErrors.Count} error(s))");
 
-                if (!hasErrors)
-                {
-                    Console.WriteLine($" {endpoint} STRUCTURE & PATTERN VALIDATION OK ");
-                }
-                else
-                {
-                    Console.WriteLine($" {endpoint} VALIDATION FAILED ({validationErrors.Count} error(s))");
-                }
-
-                return !hasErrors;
+                return passed;
             }
             catch (Exception ex)
             {
-                string error = $"ERROR: {ex.Message}";
-                Console.WriteLine($" {endpoint} {error}");
-                validationErrors.Add(error);
+                validationErrors.Add($"ERROR: {ex.Message}");
                 return false;
             }
         }
 
+        // ─── Core Recursive Validator ─────────────────────────────────────────────
+
         private static void ValidateElement(JsonElement expected, JsonElement actual, string path, List<string> errors)
         {
-            bool expectedIsNull = expected.ValueKind == JsonValueKind.Null || expected.ValueKind == JsonValueKind.Undefined;
-            bool actualIsNull = actual.ValueKind == JsonValueKind.Null || actual.ValueKind == JsonValueKind.Undefined;
+            // nothing to validate
+            if (IsNullOrUndefined(expected)) return;
 
-            if (expectedIsNull) return;
-
-            if (actualIsNull)
+            // Actual is null — check if template allows it
+            if (IsNullOrUndefined(actual))
             {
-                if (expected.ValueKind == JsonValueKind.String)
-                {
-                    var expStr=expected.GetString() ?? "";
-
-                    //Empty schema string = field is optional / nullable
-                    if (string.IsNullOrEmpty(expStr)) 
-                        return; // Allow null if template string is empty
-
-                    if (expStr.Contains("||"))
-                    {
-                        var parts = expStr.Split(new[] { "||" }, 2, StringSplitOptions.None);
-                        if (parts.Length == 2 && (parts[1].EndsWith("|null") || parts[1] == "null"))
-                            return;
-                    }
-                }
-
-                string error = $"NULL value at {path} (expected non-null)";
-                Console.WriteLine($" {error}");
-                errors.Add(error);
-                return;
-            }
-              
-            if ((expected.ValueKind == JsonValueKind.True || expected.ValueKind == JsonValueKind.False) &&
-                (actual.ValueKind == JsonValueKind.True || actual.ValueKind == JsonValueKind.False))
-            {
+                if (!IsNullAllowedByTemplate(expected))
+                    errors.Add($"NULL value at {path} (expected non-null)");
                 return;
             }
 
+            // Both booleans — just presence check
+            if (IsBooleanKind(expected) && IsBooleanKind(actual)) return;
+
+            // Type must match
             if (expected.ValueKind != actual.ValueKind)
             {
-                string error = $"Type mismatch at {path}. Expected {expected.ValueKind}, got {actual.ValueKind}";
-                Console.WriteLine($" {error}");
-                errors.Add(error);
+                errors.Add($"Type mismatch at {path}. Expected {expected.ValueKind}, got {actual.ValueKind}");
                 return;
             }
 
-            // String validation and  pattern checking
-            if (expected.ValueKind == JsonValueKind.String)
+            switch (expected.ValueKind)
             {
-                var expectedValue = expected.GetString() ?? "";
-                var actualValue = actual.GetString() ?? "";
-
-                // Check for pattern syntax
-                if (!string.IsNullOrEmpty(expectedValue) && expectedValue.Contains("||"))
-                {
-                    var parts = expectedValue.Split(new[] { "||" }, 2, StringSplitOptions.None);
-
-                    if (parts.Length == 2)
-                    {
-                        string pattern = parts[1];
-
-                        // Check if pattern allows null: "pattern|null"
-                        bool allowNull = pattern.EndsWith("|null");
-                        if (allowNull)
-                        {
-                            pattern = pattern.Substring(0, pattern.Length - 5);
-                            if (string.IsNullOrEmpty(actualValue))
-                                return;
-                        }
-
-                        try
-                        {
-                            if (!Regex.IsMatch(actualValue, pattern))
-                            {
-                                string error = $"Pattern mismatch at {path}: Expected pattern \"{pattern}\", got \"{actualValue}\"";
-                                Console.WriteLine($" {error}");
-                                errors.Add(error);
-                            }
-                        }
-                        catch (ArgumentException ex)
-                        {
-                            string error = $"Invalid regex pattern at {path}: {ex.Message}";
-                            Console.WriteLine($" {error}");
-                            errors.Add(error);
-                        }
-                    }
-                    return;
-                }
-
-                // No pattern - just check non-empty
-                if (!string.IsNullOrEmpty(expectedValue) && string.IsNullOrEmpty(actualValue))
-                {
-                    string error = $"Empty string at {path}";
-                    Console.WriteLine($" {error}");
-                    errors.Add(error);
-                }
-                return;
-            }
-
-            // Number 
-            if (expected.ValueKind == JsonValueKind.Number)
-            {
-                return;
-            }
-
-            // Object 
-            if (expected.ValueKind == JsonValueKind.Object)
-            {
-                // Check for __any__ wildcard template
-                JsonElement wildcardTemplate = default;
-                bool hasWildcard = expected.TryGetProperty("__any__", out wildcardTemplate);
-
-                // First, validate all explicitly defined properties
-                foreach (var prop in expected.EnumerateObject())
-                {
-                    // Skip special markers
-                    if (prop.Name == "__any__" || prop.Name == "__pattern__" || prop.Name.EndsWith("||pattern"))
-                        continue;
-
-                    if (!actual.TryGetProperty(prop.Name, out var actualProp))
-                    {
-                        string error = $"Missing field at {path}.{prop.Name}";
-                        Console.WriteLine($"{error}");
-                        errors.Add(error);
-                        continue;
-                    }
-                    ValidateElement(prop.Value, actualProp, $"{path}.{prop.Name}", errors);
-                }
-
-                // If __any__ exists, validate all actual properties 
-                if (hasWildcard)
-                {
-                    foreach (var actualProp in actual.EnumerateObject())
-                    {
-                        // Skip if this property was already validated as an explicit property
-                        if (expected.TryGetProperty(actualProp.Name, out _) &&
-                            actualProp.Name != "__any__" &&
-                            actualProp.Name != "__pattern__")
-                        {
-                            continue;
-                        }
-
-                        // Validate against wildcard template
-                        ValidateElement(wildcardTemplate, actualProp.Value, $"{path}.{actualProp.Name}", errors);
-                    }
-                }
-
-                return;
-            }
-
-            // Array validation 
-            if (expected.ValueKind == JsonValueKind.Array)
-            {
-                if (actual.ValueKind != JsonValueKind.Array)
-                {
-                    string error = $"Expected array at {path}";
-                    Console.WriteLine($" {error}");
-                    errors.Add(error);
-                    return;
-                }
-
-                int expectedLength = expected.GetArrayLength();
-                int actualLength = actual.GetArrayLength();
-
-                if (expectedLength == 0)
-                    return; // Empty array in template - skip validation
-
-                // Use first element as template
-                var template = expected[0];
-
-                if (template.ValueKind == JsonValueKind.String)
-                {
-                    string templateStr = template.GetString() ?? "";
-
-                    if (templateStr.Contains("||"))
-                    {
-                        var parts = templateStr.Split(new[] { "||" }, 2, StringSplitOptions.None);
-
-                        if (parts.Length == 2)
-                        {
-                            string pattern = parts[1];
-
-                            // Validate ALL elements against this pattern
-                            int index = 0;
-                            foreach (var actualItem in actual.EnumerateArray())
-                            {
-                                if (actualItem.ValueKind == JsonValueKind.String)
-                                {
-                                    string actualValue = actualItem.GetString() ?? "";
-
-                                    try
-                                    {
-                                        if (!Regex.IsMatch(actualValue, pattern))
-                                        {
-                                            string error = $"Array element pattern mismatch at {path}[{index}]: Expected pattern \"{pattern}\", got \"{actualValue}\"";
-                                            Console.WriteLine($" {error}");
-                                            errors.Add(error);
-                                        }
-                                    }
-                                    catch (ArgumentException ex)
-                                    {
-                                        string error = $"Invalid regex pattern at {path}[{index}]: {ex.Message}";
-                                        Console.WriteLine($" {error}");
-                                        errors.Add(error);
-                                    }
-                                }
-                                index++;
-                            }
-                            return;
-                        }
-                    }
-                }
-
-                // Validate ALL elements against template structure
-                int elementIndex = 0;
-                foreach (var actualItem in actual.EnumerateArray())
-                {
-                    ValidateElement(template, actualItem, $"{path}[{elementIndex}]", errors);
-                    elementIndex++;
-                }
+                case JsonValueKind.String: ValidateString(expected, actual, path, errors); break;
+                case JsonValueKind.Number: break; // presence is enough
+                case JsonValueKind.Object: ValidateObject(expected, actual, path, errors); break;
+                case JsonValueKind.Array: ValidateArray(expected, actual, path, errors); break;
             }
         }
 
+        // ─── String Validation 
 
+        private static void ValidateString(JsonElement expected, JsonElement actual, string path, List<string> errors)
+        {
+            string expectedValue = expected.GetString() ?? "";
+            string actualValue = actual.GetString() ?? "";
+
+            if (!expectedValue.Contains("||"))
+            {
+                // No pattern — just check actual is not empty when expected is not
+                if (!string.IsNullOrEmpty(expectedValue) && string.IsNullOrEmpty(actualValue))
+                    errors.Add($"Empty string at {path}");
+                return;
+            }
+
+            // Has pattern: "example||<regex>" or "example||<regex>|null"
+            string pattern = expectedValue.Split(new[] { "||" }, 2, StringSplitOptions.None)[1];
+
+            if (pattern.EndsWith("|null"))
+            {
+                pattern = pattern[..^5]; // strip "|null"
+                if (string.IsNullOrEmpty(actualValue)) return; // null is allowed
+            }
+
+            MatchPattern(actualValue, pattern, path, errors);
+        }
+
+        private static void MatchPattern(string actualValue, string pattern, string path, List<string> errors)
+        {
+            try
+            {
+                if (!Regex.IsMatch(actualValue, pattern))
+                    errors.Add($"Pattern mismatch at {path}: Expected \"{pattern}\", got \"{actualValue}\"");
+            }
+            catch (ArgumentException ex)
+            {
+                errors.Add($"Invalid regex at {path}: {ex.Message}");
+            }
+        }
+
+        // Object Validation 
+        private static void ValidateObject(JsonElement expected, JsonElement actual, string path, List<string> errors)
+        {
+            bool hasWildcard = expected.TryGetProperty("__any__", out var wildcardTemplate);
+
+            // Validate all explicitly defined fields in template
+            foreach (var prop in expected.EnumerateObject())
+            {
+                if (IsSpecialMarker(prop.Name)) continue;
+
+                if (!actual.TryGetProperty(prop.Name, out var actualProp))
+                {
+                    errors.Add($"Missing field at {path}.{prop.Name}");
+                    continue;
+                }
+
+                ValidateElement(prop.Value, actualProp, $"{path}.{prop.Name}", errors);
+            }
+
+            // Wildcard: validate all actual fields not already covered
+            if (!hasWildcard) return;
+
+            foreach (var actualProp in actual.EnumerateObject())
+            {
+                bool alreadyValidated = expected.TryGetProperty(actualProp.Name, out _)
+                                        && !IsSpecialMarker(actualProp.Name);
+                if (alreadyValidated) continue;
+
+                ValidateElement(wildcardTemplate, actualProp.Value, $"{path}.{actualProp.Name}", errors);
+            }
+        }
+
+        // Array Validation 
+
+        private static void ValidateArray(JsonElement expected, JsonElement actual, string path, List<string> errors)
+        {
+            if (actual.ValueKind != JsonValueKind.Array)
+            {
+                errors.Add($"Expected array at {path}");
+                return;
+            }
+
+            if (expected.GetArrayLength() == 0) return; // empty template = skip
+
+            var template = expected[0];
+
+            // String template with pattern — validate every element against regex
+            if (template.ValueKind == JsonValueKind.String)
+            {
+                string templateStr = template.GetString() ?? "";
+                if (templateStr.Contains("||"))
+                {
+                    string pattern = templateStr.Split(new[] { "||" }, 2, StringSplitOptions.None)[1];
+                    int index = 0;
+                    foreach (var item in actual.EnumerateArray())
+                    {
+                        if (item.ValueKind == JsonValueKind.String)
+                            MatchPattern(item.GetString() ?? "", pattern, $"{path}[{index}]", errors);
+                        index++;
+                    }
+                    return;
+                }
+            }
+
+            // Object template — validate every element against first element's shape
+            int elementIndex = 0;
+            foreach (var item in actual.EnumerateArray())
+            {
+                ValidateElement(template, item, $"{path}[{elementIndex}]", errors);
+                elementIndex++;
+            }
+        }
+
+        //  Small Helpers 
+
+        private static bool IsNullOrUndefined(JsonElement el) =>
+            el.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined;
+
+        private static bool IsBooleanKind(JsonElement el) =>
+            el.ValueKind is JsonValueKind.True or JsonValueKind.False;
+
+        private static bool IsSpecialMarker(string name) =>
+            name is "__any__" or "__pattern__" || name.EndsWith("||pattern");
+
+        private static bool IsNullAllowedByTemplate(JsonElement expected)
+        {
+            if (expected.ValueKind != JsonValueKind.String) return false;
+
+            string val = expected.GetString() ?? "";
+            if (string.IsNullOrEmpty(val)) return true; // empty string = optional
+
+            if (val.Contains("||"))
+            {
+                string pattern = val.Split(new[] { "||" }, 2, StringSplitOptions.None)[1];
+                return pattern.EndsWith("|null") || pattern == "null";
+            }
+
+            return false;
+        }
     }
 }

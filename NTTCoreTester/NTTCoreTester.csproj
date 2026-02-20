@@ -11,6 +11,7 @@
     <None Remove="appsettings.json" />
     <None Remove="Configs\LiveMock.json" />
     <None Remove="Configs\Order_request.json" />
+    <None Remove="Configs\Uat - Copy.json" />
     <None Remove="ExpectedResponses\CancelOrder_response.json" />
     <None Remove="ExpectedResponses\CheckLogin_response.json" />
     <None Remove="ExpectedResponses\GetClientBankInfo_response.json" />
@@ -33,6 +34,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Live_AllCargo.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Uat - Copy.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Uat.json">
