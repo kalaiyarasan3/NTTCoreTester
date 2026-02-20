@@ -1,0 +1,25 @@
+﻿{
+  "Status": "OK||^(Ok|OK)$",
+  "Message": "OTP sent to ********57 and kal**********@*****.***||^OTP sent to \\*+\\d{2} and [a-zA-Z]{3}\\*+@\\*+\\.\\*+$",
+  "StatusCode": 0,
+  "RequestID": "14eefb6d-4728-457e-bb7e-e1dbd0fe85e1||^[0-9a-fA-F-]{36}$",
+  "Responce": null,
+  "ResponceDataObject": {
+    "request_time": "14:10:08:6596 20-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4}\\s\\d{2}-\\d{2}-\\d{4}$",
+    "status": "Ok||^(Ok|OK)$",
+    "OSId": null,
+    "TypeID": null,
+    "Info": null,
+    "ModelId": null,
+    "Message": "OTP sent to ********57 and kal**********@*****.***||^OTP sent to \\*+\\d{2} and [a-zA-Z]{3}\\*+@\\*+\\.\\*+$",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {
+      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 40 |  Total 40||^ReadStreamD\\s\\d+\\s\\|\\sBeforePro\\s\\d+\\s\\|\\sAfterPro\\s\\d+\\s\\|\\s+Total\\s\\d+$"
+    }
+  },
+  "Activity": "FgtPwdOTP||^[A-Za-z]+$",
+  "TypeID": null,
+  "Info": null
+}

@@ -1,0 +1,28 @@
+﻿{
+  "Status": "Ok||^(OK|Ok|Failed)$",
+  "Message": "MarketWatch Name Fetched Successfully",
+  "StatusCode": 0,
+  "RequestID": "id||^[0-9a-fA-F-]{36}$",
+  "Responce": null,
+  "ResponceDataObject": {
+    "values": {
+      "__any__": "watchlist||^.+$"
+    },
+    "request_time": "12:37:05:5280 20-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
+    "status": "Ok||^(Ok|OK)$",
+    "OSId": null,
+    "TypeID": null,
+    "Info": null,
+    "ModelId": null,
+    "Message": "MarketWatch Name Fetched Successfully",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {
+      "__any__": "value||^.+$"
+    }
+  },
+  "Activity": "MWList",
+  "TypeID": null,
+  "Info": null
+}

@@ -23,6 +23,7 @@
     <None Remove="ExpectedResponses\Login_response.json" />
     <None Remove="ExpectedResponses\Logout_response.json" />
     <None Remove="ExpectedResponses\ModifyOrder_response.json" />
+    <None Remove="ExpectedResponses\MWList_response.json" />
     <None Remove="ExpectedResponses\OrderBook_response.json" />
     <None Remove="ExpectedResponses\PlaceOrder_response.json" />
     <None Remove="ExpectedResponses\PositionBook_response.json" />
@@ -52,6 +53,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\AddMarketWatchName_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\MWList_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\PositionSquareOff_response.json">

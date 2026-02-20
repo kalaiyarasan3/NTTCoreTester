@@ -36,7 +36,7 @@
           "InstrumentType": "",
           "BaseSymbol": "ALLCARGO||^[A-Z0-9#_-]+$",
           "ExpiryData": 0,
-          "OptionType": "EQ",
+          "OptionType": "EQ||^[A-Za_z]",
           "LotQuantity": 1,
           "TickSize": 1,
           "PriceIndicator": "0",
@@ -85,12 +85,13 @@
     "TypeID": null,
     "Info": null,
     "ModelId": null,
-    "Message": "MarketWatch Symbol Name Added Successfully",
+    "Message": "MarketWatch Symbol Name Added Successfully||^[A-Za-z ]",
     "Result": 0,
     "CTA": null,
     "Action": null,
     "Data": {
-      "__any__": "value||^.+$"
+      "APITimeTaken": "Auth 6 | Access 0 | LMod 0 | Invo 46 | ||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+$",
+      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 53 |  Total 54||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+[A-Za-z]+\\s+\\d+$"
     }
   }
 }

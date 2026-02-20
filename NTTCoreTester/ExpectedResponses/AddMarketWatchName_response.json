@@ -2,11 +2,11 @@
   "ResponceDataObject": {
     "uid": null,
     "MarketWatchId": 78325,
-    "MarketWatchName": "dummy",
+    "MarketWatchName": "dummy||",
     "IsDeleted": 0,
     "Symbols": null,
     "request_time": "14:44:13:3385 13-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
-    "status": "Ok||^(Ok|OK)$",
+    "status": "Ok||^(Ok|Not_Ok)$",
     "OSId": null,
     "TypeID": null,
     "Info": null,
@@ -16,8 +16,8 @@
     "CTA": null,
     "Action": null,
     "Data": {
-      "APITimeTaken": "Auth 1 | Access 0 | LMod 0 | Invo 0 ||^.+$",
-      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 1 |  Total 1||^.+$"
+      "APITimeTaken": "Auth 1 | Access 0 | LMod 0 | Invo 0 ||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+$",
+      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 1 |  Total 1||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+[A-Za-z]+\\s+\\d+$"
     }
   }
   }

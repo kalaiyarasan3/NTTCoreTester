@@ -40,6 +40,18 @@
       }
     },
     {
+      "endpoint": "MWList",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+      }
+    },
+    {
       "endpoint": "GetLastOrderStatus",
       "method": "POST",
       "headers": {

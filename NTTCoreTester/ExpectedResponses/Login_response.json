@@ -1,8 +1,8 @@
 ﻿{
   "Status": "OK||^(OK|Ok|Failed)$",
-  "Message": "Authentication Success",
+  "Message": "Authentication Success||^[A-Za-z ]+$",
   "StatusCode": 0,
-  "RequestID": "71c64ca4||^[0-9a-fA-F-]{36}$",
+  "RequestID": "14eefb6d-4728-457e-bb7e-e1dbd0fe85e1||^[0-9a-fA-F-]{36}$",
   "Responce": null,
   "ResponceDataObject": {
     "susertoken": "token||^[A-Za-z0-9+/=]+$",
@@ -53,7 +53,7 @@
     "TypeID": null,
     "Info": null,
     "ModelId": null,
-    "Message": "Authentication Success",
+    "Message": "Authentication Success||^[A-Za-z ]",
     "Result": 0,
     "CTA": null,
     "Action": null,
@@ -61,7 +61,7 @@
       "__any__": "value||^.+$"
     }
   },
-  "Activity": "Login",
+  "Activity": "Login||^[A-Za-z]+$",
   "TypeID": null,
   "Info": null
 }
