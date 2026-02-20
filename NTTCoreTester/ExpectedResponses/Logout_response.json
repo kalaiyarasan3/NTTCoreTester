@@ -1,23 +1,23 @@
 ﻿{
-    "Status": "Ok||^(OK|Ok|Failed)$",
-    "Message": "Logout Successfully",
-    "StatusCode": 0,
-    "RequestID": "sample-uuid||^[0-9a-fA-F-]{36}$",
-    "Responce": null,
-    "ResponceDataObject": {
-        "request_time": "16:36:45:8672 11-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
-        "status": "Ok||^(Ok|OK)$",
-        "OSId": null,
-        "TypeID": null,
-        "Info": null,
-        "ModelId": null,
-        "Message": "Logout Successfully",
-        "Result": 0,
-        "CTA": null,
-        "Action": null,
-        "Data": {}
-    },
-    "Activity": "Logout",
+  "Status": "Ok||^(OK|Ok|Failed)$",
+  "Message": "Logout Successfully||^[A-Za-z ]+$",
+  "StatusCode": 0,
+  "RequestID": "59857774-9da8-4e1d-915b-41b1508a348b||^[0-9a-fA-F-]{36}$",
+  "Responce": null,
+  "ResponceDataObject": {
+    "request_time": "16:36:45:8672 11-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
+    "status": "Ok||^(Ok|OK)$",
+    "OSId": null,
     "TypeID": null,
-    "Info": null
+    "Info": null,
+    "ModelId": null,
+    "Message": "Logout Successfully||^[A-Za-z ]+$",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {}
+  },
+  "Activity": "Logout||^[A-Za-z]+$",
+  "TypeID": null,
+  "Info": null
 }
