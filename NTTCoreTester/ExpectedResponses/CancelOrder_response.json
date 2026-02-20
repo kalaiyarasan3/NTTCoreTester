@@ -1,7 +1,7 @@
 ﻿{
   "ResponceDataObject": {
     "request_time": "12:38:27:5524 09-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
-    "status": "Ok||^(Ok|OK)$",
+    "status": "Ok||^(Ok)$",
     "OSId": null,
     "TypeID": null,
     "Info": null,
@@ -11,8 +11,8 @@
     "CTA": null,
     "Action": null,
     "Data": {
-      "APITimeTaken": "Auth 2 | Access 0 | LMod 0 | Invo 1 | ",
-      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 4 |  Total 5"
+      "APITimeTaken": "Auth 2 | Access 0 | LMod 0 | Invo 1 | ||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+$",
+      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 4 |  Total 5||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+[A-Za-z]+\\s+\\d+$"
     }
   }
 }

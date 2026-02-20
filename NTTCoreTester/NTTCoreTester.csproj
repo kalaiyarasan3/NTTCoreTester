@@ -12,8 +12,10 @@
     <None Remove="Configs\LiveMock.json" />
     <None Remove="Configs\Order_request.json" />
     <None Remove="Configs\Uat - Copy.json" />
+    <None Remove="ExpectedResponses\BasketOrder_response.json" />
     <None Remove="ExpectedResponses\CancelOrder_response.json" />
     <None Remove="ExpectedResponses\CheckLogin_response.json" />
+    <None Remove="ExpectedResponses\FgtPwdOTP_response.json" />
     <None Remove="ExpectedResponses\GetClientBankInfo_response.json" />
     <None Remove="ExpectedResponses\GetLastOrderStatus_response.json" />
     <None Remove="ExpectedResponses\GetOrderMargin_response.json" />
@@ -28,6 +30,7 @@
     <None Remove="ExpectedResponses\PlaceOrder_response.json" />
     <None Remove="ExpectedResponses\PositionBook_response.json" />
     <None Remove="ExpectedResponses\SendOTP_response.json" />
+    <None Remove="ExpectedResponses\ValOTPStPwd.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +56,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\AddMarketWatchName_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\BasketOrder_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\FgtPwdOTP_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\MWList_response.json">
@@ -110,6 +119,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\TradeBook_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\ValOTPStPwd.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

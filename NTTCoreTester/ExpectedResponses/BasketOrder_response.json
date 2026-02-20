@@ -1,0 +1,40 @@
+{
+  "Status": "OK||^(OK|Ok|Failed)$",
+  "Message": "Orders Placed Successfully||^[A-Za-z ]+$",
+  "StatusCode": 0,
+  "RequestID": "1036022a-45bf-4244-b572-cf12f9b80f15||^[0-9a-fA-F-]{36}$",
+  "Responce": null,
+  "ResponceDataObject": {
+    "AllOrders": [
+      {
+        "Message": "Successfully placed||^[A-Za-z ]+$",
+        "StatusCode": 0,
+        "stat": "Ok||^(Ok|Not_Ok)$",
+        "BasketOrderId": "160285743||^\\d+$"
+      },
+      {
+        "Message": "Successfully placed",
+        "StatusCode": 0,
+        "stat": "Ok",
+        "BasketOrderId": "160285753||^\\d+$"
+      }
+    ],
+    "request_time": "16:49:53:8628 20-02-2026||^\\d{2}:\\d{2}:\\d{2}:\\d{4} \\d{2}-\\d{2}-\\d{4}$",
+    "stat": "Ok||^(Ok|Not_Ok)$",
+    "OSId": null,
+    "TypeID": null,
+    "Info": null,
+    "ModelId": null,
+    "Message": "Orders Placed Successfully||^[A-Za-z ]",
+    "Result": 0,
+    "CTA": null,
+    "Action": null,
+    "Data": {
+      "APITimeTaken": "Auth 1 | Access 0 | LMod 0 | Invo 30 | ||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+$",
+      "TimeTaken": "ReadStreamD 0 | BeforePro 0 | AfterPro 32 |  Total 32||^([A-Za-z]+\\s+\\d+\\s*\\|\\s*)+[A-Za-z]+\\s+\\d+$"
+    }
+  },
+  "Activity": "BasketOrder||^[A-Za-z]+$",
+  "TypeID": null,
+  "Info": null
+}
