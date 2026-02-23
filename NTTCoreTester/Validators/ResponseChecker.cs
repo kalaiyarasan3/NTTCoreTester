@@ -15,7 +15,7 @@ namespace NTTCoreTester.Validators
         public ResponseChecker()
         {
         }
-
+            
 
         public ValidationResult Validate(ApiExecutionResult result)
         {

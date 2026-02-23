@@ -26,5 +26,17 @@ namespace NTTCoreTester.Models
 
         [JsonProperty("status")]
         public string? Status { get; set; }
+
+        [JsonProperty("qty")]
+        public string? Quantity { get; set; }
+
+        [JsonProperty("trantype")]
+        public string? TransactionType { get; set; } //Buy/Sell
+
+        [JsonProperty("prd")]
+        public string? Product { get; set; } //CNC/MIS
+
+        [JsonProperty("tsym")]
+        public string? TypeSymbol { get; set; } //IOC-EQ
     }
 }

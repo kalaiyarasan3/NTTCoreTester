@@ -33,6 +33,9 @@ namespace NTTCoreTester
             services.AddTransient<IActivityHandler, GetOrderMarginHandler>();
             services.AddTransient<IActivityHandler, ExtractPostLimitMarginHandler>();
             services.AddTransient<IActivityHandler, ExtractPreLimitMarginHandler>();
+            services.AddTransient<IActivityHandler, ExtractPrePositionsHandler>();
+            services.AddTransient<IActivityHandler, ExtractTradeFillHandler>();
+            services.AddTransient<IActivityHandler, ValidatePostPositionsHandler>();
 
             services.AddHttpClient<IApiService, ApiService>()
                   .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler

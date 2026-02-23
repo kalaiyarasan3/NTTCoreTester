@@ -37,21 +37,53 @@ namespace NTTCoreTester.Activities
             var orders = ordersToken.ToObject<List<OrderDetails>>();
 
             var key = _cache.Get<string>(Constants.ClientOrdId);
+             
+            var relatedOrders = orders?
+                .Where(x => x.ClientOrderId == key)
+                .ToList();
 
-            var order = orders?.FirstOrDefault(x => x.ClientOrderId == key);
+            if (relatedOrders == null || !relatedOrders.Any())
+                return $"Order {key} not found".FailWithLog();
 
-            if (order == null)
-                return "Order not found".FailWithLog();
+            var pendingOrder = relatedOrders
+                .FirstOrDefault(x => x.Status == "1111");
 
-            if (order.Status != "1111")
+            if (pendingOrder == null)
             {
-                return $"status: {order.Status}, Remarks: {order.Remarks}".FailWithLog();
+                var statuses = string.Join(",",
+                    relatedOrders.Select(x => x.Status).Distinct());
+
+                return $"1111 not found. Current statuses: {statuses}"
+                    .FailWithLog();
             }
 
-            _cache.Set(Constants.OrderNumber, order.OrderNumber);
+            _cache.Set(Constants.OrderNumber, pendingOrder.OrderNumber);
+            _cache.Set(Constants.TotalQuantity, pendingOrder.Quantity);
+            _cache.Set(Constants.OrderSymbol, pendingOrder.TypeSymbol);
+            _cache.Set(Constants.OrderProduct, pendingOrder.Product);
+            _cache.Set(Constants.OrderSide, pendingOrder.TransactionType);
 
-            return ActivityResult.Success();
+            $"ordno: {pendingOrder.OrderNumber} qty: {pendingOrder.Quantity} symbol: {pendingOrder.TypeSymbol} product: {pendingOrder.Product} type: {pendingOrder.TransactionType}".Info();
+
+            return ActivityResult.Success(pendingOrder.Remarks ?? "");
         }
     }
 
 }
+
+/*
+
+Login 
+Check Login
+Get Security Info
+Limits
+Place Order
+Check Order Status
+Modify Order
+place order with new client order id
+cancel order
+Square off order
+
+
+
+ */
