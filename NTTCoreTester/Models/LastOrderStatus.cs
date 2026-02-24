@@ -21,6 +21,9 @@ namespace NTTCoreTester.Models
         [JsonProperty("cl_ord_id")]
         public string? ClientOrderId { get; set; }
 
+        [JsonProperty("NewClientOrderId")]
+        public string? NewClientOrderId { get; set; }
+
         [JsonProperty("remarks")]
         public string? Remarks { get; set; }
 

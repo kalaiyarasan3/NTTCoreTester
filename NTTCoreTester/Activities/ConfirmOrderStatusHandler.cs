@@ -32,7 +32,7 @@ namespace NTTCoreTester.Activities
             var key = cache.Get<string>(Constants.ClientOrdId);
 
             var relatedOrders = orders?
-                .Where(x => x.ClientOrderId == key)
+                .Where(x => x.NewClientOrderId == key)
                 .ToList();
 
             if (relatedOrders == null || !relatedOrders.Any())
