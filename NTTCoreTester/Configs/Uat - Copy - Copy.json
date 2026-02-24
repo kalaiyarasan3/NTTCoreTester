@@ -1,0 +1,45 @@
+{
+  "suiteName": "Uat",
+  "description": "   ",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "Login",
+      "method": "POST",
+      "headers": {},
+      "activity": "ExtractSession",
+      "payload": {
+        "uid": "47054457",
+        "pwd": "Navia@123",
+        "otp": "7657768",
+        "TwoFA": 1
+      }
+    },
+
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "GetLastOrderStatus"
+    },
+
+    {
+      "endpoint": "Logout",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}"
+      },
+      "activity": "",
+      "payload": {}
+    }
+  ]
+}

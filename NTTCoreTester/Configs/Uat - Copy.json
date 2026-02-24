@@ -1,7 +1,7 @@
 {
   "suiteName": "Uat",
   "description": "   ",
-  "stopOnFailure": true,
+  "stopOnFailure": false,
   "requests": [
     {
       "endpoint": "Login",
@@ -10,7 +10,7 @@
       "activity": "ExtractSession",
       "payload": {
         "uid": "47054457",
-        "pwd": "Uat@47054457",
+        "pwd": "Navia@123",
         "otp": "7657768",
         "TwoFA": 1
       }
@@ -37,22 +37,6 @@
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}"
-      }
-    },
-    {
-      "endpoint": "MarketWatch",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
-      "activity": "",
-      "payload": {
-        "uid": "{{uid}}",
-        "wlid": [
-          "{{MarketWatchId}}"
-        ]
       }
     },
     {
@@ -116,7 +100,7 @@
         "prd": ""
       }
     },
-      {
+    {
       "endpoint": "AddMarketWatchName",
       "method": "POST",
       "headers": {
@@ -129,7 +113,7 @@
       }
     },
     {
-      "endpoint": "AddMarketWatchName",
+      "endpoint": "AddMarketWatchSymbols",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
@@ -142,7 +126,7 @@
       }
     },
     {
-      "endpoint": "AddMarketWatchName",
+      "endpoint": "AddMarketWatchSymbols",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
@@ -152,6 +136,35 @@
       "payload": {
         "wlid": "{{MarketWatchId}}",
         "scrips": "NSE|13501"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|10604"
+      }
+    },
+    {
+      "endpoint": "MarketWatch",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "wlid": [
+          "{{MarketWatchId}}"
+        ]
       }
     },
     {
@@ -165,7 +178,7 @@
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
-        "token": "1624"
+        "token": "10604"
       }
     },
     {
@@ -195,7 +208,7 @@
         "actid": "{{uid}}",
         "exch": "{{exch}}",
         "tsym": "{{tsym}}",
-        "qty": "2",
+        "qty": "100",
         "trantype": "Buy",
         "ordno": "0",
         "prc": "{{lp}}",
@@ -229,8 +242,8 @@
         "norenordno": "0",
         "segment": "EQ",
         "tsym": "{{tsym}}",
-        "qty": 15,
-        "prc": "176.16",
+        "qty": 10,
+        "prc": "1970.200",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -301,10 +314,10 @@
       "payload": {
         "exch": "{{exch}}",
         "ordno": "{{ordno}}",
-        "prctyp": "LMT",
+        "prctyp": "MKT",
         "prc": "{{lp}}",
-        "qty": 10,
-        "tsym": "ALLCARGO-EQ",
+        "qty": 15,
+        "tsym": "{{tsym}}",
         "ret": "",
         "mkt_protection": "0",
         "trgprc": "0.00",
@@ -319,7 +332,77 @@
         "ordersource": "Web",
         "orderactivity": 1,
         "prd": "CNC",
-        "tqty": 1
+        "tqty": 15
+      }
+    },
+    {
+      "endpoint": "ProductConversion",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "token": "10604",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prd": "CNC",
+        "prevprd": "MIS",
+        "trantype": "Buy",
+        "postype": "Day",
+        "ordersource": "WEB"
+      }
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Buy",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "1970.200",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "MIS",
+        "prctyp": "Limit",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
       }
     },
     {
@@ -340,121 +423,115 @@
       }
     },
     {
-      "endpoint": "PositionSquareOff",
+      "endpoint": "PlaceOrder",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractClientOrdId",
       "payload": {
+        "uid": "{{uid}}",
         "actid": "{{uid}}",
-        "ClientType": "ALL",
-        "uid": "{{uid}}"
+        "exch": "{{exch}}",
+        "trantype": "Buy",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "0",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "MIS",
+        "prctyp": "MKT",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
       }
     },
     {
-      "endpoint": "PositionSquareOff",
+      "endpoint": "PlaceOrder",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractClientOrdId",
       "payload": {
-          "AllOrders": [
-            {
-              "uid": "{47054457}",
-              "actid": "47054457",
-              "exch": "BSE",
-              "trantype": "Buy",
-              "norenordno": "0",
-              "segment": "EQ",
-              "tsym": "IOC-A",
-              "qty": 1,
-              "prc": "158.95",
-              "trgprc": "0",
-              "dscqty": 0,
-              "prd": "CNC",
-              "prctyp": "Limit",
-              "mkt_protection": "",
-              "ret": "",
-              "remarks": "",
-              "ordersource": "WEB",
-              "bpprc": "0",
-              "blprc": "0",
-              "trailprc": "0",
-              "ext_remarks": "External remarks",
-              "cl_ord_id": "",
-              "tsym2": "",
-              "trantype2": "",
-              "qty2": "0",
-              "prc2": "0",
-              "tsym3": "0",
-              "trantype3": "",
-              "qty3": "0",
-              "prc3": "0",
-              "algo_id": "0",
-              "naic_code": "0",
-              "snonum": "0",
-              "filshares": "0",
-              "rorgqty": "0",
-              "orgtrgprc": "0",
-              "OEFIELD3": "Y",
-              "order_type": "LIMIT",
-              "oe_status": 2,
-              "oe_market_id": 1,
-              "oe_destination": 1
-            },
-            {
-              "uid": "{47054457}",
-              "actid": "47054457",
-              "exch": "BSE",
-              "trantype": "Buy",
-              "norenordno": "0",
-              "segment": "EQ",
-              "tsym": "NIRAJISPAT-NT",
-              "qty": 100,
-              "prc": "0",
-              "trgprc": "0",
-              "dscqty": 0,
-              "prd": "CNC",
-              "prctyp": "MKT",
-              "mkt_protection": "",
-              "ret": "",
-              "remarks": "",
-              "ordersource": "WEB",
-              "bpprc": "0",
-              "blprc": "0",
-              "trailprc": "0",
-              "ext_remarks": "External remarks",
-              "cl_ord_id": "",
-              "tsym2": "",
-              "trantype2": "",
-              "qty2": "0",
-              "prc2": "0",
-              "tsym3": "0",
-              "trantype3": "",
-              "qty3": "0",
-              "prc3": "0",
-              "algo_id": "0",
-              "naic_code": "0",
-              "snonum": "0",
-              "filshares": "0",
-              "rorgqty": "0",
-              "orgtrgprc": "0",
-              "OEFIELD3": "Y",
-              "order_type": "MARKET",
-              "oe_status": 2,
-              "oe_market_id": 1,
-              "oe_destination": 1
-            }
-          ]
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Sell",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 20,
+        "prc": "0",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "MIS",
+        "prctyp": "MKT",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
       }
     },
-
+    {
+      "endpoint": "AddMarketWatchName",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "MarketWatcListID",
+      "payload": {
+        "MarketWatchId": "{{MarketWatchId}}",
+        "IsDeleted": 1,
+        "MarketWatchName": "TestMWList"
+      }
+    },
 
     {
       "endpoint": "Logout",

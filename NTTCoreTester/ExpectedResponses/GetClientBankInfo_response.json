@@ -10,7 +10,7 @@
         "BankBranchName": "MANAPPARAI||^[A-Za-z ]+$",
         "AccountNumber": "6830387320||^\\d+$",
         "BankIfscCode": "IDIB000M131||^[A-Z0-9 ]+$",
-        "AccountType": "Savings||^[A-Za-z]+$",
+        "AccountType": "Savings A/c||^[A-Za-z/. ]+$",
         "BankCity": "MANAPPARAI||^[A-Za-z ]",
         "CustomerId": "",
         "BankCityPincode": "621306||^\\d{6}$",
