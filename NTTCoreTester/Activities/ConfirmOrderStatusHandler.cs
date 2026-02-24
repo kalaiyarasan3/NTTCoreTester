@@ -11,16 +11,9 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    public class GetLastOrderStatusHandler : IActivityHandler
+    public class ConfirmOrderStatusHandler(PlaceholderCache cache) : IActivityHandler
     {
-        private readonly PlaceholderCache _cache;
-
-        public GetLastOrderStatusHandler(PlaceholderCache cache)
-        {
-            _cache = cache;
-        }
-
-        public string Name => "GetLastOrderStatus";
+        public string Name => "ConfirmOrderStatus";
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
@@ -36,8 +29,8 @@ namespace NTTCoreTester.Activities
 
             var orders = ordersToken.ToObject<List<OrderDetails>>();
 
-            var key = _cache.Get<string>(Constants.ClientOrdId);
-             
+            var key = cache.Get<string>(Constants.ClientOrdId);
+
             var relatedOrders = orders?
                 .Where(x => x.ClientOrderId == key)
                 .ToList();
@@ -45,47 +38,21 @@ namespace NTTCoreTester.Activities
             if (relatedOrders == null || !relatedOrders.Any())
                 return $"Order {key} not found".FailWithLog();
 
-            var pendingOrder = relatedOrders
-                .FirstOrDefault(x => x.Status == "1111");
+            var filledOrder = relatedOrders
+                .FirstOrDefault(x => x.Status == "1118");
 
-            if (pendingOrder == null)
+            if (filledOrder == null)
             {
                 var statuses = string.Join(" | ",
                     relatedOrders
                         .Select(x => $"[{x.Status}] {x.Remarks ?? "No Remarks"}")
                         .Distinct());
 
-                return $"1111 not found. Current states: {statuses}"
+                return $"Current states: {statuses}"
                     .FailWithLog();
             }
 
-            _cache.Set(Constants.OrderNumber, pendingOrder.OrderNumber);
-            _cache.Set(Constants.TotalQuantity, pendingOrder.Quantity);
-            _cache.Set(Constants.OrderSymbol, pendingOrder.TypeSymbol);
-            _cache.Set(Constants.OrderProduct, pendingOrder.Product);
-            _cache.Set(Constants.OrderSide, pendingOrder.TransactionType);
-
-            $"ordno: {pendingOrder.OrderNumber} qty: {pendingOrder.Quantity} symbol: {pendingOrder.TypeSymbol} product: {pendingOrder.Product} type: {pendingOrder.TransactionType}".Info();
-
-            return ActivityResult.Success(pendingOrder.Remarks ?? "");
+            return ActivityResult.Success(filledOrder.Remarks ?? "");
         }
     }
-
 }
-
-/*
-
-Login 
-Check Login
-Get Security Info
-Limits
-Place Order
-Check Order Status
-Modify Order
-place order with new client order id
-cancel order
-Square off order
-
-
-
- */

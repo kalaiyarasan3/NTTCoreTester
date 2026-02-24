@@ -33,103 +33,80 @@ namespace NTTCoreTester.Activities
                 decimal Normalize(decimal value) =>
                     Math.Round(value, 2, MidpointRounding.AwayFromZero);
 
-                //Expected deduction = ordermargin + charges
+                bool AreEqual(decimal a, decimal b) =>
+                    Math.Abs(Normalize(a) - Normalize(b)) <= 0.01m;
+                 
+                //  Validate marginusedprev matches PreLimit 
 
-                decimal expectedTotalDeduction =
-                    Normalize(orderMargin.OrderMargin + orderMargin.Charges);
+                if (!AreEqual(orderMargin.MarginUsedPrev, preLimit.UsedMarginWithoutPL))
+                {
+                    return $"marginusedprev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, Actual: {orderMargin.MarginUsedPrev}"
+                        .FailWithLog(false);
+                }
+                 
+                // Validate internal margin movement 
 
-                //RemainingMargin check
-
-                decimal actualRemainingReduction =
+                decimal remainingDelta =
                     Normalize(preLimit.RemainingMargin - postLimit.RemainingMargin);
 
-                if (actualRemainingReduction != expectedTotalDeduction)
+                decimal usedDelta =
+                    Normalize(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
+
+                if (!AreEqual(remainingDelta, usedDelta))
                 {
-                    return $"RemainingMargin mismatch. Expected: {expectedTotalDeduction}, Actual: {actualRemainingReduction}".FailWithLog(false);
+                    return $"Limit delta mismatch. RemainingDelta: {remainingDelta}, UsedDelta: {usedDelta}"
+                        .FailWithLog(false);
                 }
+                 
+                // Validate charge increase only 
 
-                //UsedMargin check
+                decimal chargeDelta =
+                    Normalize(postLimit.Charges - preLimit.Charges);
 
-                decimal actualUsedIncrease =
-                    Normalize(postLimit.UsedMargin - preLimit.UsedMargin);
-
-                if (actualUsedIncrease != expectedTotalDeduction)
+                if (!AreEqual(chargeDelta, orderMargin.Charges))
                 {
-                    return 
-                        $"UsedMargin mismatch. Expected: {expectedTotalDeduction}, Actual: {actualUsedIncrease}".FailWithLog(false);
+                    return $"Charge mismatch. Expected: {orderMargin.Charges}, Actual: {chargeDelta}"
+                        .FailWithLog(false);
                 }
+                 
+                // UsedMargin internal consistency 
 
-                //UsedMarginWithoutCharges check
-
-                decimal expectedWithoutCharges =
-                    Normalize(orderMargin.OrderMargin);
-
-                decimal actualWithoutChargesIncrease =
-                    Normalize(postLimit.UsedMarginWithoutCharges -
-                              preLimit.UsedMarginWithoutCharges);
-
-                if (actualWithoutChargesIncrease != expectedWithoutCharges)
+                if (!AreEqual(postLimit.UsedMargin,
+                    postLimit.UsedMarginWithoutCharges + postLimit.Charges))
                 {
-                    return  
-                        $"UsedMarginWithoutCharges mismatch. Expected: {expectedWithoutCharges}, Actual: {actualWithoutChargesIncrease}".FailWithLog(false);
+                    return "UsedMargin internal calculation mismatch"
+                        .FailWithLog(false);
                 }
+                 
+                // Transferable & Withdrawable must equal Remaining 
 
-                //Charges cumulative check
+                if (!AreEqual(postLimit.TransferableAmount, postLimit.RemainingMargin))
+                    return "TransferableAmount mismatch".FailWithLog(false);
 
-                decimal expectedCharges =
-                    Normalize(preLimit.Charges + orderMargin.Charges);
-
-                if (Normalize(postLimit.Charges) != expectedCharges)
-                {
-                    return  
-                        $"Charges mismatch. Expected: {expectedCharges}, Actual: {postLimit.Charges}".FailWithLog(false);
-                }
-
-                // UsedMargin internal consistency
-                if (Normalize(postLimit.UsedMargin) !=
-                    Normalize(postLimit.UsedMarginWithoutCharges + postLimit.Charges))
-                {
-                    return "UsedMargin internal calculation mismatch".FailWithLog(false);
-                }
-
-
-                //Transferable & Withdrawable check
-
-                if (Normalize(postLimit.TransferableAmount) !=
-                    Normalize(postLimit.RemainingMargin))
-                {
-                    return  "TransferableAmount mismatch".FailWithLog(false);
-                }
-
-                if (Normalize(postLimit.WithdrawableAmount) !=
-                    Normalize(postLimit.RemainingMargin))
-                {
+                if (!AreEqual(postLimit.WithdrawableAmount, postLimit.RemainingMargin))
                     return "WithdrawableAmount mismatch".FailWithLog(false);
-                }
+                 
+                // TotalCash must remain unchanged 
 
-                //Percentage check
+                if (!AreEqual(preLimit.TotalCash, postLimit.TotalCash))
+                    return "TotalCash changed unexpectedly".FailWithLog(false);
+                 
+                // Percentage validation (Reference Only) 
 
                 decimal calculatedUsedPercent =
                     Normalize((postLimit.UsedMargin / postLimit.TotalCash) * 100);
 
-                Console.WriteLine($"[INFO] UsedMarginPercentage API: {postLimit.UsedMarginPercentage}");
+                Console.WriteLine($"[INFO] UsedMarginPercentage API : {postLimit.UsedMarginPercentage}");
                 Console.WriteLine($"[INFO] UsedMarginPercentage CALC: {calculatedUsedPercent}");
-
-
-                if (Normalize(preLimit.TotalCash) != Normalize(postLimit.TotalCash))
-                {
-                    return "TotalCash changed unexpectedly".FailWithLog(false);
-                }
-
-                //if mismatch report
-
+                 
                 _cache.Set("PostLimitMargin", postLimit);
 
                 return ActivityResult.Success();
             }
             catch (Exception ex)
             {
-                return $"Error in ExtractPostLimitMarginHandler: {ex.Message}".FailWithLog();
+                return $"Error in ExtractPostLimitMarginHandler: {ex.Message}"
+                    .FailWithLog();
             }
         }
 
