@@ -1,52 +1,52 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace NTTCoreTester.Models
 {
     public class LimitMarginDetails
     {
-        [JsonPropertyName("UsedMargin")]
+        [JsonProperty("UsedMargin")]
         public decimal UsedMargin { get; set; }
 
-        [JsonPropertyName("NetPremium")]
+        [JsonProperty("NetPremium")]
         public decimal NetPremium { get; set; }
 
-        [JsonPropertyName("UsedMarginWithoutPL")]
+        [JsonProperty("UsedMarginWithoutPL")]
         public decimal UsedMarginWithoutPL { get; set; }
 
-        [JsonPropertyName("ReamainingMargin")]
+        [JsonProperty("ReamainingMargin")]
         public decimal RemainingMargin { get; set; }
 
-        [JsonPropertyName("RemainingMarginForDisplay")]
+        [JsonProperty("RemainingMarginForDisplay")]
         public decimal RemainingMarginForDisplay { get; set; }
 
-        [JsonPropertyName("AvailableMarginPercentage")]
+        [JsonProperty("AvailableMarginPercentage")]
         public decimal AvailableMarginPercentage { get; set; }
 
-        [JsonPropertyName("UsedMarginPercentage")]
+        [JsonProperty("UsedMarginPercentage")]
         public decimal UsedMarginPercentage { get; set; }
 
-        [JsonPropertyName("CashUsed")]
+        [JsonProperty("CashUsed")]
         public decimal CashUsed { get; set; }
 
-        [JsonPropertyName("TotalCash")]
+        [JsonProperty("TotalCash")]
         public decimal TotalCash { get; set; }
 
-        [JsonPropertyName("Charges")]
+        [JsonProperty("Charges")]
         public decimal Charges { get; set; }
 
-        [JsonPropertyName("Transfer_Funds_Received")]
+        [JsonProperty("Transfer_Funds_Received")]
         public decimal TransferFundsReceived { get; set; }
 
-        [JsonPropertyName("UsedMarginWithoutCharges")]
+        [JsonProperty("UsedMarginWithoutCharges")]
         public decimal UsedMarginWithoutCharges { get; set; }
 
-        [JsonPropertyName("UsedMarginPercentageWithoutCharges")]
+        [JsonProperty("UsedMarginPercentageWithoutCharges")]
         public decimal UsedMarginPercentageWithoutCharges { get; set; }
 
-        [JsonPropertyName("TransferableAmount")]
+        [JsonProperty("TransferableAmount")]
         public decimal TransferableAmount { get; set; }
 
-        [JsonPropertyName("WithdrawableAmount")]
+        [JsonProperty("WithdrawableAmount")]
         public decimal WithdrawableAmount { get; set; }
     }
 }

@@ -16,6 +16,8 @@ namespace NTTCoreTester.Activities
         {
             try
             {
+                var errors = new List<string>();
+
                 var postLimit = GetPrimaryLimitMargin(result);
 
                 if (postLimit == null)
@@ -30,22 +32,33 @@ namespace NTTCoreTester.Activities
                 if (orderMargin == null)
                     return "OrderMargin missing".FailWithLog();
 
+                var debugMessage =
+                $"preLimit.RemainingMargin: {preLimit.RemainingMargin}\n" +
+                $"postLimit.RemainingMargin: {postLimit.RemainingMargin}\n" +
+                $"preLimit.UsedMarginWithoutPL: {preLimit.UsedMarginWithoutPL}\n" +
+                $"preLimit.Charges: {preLimit.Charges}\n" +
+                $"postLimit.UsedMarginWithoutPL: {postLimit.UsedMarginWithoutPL}\n" +
+                $"postLimit.Charges: {postLimit.Charges}\n" +
+                $"orderMargin.OrderMargin: {orderMargin.OrderMargin}\n" +
+                $"orderMargin.charges: {orderMargin.Charges}\n" +
+                $"orderMargin.MarginUsedPrev: {orderMargin.MarginUsedPrev}";
+
+                debugMessage.Warn();
+
                 decimal Normalize(decimal value) =>
                     Math.Round(value, 2, MidpointRounding.AwayFromZero);
 
                 bool AreEqual(decimal a, decimal b) =>
                     Math.Abs(Normalize(a) - Normalize(b)) <= 0.01m;
-                 
-                //  Validate marginusedprev matches PreLimit 
 
+                // marginusedprev check
                 if (!AreEqual(orderMargin.MarginUsedPrev, preLimit.UsedMarginWithoutPL))
                 {
-                    return $"marginusedprev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, Actual: {orderMargin.MarginUsedPrev}"
-                        .FailWithLog(false);
+                    errors.Add(
+                        $"marginusedprev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, Actual: {orderMargin.MarginUsedPrev}");
                 }
-                 
-                // Validate internal margin movement 
 
+                //internal movement check
                 decimal remainingDelta =
                     Normalize(preLimit.RemainingMargin - postLimit.RemainingMargin);
 
@@ -54,52 +67,65 @@ namespace NTTCoreTester.Activities
 
                 if (!AreEqual(remainingDelta, usedDelta))
                 {
-                    return $"Limit delta mismatch. RemainingDelta: {remainingDelta}, UsedDelta: {usedDelta}"
-                        .FailWithLog(false);
+                    errors.Add(
+                        $"Limit delta mismatch. RemainingDelta: {remainingDelta}, UsedDelta: {usedDelta}");
                 }
-                 
-                // Validate charge increase only 
 
-                decimal chargeDelta =
-                    Normalize(postLimit.Charges - preLimit.Charges);
+                //charge increase (soft validation)
 
-                if (!AreEqual(chargeDelta, orderMargin.Charges))
+                decimal chargeDelta = Normalize(postLimit.Charges - preLimit.Charges);
+
+                decimal expectedChargeDelta;
+
+                var previousOrderMargin = _cache.Get<OrderMarginDetails>(Constants.PreviousOrderMargin);
+
+                // If previous order margin exists → MODIFY case
+                if (previousOrderMargin != null)
                 {
-                    return $"Charge mismatch. Expected: {orderMargin.Charges}, Actual: {chargeDelta}"
-                        .FailWithLog(false);
+                    expectedChargeDelta = Normalize(
+                        orderMargin.Charges - previousOrderMargin.Charges);
                 }
-                 
-                // UsedMargin internal consistency 
+                else
+                    expectedChargeDelta = Normalize(orderMargin.Charges);
 
+                if (!AreEqual(chargeDelta, expectedChargeDelta))
+                {
+                    errors.Add(
+                        $"Charge mismatch. Expected: {expectedChargeDelta}, Actual: {chargeDelta}");
+                }
+
+                //UsedMargin internal consistency
                 if (!AreEqual(postLimit.UsedMargin,
                     postLimit.UsedMarginWithoutCharges + postLimit.Charges))
                 {
-                    return "UsedMargin internal calculation mismatch"
-                        .FailWithLog(false);
+                    errors.Add("UsedMargin internal calculation mismatch");
                 }
-                 
-                // Transferable & Withdrawable must equal Remaining 
 
+                //Transferable & Withdrawable
                 if (!AreEqual(postLimit.TransferableAmount, postLimit.RemainingMargin))
-                    return "TransferableAmount mismatch".FailWithLog(false);
+                    errors.Add("TransferableAmount mismatch");
 
                 if (!AreEqual(postLimit.WithdrawableAmount, postLimit.RemainingMargin))
-                    return "WithdrawableAmount mismatch".FailWithLog(false);
-                 
-                // TotalCash must remain unchanged 
+                    errors.Add("WithdrawableAmount mismatch");
 
+                //TotalCash stability
                 if (!AreEqual(preLimit.TotalCash, postLimit.TotalCash))
-                    return "TotalCash changed unexpectedly".FailWithLog(false);
-                 
-                // Percentage validation (Reference Only) 
+                    errors.Add("TotalCash changed unexpectedly");
 
+                //Percentage log
                 decimal calculatedUsedPercent =
                     Normalize((postLimit.UsedMargin / postLimit.TotalCash) * 100);
 
-                Console.WriteLine($"[INFO] UsedMarginPercentage API : {postLimit.UsedMarginPercentage}");
-                Console.WriteLine($"[INFO] UsedMarginPercentage CALC: {calculatedUsedPercent}");
-                 
+                $"UsedMarginPercentage API : {postLimit.UsedMarginPercentage}".Warn();
+                $"UsedMarginPercentage CALC: {calculatedUsedPercent}".Warn();
+
                 _cache.Set("PostLimitMargin", postLimit);
+
+                if (errors.Any())
+                {
+                    var message = string.Join(" | ", errors);
+                    return message.FailWithLog(false);
+                }
 
                 return ActivityResult.Success();
             }

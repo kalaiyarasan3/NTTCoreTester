@@ -28,15 +28,22 @@ namespace NTTCoreTester.Activities
                 if (dataObject == null)
                     return "GetOrderMargin DataObject is null".FailWithLog();
 
-                var margin = dataObject.ToObject<OrderMarginDetails>();
+                var newOrderMargin = dataObject.ToObject<OrderMarginDetails>();
 
-                if (margin == null)
+                if (newOrderMargin == null)
                     return "Failed to parse OrderMargin".FailWithLog();
 
                 string? ordermargin = dataObject["ordermargin"]?.Value<string>();
                 _cache.Set("ordermargin", ordermargin);
 
-                _cache.Set(Constants.GetOrderMargin, margin);
+                var existing = _cache.Get<OrderMarginDetails>(Constants.GetOrderMargin);
+
+                if (existing != null)
+                {
+                    _cache.Set(Constants.PreviousOrderMargin, existing);
+                }
+
+                _cache.Set(Constants.GetOrderMargin, newOrderMargin);
 
                 return ActivityResult.Success();
             }

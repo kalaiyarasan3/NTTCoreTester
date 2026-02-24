@@ -25,9 +25,9 @@ namespace NTTCoreTester.Activities
                 if (prePositions == null)
                     return ActivityResult.HardFail("Pre positions missing");
 
-                string symbol = _cache.Get<string>(Constants.OrderSymbol);
-                string product = _cache.Get<string>(Constants.OrderProduct);
-                string side = _cache.Get<string>(Constants.OrderSide);
+                string? symbol = _cache.Get<string>(Constants.OrderSymbol);
+                string? product = _cache.Get<string>(Constants.OrderProduct);
+                string? side = _cache.Get<string>(Constants.OrderSide);
                 int filledQty = _cache.Get<int>(Constants.FilledQty);
 
                 var postRow = postArray
@@ -44,7 +44,8 @@ namespace NTTCoreTester.Activities
 
                 int preQty = preRow?.NetQty ?? 0;
 
-                int expectedQty = side == "Buy"
+                bool isBuy = string.Equals(side?.Trim(), "Buy", StringComparison.OrdinalIgnoreCase);
+                int expectedQty = isBuy
                     ? preQty + filledQty
                     : preQty - filledQty;
 
