@@ -40,7 +40,7 @@
       }
     },
     {
-      "endpoint": "MWList",
+      "endpoint": "MarketWatch",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
@@ -49,6 +49,10 @@
       },
       "activity": "",
       "payload": {
+        "uid": "{{uid}}",
+        "wlid": [
+          "{{MarketWatchId}}"
+        ]
       }
     },
     {
@@ -110,6 +114,44 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}",
         "prd": ""
+      }
+    },
+      {
+      "endpoint": "AddMarketWatchName",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "MarketWatcListID",
+      "payload": {
+        "MarketWatchName": "TestMWList"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchName",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|1624"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchName",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|13501"
       }
     },
     {
