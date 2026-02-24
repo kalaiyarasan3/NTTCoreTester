@@ -17,7 +17,7 @@
           "MarketWatchName": "watchlist1||^[A-Za-z0-9_ ]+$",
           "exch": "NSE||^(BSE|NSE|NFO|MCX|CDS|BFO|IND)$",
           "token": 0,
-          "tsym": "SYMBOL||^[A-Z0-9#_-]+$",
+          "tsym": "SYMBOL||^[A-Z0-9&#_-]+$",
           "Segment": "1||^-?\\d+$",
           "instname": "EQ||^[A-Z]{1,3}$|null",
           "pp": "0||^[+-]?\\d+\\.?\\d*$|null",
