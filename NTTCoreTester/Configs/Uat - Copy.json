@@ -205,7 +205,7 @@
         ]
       }
     },
-      {
+    {
       "endpoint": "AddMarketWatchName",
       "method": "POST",
       "headers": {
@@ -218,7 +218,7 @@
       }
     },
     {
-      "endpoint": "AddMarketWatchName",
+      "endpoint": "AddMarketWatchSymbols",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
@@ -231,7 +231,7 @@
       }
     },
     {
-      "endpoint": "AddMarketWatchName",
+      "endpoint": "AddMarketWatchSymbols",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
@@ -241,6 +241,35 @@
       "payload": {
         "wlid": "{{MarketWatchId}}",
         "scrips": "NSE|13501"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|10604"
+      }
+    },
+    {
+      "endpoint": "MarketWatch",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "wlid": [
+          "{{MarketWatchId}}"
+        ]
       }
     },
     {
