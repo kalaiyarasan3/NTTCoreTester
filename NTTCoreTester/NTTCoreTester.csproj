@@ -24,6 +24,7 @@
     <None Remove="ExpectedResponses\Limits_response.json" />
     <None Remove="ExpectedResponses\Login_response.json" />
     <None Remove="ExpectedResponses\Logout_response.json" />
+    <None Remove="ExpectedResponses\Marketwatch_response.json" />
     <None Remove="ExpectedResponses\ModifyOrder_response.json" />
     <None Remove="ExpectedResponses\MWList_response.json" />
     <None Remove="ExpectedResponses\OrderBook_response.json" />
@@ -38,6 +39,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Live_AllCargo.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Uat - Copy - Copy.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Uat - Copy.json">
@@ -62,6 +66,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\FgtPwdOTP_response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExpectedResponses\Marketwatch_response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\MWList_response.json">
@@ -135,6 +142,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	  <None Update="appsettings.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Reporting\ReportTemplate.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
   </ItemGroup>
 

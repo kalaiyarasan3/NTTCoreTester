@@ -31,7 +31,7 @@ namespace NTTCoreTester.Activities
             string? MarketWatchId = dataObject["MarketWatchId"]?.ToString();
             _cache.Set("MarketWatchId", MarketWatchId);
      
-            return ActivityResult.Success("Security info extracted and stored in cache");
+            return ActivityResult.Success();
         }
 
       
