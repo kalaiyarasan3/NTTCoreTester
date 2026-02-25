@@ -44,8 +44,10 @@ namespace NTTCoreTester.Activities
 
                 int preQty = preRow?.NetQty ?? 0;
 
-                bool isBuy = string.Equals(transactionType?.Trim(), "Buy", StringComparison.OrdinalIgnoreCase);
-                int expectedQty = isBuy ? preQty + filledQty : preQty - filledQty;
+                int expectedQty = side == "Buy"
+                    ? preQty + filledQty
+                    : preQty - filledQty;
+                    : preQty - filledQty;
 
                 if (postQty != expectedQty)
                 {
