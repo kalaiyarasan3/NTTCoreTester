@@ -97,7 +97,7 @@
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
-        "token": "1624"
+        "token": "10604"
       }
     },
     {
@@ -127,7 +127,7 @@
         "actid": "{{uid}}",
         "exch": "{{exch}}",
         "tsym": "{{tsym}}",
-        "qty": "15",
+        "qty": "10",
         "trantype": "Buy",
         "ordno": "0",
         "prc": "{{lp}}",
@@ -161,8 +161,8 @@
         "norenordno": "0",
         "segment": "EQ",
         "tsym": "{{tsym}}",
-        "qty": 15,
-        "prc": "176.16",
+        "qty": 10,
+        "prc": "1940.80",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -222,6 +222,20 @@
       }
     },
     {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
       "endpoint": "GetOrderMargin",
       "method": "POST",
       "headers": {
@@ -266,7 +280,7 @@
         "prctyp": "MKT",
         "prc": "0",
         "qty": 5,
-        "tsym": "IOC-EQ",
+        "tsym": "{{tsym}}",
         "ret": "",
         "mkt_protection": "0",
         "trgprc": "0.00",
@@ -298,6 +312,20 @@
         "status": "ALL"
       },
       "activity": "ConfirmOrderStatus"
+    },
+    {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
     },
     {
       "endpoint": "TradeBook",
