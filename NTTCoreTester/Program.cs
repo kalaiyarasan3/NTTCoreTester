@@ -69,9 +69,9 @@ namespace NTTCoreTester
                 $"{new string('=', 80)}".Info();
 
                 //var csvReport = provider.GetRequiredService<CsvReport>();
-                var csvReport = provider.GetRequiredService<ReportManager>();
+                var csvReport = provider.GetRequiredService<CsvReport>();
                 //await csvReport.Save();
-                await csvReport.SaveAll();
+                await csvReport.Save();
 
                 "\nTesting completed successfully!".Info();
                 "Press any key to exit...".Info();

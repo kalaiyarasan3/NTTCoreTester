@@ -25,10 +25,10 @@ namespace NTTCoreTester.Services
         private readonly ResponseChecker _checker;
         private readonly ActivityExecutor _activityExecutor; 
         private readonly PlaceholderCache _cache;
-        private readonly ReportManager _reportManager;
+        private readonly CsvReport _csvReport;
 
         public ApiService(HttpClient http, ApiConfiguration config, ResponseChecker checker,
-                          PlaceholderCache cache, ActivityExecutor activityExecutor, ReportManager reportManager)
+                          PlaceholderCache cache, ActivityExecutor activityExecutor, CsvReport csvReport)
         {
             _http = http;
             _config = config;
@@ -36,7 +36,7 @@ namespace NTTCoreTester.Services
             _http.BaseAddress = new Uri(_config.BaseUrl);
             _activityExecutor = activityExecutor;
             _cache = cache;
-            _reportManager = reportManager;
+            _csvReport = csvReport;
         }
 
         public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest)
@@ -109,7 +109,7 @@ namespace NTTCoreTester.Services
                 if (!string.IsNullOrWhiteSpace(activityResult.Message))
                     validation.Message = activityResult.Message;
 
-                _reportManager.AddEntry(
+                _csvReport.AddEntry(
                     result.Endpoint,
                     result.ResponseTime,
                     result.StatusCode,
