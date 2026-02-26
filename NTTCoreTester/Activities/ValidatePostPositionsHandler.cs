@@ -27,7 +27,7 @@ namespace NTTCoreTester.Activities
 
                 string? symbol = _cache.Get<string>(Constants.OrderSymbol);
                 string? product = _cache.Get<string>(Constants.OrderProduct);
-                string? side = _cache.Get<string>(Constants.OrderSide);
+                string? transactionType = _cache.Get<string>(Constants.OrderSide);
                 int filledQty = _cache.Get<int>(Constants.FilledQty);
 
                 var postRow = postArray
@@ -44,10 +44,8 @@ namespace NTTCoreTester.Activities
 
                 int preQty = preRow?.NetQty ?? 0;
 
-                bool isBuy = string.Equals(side?.Trim(), "Buy", StringComparison.OrdinalIgnoreCase);
-                int expectedQty = isBuy
-                    ? preQty + filledQty
-                    : preQty - filledQty;
+                bool isBuy = string.Equals(transactionType?.Trim(), "Buy", StringComparison.OrdinalIgnoreCase);
+                int expectedQty = isBuy ? preQty + filledQty : preQty - filledQty;
 
                 if (postQty != expectedQty)
                 {

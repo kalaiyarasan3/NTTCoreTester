@@ -51,7 +51,9 @@ namespace NTTCoreTester.Activities
                 bool AreEqual(decimal a, decimal b) =>
                     Math.Abs(Normalize(a) - Normalize(b)) <= 0.01m;
 
-                // marginusedprev check
+                // margin_used_prev check 
+                // checking GetOrderMargin.MarginUsedPrev against preLimit(Limits.AvailableMargin).
+                //UsedMarginWithoutPL to ensure that the previous margin used value is consistent with the pre-limit state before the order execution.
                 if (!AreEqual(orderMargin.MarginUsedPrev, preLimit.UsedMarginWithoutPL))
                 {
                     errors.Add(
@@ -64,7 +66,9 @@ namespace NTTCoreTester.Activities
 
                 decimal usedDelta =
                     Normalize(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
+                
 
+                //External API Check
                 if (!AreEqual(remainingDelta, usedDelta))
                 {
                     errors.Add(
@@ -75,9 +79,10 @@ namespace NTTCoreTester.Activities
 
                 decimal chargeDelta = Normalize(postLimit.Charges - preLimit.Charges);
 
+                var previousOrderMargin = _cache.Get<OrderMarginDetails>(Constants.PreviousOrderMargin);
+
                 decimal expectedChargeDelta;
 
-                var previousOrderMargin = _cache.Get<OrderMarginDetails>(Constants.PreviousOrderMargin);
 
                 // If previous order margin exists → MODIFY case
                 if (previousOrderMargin != null)

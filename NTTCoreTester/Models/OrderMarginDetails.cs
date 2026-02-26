@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Models
 {
-    public class OrderMarginDetails
+    public class OrderMarginDetails// GetOrderMargin response model
     {
         public decimal AvailableMargin { get; set; }
         public decimal OrderMargin { get; set; }
