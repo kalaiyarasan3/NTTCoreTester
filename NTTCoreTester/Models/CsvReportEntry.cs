@@ -13,6 +13,8 @@
         public string ValidationErrors { get; set; }
         public string? Message { get; set; }
 
+        public string? ActivityMessage { get; set; }
+
         public CsvReportEntry()
         {
             Timestamp = DateTime.Now;

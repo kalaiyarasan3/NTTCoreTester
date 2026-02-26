@@ -79,6 +79,13 @@ namespace NTTCoreTester.Services
                 
                 $"\n[{i + 1}/{suiteConfig.Requests.Count}] {request.Endpoint}".Info();
 
+                if (request.DelayBeforeMs > 0)
+                {
+                    $"Waiting {request.DelayBeforeMs}ms before [{request.Endpoint}]...".Warn();
+                    await Task.Delay(request.DelayBeforeMs);
+                }
+
+
                 bool success = await _apiService.ExecuteRequestFromConfig(request);
                     
                 if (success)
@@ -101,7 +108,7 @@ namespace NTTCoreTester.Services
                 // Small delay between requests
                 if (i < suiteConfig.Requests.Count - 1)
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(500);
                 }
             }
 

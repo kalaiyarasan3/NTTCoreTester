@@ -1,7 +1,7 @@
 {
   "suiteName": "Uat",
   "description": "   ",
-  "stopOnFailure": true,
+  "stopOnFailure": false,
   "requests": [
     {
       "endpoint": "Login",
@@ -96,8 +96,8 @@
       },
       "activity": "ExtractSecurityInfo",
       "payload": {
-        "exch": "NSE",
-        "token": "10604"
+        "exch": "BSE",
+        "token": "532454"
       }
     },
     {
@@ -162,7 +162,7 @@
         "segment": "EQ",
         "tsym": "{{tsym}}",
         "qty": 10,
-        "prc": "1940.80",
+        "prc": "1314",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -341,6 +341,23 @@
         "uid": "{{uid}}",
         "prd": ""
       }
+    },
+
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ValidateActivityStatus",
+      "delayBeforeMs": 1000
     },
     {
       "endpoint": "PositionBook",
