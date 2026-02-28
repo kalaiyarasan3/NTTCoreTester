@@ -29,6 +29,8 @@ namespace NTTCoreTester.Activities
             if (string.IsNullOrWhiteSpace(clOrdId))
                 return  $"cl_ord_id not found in {endpoint}".FailWithLog();
 
+            $"Client order id: {clOrdId}".Warn();
+
             _cache.Set(Constants.ClientOrdId, clOrdId);
 
             return ActivityResult.Success();

@@ -19,23 +19,30 @@ namespace NTTCoreTester.Activities
                 var postArray = result.DataObject?["Positions"] as JArray;
 
                 if (postArray == null)
-                    return ActivityResult.HardFail("Post positions not found");
+                    return "Post positions not found in ValidatePostPositionsHandler".FailWithLog(true);
 
                 var prePositions = _cache.Get<List<PositionBookModel>>(Constants.PrePositions);
                 if (prePositions == null)
-                    return ActivityResult.HardFail("Pre positions missing");
+                    return "Pre positions missing in ValidatePostPositionsHandler".FailWithLog(true);
 
                 string? symbol = _cache.Get<string>(Constants.OrderSymbol);
                 string? product = _cache.Get<string>(Constants.OrderProduct);
                 string? transactionType = _cache.Get<string>(Constants.OrderSide);
                 int filledQty = _cache.Get<int>(Constants.FilledQty);
 
-                var postRow = postArray
-                    .FirstOrDefault(p =>
-                        p["tsym"]?.Value<string>() == symbol &&
-                        p["prd"]?.Value<string>() == product);
+                var postPositions = postArray.ToObject<List<PositionBookModel>>();
 
-                int postQty = postRow?["netqty"]?.Value<int>() ?? 0;
+                var postRow = postPositions?.FirstOrDefault(p =>
+                        p.Symbol == symbol &&
+                        p.ProductType == product);
+                $"Position for symbol: {symbol} /product: {product}".Warn();
+
+                if (postRow == null)
+                {
+                    return $"Position for symbol: {symbol} /product: {product} not found in post positions".FailWithLog(true);
+                }
+
+                int postQty = postRow.NetQty;
 
                 var preRow = prePositions
                     .FirstOrDefault(p =>
@@ -44,19 +51,20 @@ namespace NTTCoreTester.Activities
 
                 int preQty = preRow?.NetQty ?? 0;
 
-                int expectedQty = transactionType == "Buy" ? preQty + filledQty : preQty - filledQty;
+                $"PreQty: {preQty}, FilledQty: {filledQty}, PostQty: {postQty}".Warn();
 
+                int expectedQty = preQty + filledQty;
                 if (postQty != expectedQty)
                 {
-                    return ActivityResult.SoftFail(
-                        $"Position mismatch. Expected: {expectedQty}, Actual: {postQty}");
+                    return $"Position mismatch. Expected: {expectedQty}, Actual: {postQty}".FailWithLog();
                 }
 
+                _cache.Set(Constants.PostPositions, postPositions);
                 return ActivityResult.Success();
             }
             catch (Exception ex)
             {
-                return ActivityResult.HardFail($"Error validating post positions: {ex.Message}");
+                return $"Error ValidatePostPositionsHandler: {ex.Message}".FailWithLog(true);
             }
         }
     }

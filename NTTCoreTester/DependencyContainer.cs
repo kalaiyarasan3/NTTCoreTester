@@ -24,6 +24,7 @@ namespace NTTCoreTester
             services.AddSingleton<ResponseChecker>();
             services.AddSingleton<ConfigRunner>();
             services.AddSingleton<ActivityExecutor>();
+            services.AddSingleton<ReportManager>();
 
             services.AddTransient<IActivityHandler, ExtractSessionHandler>();
             services.AddTransient<IActivityHandler, ExtractOTPHandler>();
@@ -37,6 +38,7 @@ namespace NTTCoreTester
             services.AddTransient<IActivityHandler, ExtractTradeFillHandler>();
             services.AddTransient<IActivityHandler, ValidatePostPositionsHandler>();
             services.AddTransient<IActivityHandler, ConfirmOrderStatusHandler>();
+            services.AddTransient<IActivityHandler, ExtractSquareOffOrderHandler>();
             services.AddTransient<IActivityHandler, MarketWatcListID>();
 
 

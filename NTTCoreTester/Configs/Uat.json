@@ -9,7 +9,7 @@
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
-        "uid": "47054457",
+        "uid": "90255961",
         "pwd": "Navia@123",
         "otp": "7657768",
         "TwoFA": 1
@@ -97,7 +97,7 @@
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
-        "token": "10604"
+        "token": "3432"
       }
     },
     {
@@ -162,7 +162,7 @@
         "segment": "EQ",
         "tsym": "{{tsym}}",
         "qty": 10,
-        "prc": "1940.80",
+        "prc": "1050.3",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -314,6 +314,36 @@
       "activity": "ConfirmOrderStatus"
     },
     {
+      "endpoint": "TradeBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
       "endpoint": "Limits",
       "method": "POST",
       "headers": {
@@ -326,6 +356,51 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       }
+    },
+    {
+      "endpoint": "PositionBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPrePositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionSquareOff",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "ClientType": "ALL",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ExtractSquareOffOrder"
     },
     {
       "endpoint": "TradeBook",
@@ -358,18 +433,32 @@
       }
     },
     {
-      "endpoint": "PositionSquareOff",
+      "endpoint": "Limits",
       "method": "POST",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractPostLimitMargin",
       "payload": {
         "actid": "{{uid}}",
-        "ClientType": "ALL",
         "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "activity": "ValidateSquareOffOrderStatus",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
       }
     },
     {

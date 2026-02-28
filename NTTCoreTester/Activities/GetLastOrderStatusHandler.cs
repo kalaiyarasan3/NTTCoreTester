@@ -81,7 +81,25 @@ Modify Order
 place order with new client order id
 cancel order
 Square off order
+i already have this handlers 
+prelimits 
+prepositions
+place order
+post limits
+post positions book (here save the post positions and  in cache and use it after square off)
+pre limits 
+square off
+post limits
+post positions (validate the position is updated as expected after square off)
+*************
 
-
+so place buy order
+check trade fill
+check positions
+check margin
+now place sell order with same symbol
+check trade fill
+check positions
+check margin
 
  */

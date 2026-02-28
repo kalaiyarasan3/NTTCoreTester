@@ -42,7 +42,7 @@ namespace NTTCoreTester.Activities
                 {
                     _cache.Set(Constants.PreviousOrderMargin, existing);
                 }
-
+                $"Available margin; {newOrderMargin.MarginUsedPrev}, Required margin + charges: {newOrderMargin.OrderMargin + newOrderMargin.Charges}".Info();
                 _cache.Set(Constants.GetOrderMargin, newOrderMargin);
 
                 return ActivityResult.Success();

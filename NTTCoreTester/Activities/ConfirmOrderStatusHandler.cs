@@ -31,6 +31,8 @@ namespace NTTCoreTester.Activities
 
             var key = cache.Get<string>(Constants.ClientOrdId);
 
+            $"Client order id: {key}".Warn();
+
             var relatedOrders = orders?
                 .Where(x => x.NewClientOrderId == key)
                 .ToList();

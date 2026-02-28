@@ -124,6 +124,51 @@ namespace NTTCoreTester.Activities
                 $"UsedMarginPercentage API : {postLimit.UsedMarginPercentage}".Warn();
                 $"UsedMarginPercentage CALC: {calculatedUsedPercent}".Warn();
 
+                var prePositions = _cache.Get<List<PositionBookModel>>(Constants.PrePositions);
+                var postPositions = _cache.Get<List<PositionBookModel>>(Constants.PostPositions);
+
+                if (prePositions != null && postPositions != null)
+                {
+                    var symbol = _cache.Get<string>(Constants.OrderSymbol);
+                    var product = _cache.Get<string>(Constants.OrderProduct);
+
+                    var prePosition = prePositions.FirstOrDefault(p =>
+                        p.Symbol == symbol &&
+                        p.ProductType == product);
+
+                    var postPosition = postPositions.FirstOrDefault(p =>
+                        p.Symbol == symbol &&
+                        p.ProductType == product);
+
+                    int preQty = prePosition?.NetQty ?? 0;
+                    int postQty = postPosition?.NetQty ?? 0;
+
+                    // square-off detection
+                    if (preQty != 0 && postQty == 0)
+                    {
+                        decimal usedBefore = Normalize(preLimit.UsedMarginWithoutPL);
+                        decimal usedAfter = Normalize(postLimit.UsedMarginWithoutPL);
+
+                        decimal marginReduction = Normalize(usedBefore - usedAfter);
+
+                        if (marginReduction <= 0)
+                        {
+                            errors.Add(
+                                $"Square-off margin release failed. Position closed but UsedMarginWithoutPL did not reduce. Before: {usedBefore}, After: {usedAfter}");
+                        }
+                    }
+                }
+
+                decimal available = preLimit.RemainingMargin;
+                decimal required = orderMargin.OrderMargin;
+
+                if (available < required &&
+                    postLimit.UsedMarginWithoutPL > preLimit.UsedMarginWithoutPL)
+                {
+                    errors.Add(
+                        $"RMS allowed execution despite insufficient margin. Available: {available}, Required: {required}");
+                }
+
                 _cache.Set("PostLimitMargin", postLimit);
 
                 if (errors.Any())

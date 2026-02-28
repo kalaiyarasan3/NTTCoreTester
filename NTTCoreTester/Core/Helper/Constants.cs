@@ -19,6 +19,7 @@ namespace NTTCoreTester.Core.Helper
         public const string UId = "uid";
         public const string UName = "uname";
         public const string PrePositions = "PrePositions";
+        public const string PostPositions = "PostPositions";
         public const string FilledQty = "FilledQty";
         public const string OrderSymbol = "OrderSymbol";
         public const string OrderProduct = "OrderProduct";
