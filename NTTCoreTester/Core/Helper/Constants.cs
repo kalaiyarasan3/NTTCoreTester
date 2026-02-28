@@ -12,10 +12,12 @@ namespace NTTCoreTester.Core.Helper
        // public const string ClientOrdIdTradeBook = "ClientOrdId";
         public const string OrderNumber = "ordno";
         public const string TotalQuantity = "Total_Quantity";
+        public const string ShouldBlockMargin = "ShouldBlockMargin";
         public const string SUserToken = "token";
         public const string GetOrderMargin = "GetOrderMargin";
         public const string PreviousOrderMargin = "PreviousOrderMargin";
         public const string PreLimitMargin = "PreLimitMargin";
+        public const string PostLimitMargin = "PostLimitMargin";
         public const string UId = "uid";
         public const string UName = "uname";
         public const string PrePositions = "PrePositions";

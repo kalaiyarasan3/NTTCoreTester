@@ -31,7 +31,7 @@ namespace NTTCoreTester.Models
         public string? Status { get; set; }
 
         [JsonProperty("qty")]
-        public string? Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         [JsonProperty("trantype")]
         public string? TransactionType { get; set; } //Buy/Sell

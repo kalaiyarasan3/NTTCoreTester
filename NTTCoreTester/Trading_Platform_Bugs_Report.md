@@ -63,7 +63,7 @@ After square-off, position shows 0 but:
    **Actual**: Margin still blocked, order shown as Pending
 
 ## 5. Insufficient margin validation on opposite-side orders
-
+`Completed`
 **Problem**  
 Client with existing short position (–2 lots) places buy order for 3 lots 
 → system allows full 3 lots 
@@ -79,7 +79,7 @@ Full 3 lots accepted → extra 1 lot treated as new long position
 → unnecessary extra margin blocked
 
 ## 6. Additional position allowed despite insufficient margin (Natural Gas)
-
+`Completed`
 **Problem**  
 Client with open position could add more lots even when available margin 
 was clearly insufficient.
@@ -95,7 +95,7 @@ was clearly insufficient.
 **Severity**: Clear **RMS (Risk Management System)** failure
 
 ## 7. Position taken in NGMini without sufficient balance (UCC 98403013)
-
+`Completed`
 **Problem**  
 Fresh position opened in Natural Gas Mini despite 
 available balance < required margin.

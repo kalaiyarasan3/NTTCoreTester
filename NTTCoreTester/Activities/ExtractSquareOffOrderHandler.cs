@@ -57,12 +57,12 @@ namespace NTTCoreTester.Activities
             _cache.Set(Constants.ClientOrdId, latestClientId);
             _cache.Set(Constants.OrderSide, latestOrder.TransactionType);
 
-            $"Square-off Order Found: {latestClientId} qty: {latestOrder.Quantity} side: {latestOrder.TransactionType} statusFilled: {isFilled}".Warn();
+            $"Square-off Order Found: {latestClientId} qty: {latestOrder.Quantity} side: {latestOrder.TransactionType} statusFilled: {isFilled} remarks: {latestOrder.Remarks}".Warn();
 
             if (!isFilled)
             {
                 return $"Square-off order not filled yet. Current states: {string.Join(" | ", relatedOrders.Select(o => o.Status))}"
-                    .FailWithLog(false);
+                    .FailWithLog();
             }
 
             return ActivityResult.Success();

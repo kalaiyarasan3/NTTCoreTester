@@ -52,7 +52,7 @@ namespace NTTCoreTester.Activities
                         .Distinct());
 
                 return $"1111 not found. Current states: {statuses}"
-                    .FailWithLog();
+                    .FailWithLog(false);
             }
 
             _cache.Set(Constants.OrderNumber, pendingOrder.OrderNumber);
@@ -101,5 +101,21 @@ now place sell order with same symbol
 check trade fill
 check positions
 check margin
+
+i found one  thing if i square an order it will 
+next call activity book to get find the clientordid
+then call TradeBook ExtractTradeFill acivity to find the trade fill for the square off order
+then call PositionBook  ValidatePostPositions activity to validate the position is updated as expected after square off
+then call ExtractPostLimitMargin activity to validate the margin is updated as expected after square off
+here is a one caught 
+positon net qty: 20 (placed square off but in pending status)
+place order to buy 5 qty
+position net qty should be 25 now but if i call square off all 
+5 qty send to squareoff or 25 qty send to square off because order is in pending 
+status and not filled yet so position is not updated 
+yet so it will send 25 qty to 
+square off instead of 5 qty which is wrong because only 5 qty is 
+pending to fill rest 20 qty is already there in position book so we need to 
+consider the pending order qty also while calculating the square off qty
 
  */
