@@ -24,7 +24,7 @@
         "CTCLId": "634102111||^\\d+$|null",
         "ClientType": "3||^\\d+$|null",
         "RoleName": null,
-        "tsym": "ALLCARGO-B||^[A-Z0-9#_.-]+$",
+        "tsym": "ALLCARGO-B||^[A-Z0-9#_.&-]+$",
         "prc": 0.0,
         "orgqty": 0,
         "qty": 0,

@@ -4,6 +4,7 @@ using NTTCoreTester.Core.Models;
 using NTTCoreTester.Enums;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks.Dataflow;
 using ValidationResult = NTTCoreTester.Core.Models.ValidationResult;
 
 namespace NTTCoreTester.Validators
@@ -29,8 +30,13 @@ namespace NTTCoreTester.Validators
                 if (!IsBusinessSuccess(result, validation)) return validation;
 
                 validation.IsSchemaValid = Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
+                Console.WriteLine("|| {0}", string.Join(" || ", schemaErrors));
                 validation.Errors.AddRange(schemaErrors);
                 validation.IsSuccess = true;
+                //foreach (var error in schemaErrors)
+                //{
+                //    $"{error}".Error();
+                //}
             }
             catch (Exception ex)
             {

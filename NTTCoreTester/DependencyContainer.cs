@@ -40,7 +40,8 @@ namespace NTTCoreTester
             services.AddTransient<IActivityHandler, ConfirmOrderStatusHandler>();
             services.AddTransient<IActivityHandler, ExtractSquareOffOrderHandler>();
             services.AddTransient<IActivityHandler, MarketWatcListID>();
-            services.AddTransient<IActivityHandler, ValidateRejectedOrderImmutabilityHandler>();
+            services.AddTransient<IActivityHandler, ValidateOrderBookSyncHandler>();
+            services.AddTransient<IActivityHandler, SaveOrdersHandler>();
 
 
             services.AddHttpClient<IApiService, ApiService>()

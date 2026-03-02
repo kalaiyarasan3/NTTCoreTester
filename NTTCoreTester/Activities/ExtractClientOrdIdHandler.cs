@@ -24,14 +24,17 @@ namespace NTTCoreTester.Activities
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
             var clOrdId = result.DataObject?["cl_ord_id"]?.Value<string>();
-            
+            var requestTimeRaw = result.DataObject?["request_time"]?.Value<string>();
 
             if (string.IsNullOrWhiteSpace(clOrdId))
-                return  $"cl_ord_id not found in {endpoint}".FailWithLog();
+                return $"cl_ord_id not found in response for endpoint {endpoint}".FailWithLog();
 
             $"Client order id: {clOrdId}".Warn();
 
             _cache.Set(Constants.ClientOrdId, clOrdId);
+            _cache.Set(Constants.PlaceOrderTime, requestTimeRaw);
+
+            $"cl_ord_id={clOrdId} | PlaceOrderTime={requestTimeRaw}".Info();
 
             _cache.Set(Constants.ShouldBlockMargin, false);
 

@@ -7,13 +7,23 @@
       "endpoint": "Login",
       "method": "POST",
       "headers": {},
-      "activity": "",
+      "activity": "ExtractSession",
       "payload": {
-        "uid": "{{uid}}",
-        "pwd": "{{pwd}}",
-        "otp": "{{otp}}",
+        "uid": "47054457",
+        "pwd": "Navia@123",
+        "otp": "7657768",
         "TwoFA": 1
       }
+    },
+    {
+      "endpoint": "CheckLogin",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {}
     },
     {
       "endpoint": "GetSecurityInfo",
@@ -21,13 +31,13 @@
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
-        "Source": "RMS"
+        "Source": "WEB"
       },
+      "activity": "ExtractSecurityInfo",
       "payload": {
-        "exch": "BSE",
-        "token": "530965"
-      },
-      "activity": ""
+        "exch": "NSE",
+        "token": "10604"
+      }
     },
     {
       "endpoint": "GetOrderMargin",
@@ -35,17 +45,17 @@
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
-        "Source": "WEB"
+        "Source": "RMS"
       },
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
-        "exch": "BSE",
-        "tsym": "IOC-A",
-        "qty": "10",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "100",
         "trantype": "Buy",
         "ordno": "0",
-        "prc": 514.1,
+        "prc": "{{lp}}",
         "trgprc": "0",
         "dscqty": "0",
         "prd": "CNC",
@@ -57,7 +67,7 @@
         "orgtrgprc": "0",
         "snonum": "0"
       },
-      "activity": ""
+      "activity": "ExtractGetOrderMargin"
     },
     {
       "endpoint": "PlaceOrder",
@@ -65,19 +75,19 @@
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
-        "Source": "RMS"
+        "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
-        "exch": "NSE",
+        "exch": "{{exch}}",
         "trantype": "Buy",
         "norenordno": "0",
         "segment": "EQ",
-        "tsym": "IOC-EQ",
-        "qty": 1,
-        "prc": "176.16",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "1000.200",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -108,6 +118,50 @@
       }
     },
     {
+      "endpoint": "OrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "SaveOrders",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ValidateOrderBookSync"
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "GetLastOrderStatus"
+    },
+    {
       "endpoint": "ModifyOrder",
       "method": "POST",
       "headers": {
@@ -115,30 +169,59 @@
         "Module": "OrderService",
         "Source": "WEB"
       },
-      "activity": "",
+      "activity": "ExtractClientOrdId",
       "payload": {
-        "exch": "NSE",
+        "exch": "{{exch}}",
         "ordno": "{{ordno}}",
-        "prctyp": "LMT",
-        "prc": "176.16",
-        "qty": 100,
-        "tsym": "IOC-EQ",
+        "prctyp": "MKT",
+        "prc": "{{lp}}",
+        "qty": 15,
+        "tsym": "{{tsym}}",
         "ret": "",
         "mkt_protection": "0",
         "trgprc": "0.00",
         "dscqty": 0,
         "ext_remarks": "",
-        "cl_ord_id": "180274053",
-        "uid": "47054457",
-        "actid": "47054457",
+        "cl_ord_id": "{{cl_ord_id}}",
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
         "bpprc": "0",
         "blprc": "0",
         "trailprc": "0",
         "ordersource": "Web",
-        "orderactivity": 2,
+        "orderactivity": 1,
         "prd": "CNC",
-        "tqty": 100
+        "tqty": 15
       }
+    },
+    {
+      "endpoint": "OrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "SaveOrders",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ValidateOrderBookSync"
     },
     {
       "endpoint": "CancelOrder",
