@@ -13,6 +13,16 @@
         public string ValidationErrors { get; set; }
         public string? Message { get; set; }
 
+        public string? SyncFieldMismatches { get; set; }        
+        public string? OrdenttmRaw { get; set; }               
+        public long? PlaceOrderToOrderBookMs { get; set; }    
+        public long? PlaceOrderToActivityBookMs { get; set; }   
+        public long? PlaceOrderToExchangeMs { get; set; }      
+        public string? ExchangeStatus { get; set; }            
+        public string? OrderActivityStatus { get; set; }
+
+
+
         public CsvReportEntry()
         {
             Timestamp = DateTime.Now;

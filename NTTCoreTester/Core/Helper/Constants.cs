@@ -23,6 +23,11 @@ namespace NTTCoreTester.Core.Helper
         public const string OrderSymbol = "OrderSymbol";
         public const string OrderProduct = "OrderProduct";
         public const string OrderSide = "OrderSide";
+
+        public const string  PlaceOrderTime = "PlaceOrderTime";
+        public const string OrderBookAddedOn = "OrderBookAddedOn";
+
+
         // Common response keys
         public const string StatusCode = "StatusCode";
         public const string Message = "Message";
@@ -34,5 +39,8 @@ namespace NTTCoreTester.Core.Helper
         public const string NOT_JSON = "NOT_JSON";
         public const string HTTP_FAILED = "HTTP_FAILED";
         public const string INVALID_JSON = "INVALID_JSON";
+
+
+
     }
 }

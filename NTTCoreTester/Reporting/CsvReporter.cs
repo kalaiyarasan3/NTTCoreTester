@@ -50,6 +50,77 @@ namespace NTTCoreTester.Reporting
             _entries.Add(entry);
         }
 
+        public void AddSyncEntry(
+            string endpoint, long responseMs, int httpCode, string businessStatus,
+            string jsonResponse, bool schemaValid, string validationErrors, string? message,
+            string? syncFieldMismatches, string? ordenttmRaw,
+            long? placeOrderToOrderBookMs, long? placeOrderToActivityBookMs, long? placeOrderToExchangeMs,
+            string? exchangeStatus, string? orderActivityStatus)
+        {
+            var entry = new CsvReportEntry
+            {
+                Timestamp = DateTime.Now,
+                Endpoint = endpoint,
+                ResponseTimeMs = responseMs,
+                PerformanceStatus = responseMs <= PERFORMANCE_THRESHOLD_MS ? "PASS" : "FAIL",
+                HttpStatusCode = httpCode,
+                BusinessStatus = businessStatus,
+                JsonResponse = jsonResponse,
+                SchemaValid = schemaValid,
+                ValidationErrors = validationErrors ?? "",
+                Message = message,
+                SyncFieldMismatches = syncFieldMismatches,
+                OrdenttmRaw = ordenttmRaw,
+                PlaceOrderToOrderBookMs = placeOrderToOrderBookMs,
+                PlaceOrderToActivityBookMs = placeOrderToActivityBookMs,
+                PlaceOrderToExchangeMs = placeOrderToExchangeMs,
+                ExchangeStatus = exchangeStatus,
+                OrderActivityStatus = orderActivityStatus
+            };
+
+            _entries.Add(entry);
+        }
+
+        public async Task Save()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine(
+                "Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,Message," +
+                "BusinessStatus,SchemaValid,ValidationErrors," +
+                "SyncFieldMismatches,OrdenttmRaw," +
+                "PlaceOrderToOrderBookMs,PlaceOrderToActivityBookMs,PlaceOrderToExchangeMs," +
+                "ExchangeStatus,OrderActivityStatus," +
+                "JsonResponse");
+
+            foreach (var entry in _entries)
+            {
+                sb.AppendLine(
+                    $"{entry.Timestamp:yyyy-MM-dd HH:mm:ss.fff}," +
+                    $"{entry.Endpoint}," +
+                    $"{entry.ResponseTimeMs}," +
+                    $"{entry.PerformanceStatus}," +
+                    $"{entry.HttpStatusCode}," +
+                    $"{EscapeForCsv(entry.Message ?? "")}," +
+                    $"{entry.BusinessStatus}," +
+                    $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
+                    $"{EscapeForCsv(entry.ValidationErrors)}," +
+                    $"{EscapeForCsv(entry.SyncFieldMismatches ?? "")}," +
+                    $"{EscapeForCsv(entry.OrdenttmRaw ?? "")}," +
+                    $"{entry.PlaceOrderToOrderBookMs?.ToString() ?? ""}," +
+                    $"{entry.PlaceOrderToActivityBookMs?.ToString() ?? ""}," +
+                    $"{entry.PlaceOrderToExchangeMs?.ToString() ?? ""}," +
+                    $"{entry.ExchangeStatus ?? ""}," +
+                    $"{entry.OrderActivityStatus ?? ""}," +
+                    $"{EscapeForCsv(entry.JsonResponse)}");
+            }
+
+            await File.WriteAllTextAsync(_fullPath, sb.ToString());
+            Console.WriteLine($"\n CSV Report saved: {_fullPath}");
+            Console.WriteLine($"   Total Entries: {_entries.Count}");
+            Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
+        }
+
         //public async Task Save()
         //{
         //    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -69,37 +140,9 @@ namespace NTTCoreTester.Reporting
         //    Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
         //}
 
-         public async Task Save()
-         {
-             var sb = new StringBuilder();
+      
 
-             // CSV Header
-             sb.AppendLine("Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,Message,BusinessStatus,SchemaValid,ValidationErrors,JsonResponse");
-             foreach (var entry in _entries)
-             {
-                 string escapedJson = EscapeForCsv(entry.JsonResponse);
-                 string escapedErrors = EscapeForCsv(entry.ValidationErrors);
-                 string escapedMessage = EscapeForCsv(entry.Message ?? "");
-
-                 sb.AppendLine($"{entry.Timestamp:yyyy-MM-dd HH:mm:ss}," +
-                              $"{entry.Endpoint}," +
-                              $"{entry.ResponseTimeMs}," +
-                              $"{entry.PerformanceStatus}," +
-                              $"{entry.HttpStatusCode}," +
-                              $"{escapedMessage}," +
-                              $"{entry.BusinessStatus}," +
-                              $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
-                              $"{escapedErrors}," +
-                              $"{escapedJson}");
-             }
-
-             await File.WriteAllTextAsync(_fullPath, sb.ToString());
-             Console.WriteLine($"\n CSV Report saved: {_fullPath}");
-             Console.WriteLine($"   Total Entries: {_entries.Count}");
-             Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
-         }
-
-         public string GetPath()
+        public string GetPath()
          {
              return _fullPath;
          }

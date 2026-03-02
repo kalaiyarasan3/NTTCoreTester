@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using CsvHelper;
+using Newtonsoft.Json;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Models;
+using System.Globalization;
 
 namespace NTTCoreTester.Services
 {
@@ -21,6 +23,8 @@ namespace NTTCoreTester.Services
             _cache = cache;
         }
 
+
+        
         public List<string> GetAvailableSuites()
         {
             if (!Directory.Exists(CONFIG_FOLDER))
@@ -29,6 +33,22 @@ namespace NTTCoreTester.Services
             var files = Directory.GetFiles(CONFIG_FOLDER, "*.json");
             return files.Select(f => Path.GetFileNameWithoutExtension(f)).ToList();
         }
+        
+
+        //public List<string> GetAvailableSuites()
+        //{
+        //    var files =Directory.GetFiles(CONFIG_FOLDER, "*.json");
+
+        //    return files.Select(f => Path.GetFileNameWithoutExtension(f)).ToList();
+        //}
+
+        //public async Task RunSuiteCSV(string configFileName)
+        //{
+        //    string filePath= Path.Combine(CONFIG_FOLDER, $"{configFileName}.csv");
+
+        //    using var reader=new StreamReader(filePath);
+        //    using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        //}
 
         public async Task RunSuite(string configFileName)
         {

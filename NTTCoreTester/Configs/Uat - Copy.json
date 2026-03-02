@@ -178,7 +178,7 @@
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
-        "token": "10604"
+        "token": "3432"
       }
     },
     {
@@ -243,7 +243,7 @@
         "segment": "EQ",
         "tsym": "{{tsym}}",
         "qty": 10,
-        "prc": "1970.200",
+        "prc": "1000.200",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",
@@ -287,6 +287,35 @@
         "status": "ALL"
       },
       "activity": "GetLastOrderStatus"
+    },
+    {
+      "endpoint": "OrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "SaveOrders",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ValidateOrderBookSync"
     },
     {
       "endpoint": "Limits",
