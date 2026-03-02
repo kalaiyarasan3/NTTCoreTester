@@ -238,6 +238,128 @@
         "ordno": "{{ordno}}",
         "cl_ord_id": "{{cl_ord_id}}"
       }
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Buy",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "1900",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
+      }
+    },
+    {
+      "endpoint": "OrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "SaveOrders",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ValidateOrderBookSync"
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ConfirmOrderStatus"
+    },
+    {
+      "endpoint": "TradeBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
     }
   ]
 }
