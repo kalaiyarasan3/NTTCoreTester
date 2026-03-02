@@ -25,6 +25,7 @@ namespace NTTCoreTester.UI
                 if (choice == "0")
                 {
                     "\nExiting... CSV will be saved automatically.".Info();
+                    _cache.Clear();
                     return;
                 }
 
@@ -55,10 +56,12 @@ namespace NTTCoreTester.UI
 
             if (!string.IsNullOrEmpty(token))
             {
+                _ = _cache.Get<string>("token");
                 string? userName = _cache.Get<string>("userName");
                 string? userId = _cache.Get<string>("uid");
 
                 "\nLOGGED IN".Success();
+                $"Session token: {token}".Info();
                 $"User: {userName} ({userId})".Info();
             }
             else
@@ -66,7 +69,7 @@ namespace NTTCoreTester.UI
                 "\nNO ACTIVE SESSION".Warn();
             }
 
-            Console.WriteLine(); // empty line for readability
+            Console.WriteLine(); 
 
             $"{new string('─', 64)}".Info();
 

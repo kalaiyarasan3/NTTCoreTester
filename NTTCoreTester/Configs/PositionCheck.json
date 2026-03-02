@@ -1,0 +1,51 @@
+{
+  "suiteName": "Position Checking",
+  "description": "Checking the Orders are positions if its traded. Checking Margins the Margin Release and Block",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "TradeBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    }
+  ]
+}

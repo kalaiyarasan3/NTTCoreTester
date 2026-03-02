@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
-    <None Remove="Configs\LiveMock.json" />
     <None Remove="Configs\Order_request.json" />
     <None Remove="Configs\Uat - Copy.json" />
     <None Remove="ExpectedResponses\BasketOrder_response.json" />
@@ -38,19 +37,16 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Live_AllCargo.json">
+    <Content Include="Configs\PositionCheck.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Uat - Copy - Copy.json">
+    <Content Include="Configs\1Login.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Uat - Copy.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Uat.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\LiveMock.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Order_request.json">

@@ -130,7 +130,6 @@ namespace NTTCoreTester.Services
             $"  SUITE COMPLETE: {suiteConfig.SuiteName}".Info();
             $"   Passed: {passed}".Info();
             $"   Failed: {failed}".Info();
-            _cache.Clear();
             $"{new string('═', 80)}\n".Success();
         }
     }
