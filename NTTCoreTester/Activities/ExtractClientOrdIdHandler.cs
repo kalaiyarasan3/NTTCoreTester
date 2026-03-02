@@ -33,6 +33,8 @@ namespace NTTCoreTester.Activities
 
             _cache.Set(Constants.ClientOrdId, clOrdId);
 
+            _cache.Set(Constants.ShouldBlockMargin, false);
+
             return ActivityResult.Success();
         }
     }

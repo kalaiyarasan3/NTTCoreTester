@@ -41,8 +41,17 @@ namespace NTTCoreTester.Activities
             if (relatedOrders == null || !relatedOrders.Any())
                 return $"Order {key} not found".FailWithLog();
 
-            var pendingOrder = relatedOrders
-                .FirstOrDefault(x => x.Status == "1111");
+            var pendingOrder = relatedOrders.FirstOrDefault(x => x.Status == "1111");
+
+            var orderToUse = pendingOrder ?? relatedOrders.First();
+
+            _cache.Set(Constants.OrderNumber, pendingOrder?.OrderNumber ?? orderToUse.OrderNumber);  
+            _cache.Set(Constants.TotalQuantity, pendingOrder?.Quantity ?? orderToUse.Quantity);       
+            _cache.Set(Constants.OrderSymbol, orderToUse.TypeSymbol);    
+            _cache.Set(Constants.OrderProduct, orderToUse.Product);      
+            _cache.Set(Constants.OrderSide, orderToUse.TransactionType);
+
+            $"ordno: {pendingOrder?.OrderNumber} qty: {pendingOrder?.Quantity} symbol: {orderToUse.TypeSymbol} product: {orderToUse.Product} type: {orderToUse.TransactionType}".Info();
 
             if (pendingOrder == null)
             {
@@ -54,15 +63,7 @@ namespace NTTCoreTester.Activities
                 return $"1111 not found. Current states: {statuses}"
                     .FailWithLog(false);
             }
-
-            _cache.Set(Constants.OrderNumber, pendingOrder.OrderNumber);
-            _cache.Set(Constants.TotalQuantity, pendingOrder.Quantity);
-            _cache.Set(Constants.OrderSymbol, pendingOrder.TypeSymbol);
-            _cache.Set(Constants.OrderProduct, pendingOrder.Product);
-            _cache.Set(Constants.OrderSide, pendingOrder.TransactionType);
-
-            $"ordno: {pendingOrder.OrderNumber} qty: {pendingOrder.Quantity} symbol: {pendingOrder.TypeSymbol} product: {pendingOrder.Product} type: {pendingOrder.TransactionType}".Info();
-
+            _cache.Set(Constants.ShouldBlockMargin, true);
             return ActivityResult.Success(pendingOrder.Remarks ?? "");
         }
     }

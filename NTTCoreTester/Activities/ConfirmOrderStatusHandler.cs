@@ -53,7 +53,7 @@ namespace NTTCoreTester.Activities
                 return $"Current states: {statuses}"
                     .FailWithLog();
             }
-
+            cache.Set(Constants.ShouldBlockMargin, true);
 
             return ActivityResult.Success(filledOrder.Remarks ?? "");
         }

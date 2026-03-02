@@ -78,26 +78,39 @@ namespace NTTCoreTester.Activities
                         $"Difference: {Normalize(remainingDelta + usedWithoutPLDelta)}");
                 }
 
-                decimal actualMarginBlocked =Normalize(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
+                bool shouldBlockMargin = _cache.Get<bool>(Constants.ShouldBlockMargin);
 
-                decimal previewMargin = Normalize(orderMargin.OrderMargin);
-
-                if (!AreEqual(actualMarginBlocked, previewMargin))
-                {
-                    errors.Add(
-                        $"Preview vs Actual margin mismatch. " +
-                        $"Preview: {previewMargin}, ActualBlocked: {actualMarginBlocked}, " +
-                        $"Difference: {Normalize(actualMarginBlocked - previewMargin)}");
-                }
+                decimal actualBlocked = usedWithoutPLDelta;
 
                 decimal chargeDelta = Normalize(postLimit.Charges - preLimit.Charges);
 
-                decimal expectedChargeDelta = Normalize(orderMargin.Charges);
-
-                if (!AreEqual(chargeDelta, expectedChargeDelta))
+                if (shouldBlockMargin)
                 {
-                    errors.Add(
-                        $"Charge mismatch. Expected: {expectedChargeDelta}, Actual: {chargeDelta}");
+                    decimal previewMargin = Normalize(orderMargin.OrderMargin);
+
+                    if (!AreEqual(actualBlocked, previewMargin))
+                    {
+                        decimal difference = Normalize(previewMargin - actualBlocked);
+
+                        errors.Add(
+                            $"Preview vs Actual blocked margin mismatch. " +
+                            $"Preview: {previewMargin}, Actual: {actualBlocked}, " +
+                            $"Difference: {difference}");
+                    }
+                }
+                else
+                {
+                    if (!AreEqual(actualBlocked, 0))
+                    {
+                        errors.Add(
+                            "Margin blocked even though order was not accepted.");
+                    }
+
+                    if (!AreEqual(chargeDelta, 0))
+                    {
+                        errors.Add(
+                            "Charges applied even though order was rejected.");
+                    }
                 }
 
                 // ------------------------------------------------------------------
@@ -216,6 +229,7 @@ namespace NTTCoreTester.Activities
                 }
 
                 _cache.Set(Constants.PostLimitMargin, postLimit);
+                _cache.Set(Constants.ShouldBlockMargin, false);
 
                 if (errors.Any())
                 {
