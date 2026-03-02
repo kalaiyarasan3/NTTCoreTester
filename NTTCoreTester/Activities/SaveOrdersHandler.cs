@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
@@ -24,6 +25,11 @@ namespace NTTCoreTester.Activities
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
+
+            if (endpoint == "ActivityOrderBook" || endpoint == "OrderBook")
+            {
+
+            }
             var dataObject = result.DataObject;
             if (dataObject == null)
                 return "SaveOrders: DataObject is null".FailWithLog();
@@ -33,9 +39,11 @@ namespace NTTCoreTester.Activities
                 return "SaveOrders: AllOrders not found".FailWithLog();
 
             var orders = ordersToken.ToObject<List<OrderDetails>>();
+            var _orders = JsonConvert.DeserializeObject<Response>(result.ResponseBody).ResponceDataObject.AllOrders;
+            //string addedon = _orders.ResponceDataObject.AllOrders[0].AddedOn;
             var key = _cache.Get<string>(Constants.ClientOrdId);
 
-            var order = orders?
+            var order = _orders?
                 .Where(o => o.ClientOrderId == key
                          || o.NewClientOrderId == key
                          || o.OriginalClientOrderId == key)

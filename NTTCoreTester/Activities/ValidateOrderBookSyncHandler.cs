@@ -32,6 +32,8 @@ namespace NTTCoreTester.Activities
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
+
+
             //  1. Read reference fields from cache (from OrderBook via SaveOrdersHandler) 
             var clOrdId = _cache.Get<string>(Constants.ClientOrdId);
             var refSymbol = _cache.Get<string>(Constants.OrderSymbol);
@@ -86,7 +88,7 @@ namespace NTTCoreTester.Activities
                 CheckField(mismatches, "tsym", refSymbol, placementRow.TypeSymbol);
                 CheckField(mismatches, "prd", refProduct, placementRow.Product);
                 CheckField(mismatches, "trantype", refSide, placementRow.TransactionType);
-               // CheckField(mismatches, "qty", refQty, placementRow.Quantity);
+                // CheckField(mismatches, "qty", refQty, placementRow.Quantity);
             }
             else
             {
@@ -113,12 +115,13 @@ namespace NTTCoreTester.Activities
                 else
                     mismatches.Add($"request_time unparseable: '{placeOrderTimeRaw}'");
             }
-
+            string format = "yyyy-MM-dd HH:mm:ss.ffff";
             // Parse OrderBook AddedOn — format: "2026-02-27T16:12:57.6552"
             DateTime? orderBookAddedOnParsed = null;
             if (!string.IsNullOrWhiteSpace(orderBookAddedOnRaw))
             {
-                if (DateTime.TryParse(orderBookAddedOnRaw.Trim(),
+                if (DateTime.TryParseExact(orderBookAddedOnRaw.Trim().Replace("T"," "),
+                    format,
                         System.Globalization.CultureInfo.InvariantCulture,
                         System.Globalization.DateTimeStyles.None,
                         out var parsed))
@@ -145,6 +148,16 @@ namespace NTTCoreTester.Activities
             long? placeOrderToOrderBookMs = null;
             if (placeOrderParsed.HasValue && orderBookAddedOnParsed.HasValue)
                 placeOrderToOrderBookMs = (long)(orderBookAddedOnParsed.Value - placeOrderParsed.Value).TotalMilliseconds;
+
+            //if (placeOrderParsed is DateTime s && orderBookAddedOnParsed is DateTime e)
+            //{
+            //    TimeSpan diff = e - s;
+            //    long ms = (long)diff.TotalMilliseconds;
+
+            //    Console.WriteLine($"Start: {s:O}");
+            //    Console.WriteLine($"End:   {e:O}");
+            //    Console.WriteLine($"Diff ms: {(diff).TotalMilliseconds}");
+            //}
 
             // PlaceOrder → ActivityOrderBook
             long? placeOrderToActivityBookMs = null;
@@ -173,9 +186,9 @@ namespace NTTCoreTester.Activities
 
             //  6. Console 
             $"PlaceOrder time: {(placeOrderParsed.HasValue ? placeOrderParsed.Value.ToString("o") : "N/A")}".Info();
-                $"OrderBook AddedOn: {(orderBookAddedOnParsed.HasValue ? orderBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
-                $"ActivityOrderBook AddedOn: {(activityBookAddedOnParsed.HasValue ? activityBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
-                $"ordenttm: {ordenttmRaw}".Info();
+            $"OrderBook AddedOn: {(orderBookAddedOnParsed.HasValue ? orderBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
+            $"ActivityOrderBook AddedOn: {(activityBookAddedOnParsed.HasValue ? activityBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
+            $"ordenttm: {ordenttmRaw}".Info();
             $"ValidateOrderBookSync: PlaceOrder to OrderBook={placeOrderToOrderBookMs}ms | PlaceOrder to ActivityOrderBook={placeOrderToActivityBookMs}ms | PlaceOrder to Exchange={placeOrderToExchangeMs}ms".Info();
             $"ValidateOrderBookSync: exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}".Info();
 
@@ -213,7 +226,7 @@ namespace NTTCoreTester.Activities
 
             if (!string.Equals(expected.Trim(), actual?.Trim(), StringComparison.OrdinalIgnoreCase))
                 mismatches.Add($"{field}: expected='{expected}' actual='{actual}'");
-        } 
+        }
 
         private static bool TryParseOrdenttm(string raw, out DateTime result)
         {

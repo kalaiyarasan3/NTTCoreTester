@@ -16,7 +16,7 @@ namespace NTTCoreTester.Validators
         public ResponseChecker()
         {
         }
-            
+
 
         public ValidationResult Validate(ApiExecutionResult result)
         {
@@ -30,7 +30,8 @@ namespace NTTCoreTester.Validators
                 if (!IsBusinessSuccess(result, validation)) return validation;
 
                 validation.IsSchemaValid = Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
-                Console.WriteLine("|| {0}", string.Join(" || ", schemaErrors));
+                if (schemaErrors.Count > 0)
+                    Console.WriteLine("|| {0}", string.Join(" || ", schemaErrors));
                 validation.Errors.AddRange(schemaErrors);
                 validation.IsSuccess = true;
                 //foreach (var error in schemaErrors)
