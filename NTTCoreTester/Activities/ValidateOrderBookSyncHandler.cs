@@ -171,7 +171,11 @@ namespace NTTCoreTester.Activities
                 mismatches.Add("ordenttm empty on latest activity row");
             }
 
-            //  6. Console summary (once) ─
+            //  6. Console 
+            $"PlaceOrder time: {(placeOrderParsed.HasValue ? placeOrderParsed.Value.ToString("o") : "N/A")}".Info();
+                $"OrderBook AddedOn: {(orderBookAddedOnParsed.HasValue ? orderBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
+                $"ActivityOrderBook AddedOn: {(activityBookAddedOnParsed.HasValue ? activityBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
+                $"ordenttm: {ordenttmRaw}".Info();
             $"ValidateOrderBookSync: PlaceOrder to OrderBook={placeOrderToOrderBookMs}ms | PlaceOrder to ActivityOrderBook={placeOrderToActivityBookMs}ms | PlaceOrder to Exchange={placeOrderToExchangeMs}ms".Info();
             $"ValidateOrderBookSync: exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}".Info();
 

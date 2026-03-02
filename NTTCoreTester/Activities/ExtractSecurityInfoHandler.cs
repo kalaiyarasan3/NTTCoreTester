@@ -39,7 +39,7 @@ namespace NTTCoreTester.Activities
             //int? qty = Convert.ToInt32(Console.ReadLine());
             //_cache.Set("qty", qty);
 
-            return ActivityResult.Success("Security info extracted and stored in cache");
+            return ActivityResult.Success();
         }
 
       
