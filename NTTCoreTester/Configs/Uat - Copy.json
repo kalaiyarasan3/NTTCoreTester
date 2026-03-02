@@ -9,7 +9,7 @@
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
-        "uid": "47054457",
+        "uid": "90255961",
         "pwd": "Navia@123",
         "otp": "7657768",
         "TwoFA": 1
@@ -208,7 +208,7 @@
         "actid": "{{uid}}",
         "exch": "{{exch}}",
         "tsym": "{{tsym}}",
-        "qty": "100",
+        "qty": "10",
         "trantype": "Buy",
         "ordno": "0",
         "prc": "{{lp}}",
@@ -243,7 +243,7 @@
         "segment": "EQ",
         "tsym": "{{tsym}}",
         "qty": 10,
-        "prc": "1000.200",
+        "prc": "1970.200",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "CNC",

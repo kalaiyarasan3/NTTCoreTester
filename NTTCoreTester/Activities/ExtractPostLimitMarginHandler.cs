@@ -19,18 +19,23 @@ namespace NTTCoreTester.Activities
                 var errors = new List<string>();
 
                 var postLimit = GetPrimaryLimitMargin(result);
-
                 if (postLimit == null)
-                    return "Post Limit margin not found".FailWithLog();
+                    return "Post Limit margin not found".FailWithLog(true);
 
                 var preLimit = _cache.Get<LimitMarginDetails>(Constants.PreLimitMargin);
                 var orderMargin = _cache.Get<OrderMarginDetails>(Constants.GetOrderMargin);
 
                 if (preLimit == null)
-                    return "PreLimitMargin missing".FailWithLog();
+                    return "PreLimitMargin missing".FailWithLog(true);
 
                 if (orderMargin == null)
-                    return "OrderMargin missing".FailWithLog();
+                    return "OrderMargin missing".FailWithLog(true);
+
+                decimal Normalize(decimal value) =>
+                    Math.Round(value, 2, MidpointRounding.AwayFromZero);
+
+                bool AreEqual(decimal a, decimal b) =>
+                    Math.Abs(Normalize(a) - Normalize(b)) <= 0.01m;
 
                 var debugMessage =
                 $"preLimit.RemainingMargin: {preLimit.RemainingMargin}\n" +
@@ -45,99 +50,198 @@ namespace NTTCoreTester.Activities
 
                 debugMessage.Warn();
 
-                decimal Normalize(decimal value) =>
-                    Math.Round(value, 2, MidpointRounding.AwayFromZero);
+                // ------------------------------------------------------------------
+                // Margin Preview Consistency
+                // ------------------------------------------------------------------
 
-                bool AreEqual(decimal a, decimal b) =>
-                    Math.Abs(Normalize(a) - Normalize(b)) <= 0.01m;
-
-                // margin_used_prev check 
-                // checking GetOrderMargin.MarginUsedPrev against preLimit(Limits.AvailableMargin).
-                //UsedMarginWithoutPL to ensure that the previous margin used value is consistent with the pre-limit state before the order execution.
                 if (!AreEqual(orderMargin.MarginUsedPrev, preLimit.UsedMarginWithoutPL))
                 {
                     errors.Add(
-                        $"marginusedprev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, Actual: {orderMargin.MarginUsedPrev}");
+                        $"MarginUsedPrev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, Actual: {orderMargin.MarginUsedPrev}");
                 }
 
-                //internal movement check
-                decimal remainingDelta =
-                    Normalize(preLimit.RemainingMargin - postLimit.RemainingMargin);
+                // ------------------------------------------------------------------
+                // Delta Reconciliation
+                // ------------------------------------------------------------------
 
-                decimal usedDelta =
-                    Normalize(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
-                
+                //excluding charges
+                decimal usedWithoutPLDelta = Normalize(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
 
-                //External API Check
-                if (!AreEqual(remainingDelta, usedDelta))
+                decimal remainingDelta = Normalize(postLimit.RemainingMargin - preLimit.RemainingMargin);
+
+                if (!AreEqual(remainingDelta, -usedWithoutPLDelta))
                 {
                     errors.Add(
-                        $"Limit delta mismatch. RemainingDelta: {remainingDelta}, UsedDelta: {usedDelta}");
+                        $"Limit delta mismatch. " +
+                        $"RemainingDelta: {remainingDelta}, " +
+                        $"Expected: {-usedWithoutPLDelta}, " +
+                        $"Difference: {Normalize(remainingDelta + usedWithoutPLDelta)}");
                 }
 
-                //charge increase (soft validation)
+                bool shouldBlockMargin = _cache.Get<bool>(Constants.ShouldBlockMargin);
+
+                decimal actualBlocked = usedWithoutPLDelta;
 
                 decimal chargeDelta = Normalize(postLimit.Charges - preLimit.Charges);
 
-                var previousOrderMargin = _cache.Get<OrderMarginDetails>(Constants.PreviousOrderMargin);
-
-                decimal expectedChargeDelta;
-
-
-                // If previous order margin exists → MODIFY case
-                if (previousOrderMargin != null)
+                if (shouldBlockMargin)
                 {
-                    expectedChargeDelta = Normalize(
-                        orderMargin.Charges - previousOrderMargin.Charges);
+                    decimal previewMargin = Normalize(orderMargin.OrderMargin);
+
+                    if (!AreEqual(actualBlocked, previewMargin))
+                    {
+                        decimal difference = Normalize(previewMargin - actualBlocked);
+
+                        errors.Add(
+                            $"Preview vs Actual blocked margin mismatch. " +
+                            $"Preview: {previewMargin}, Actual: {actualBlocked}, " +
+                            $"Difference: {difference}");
+                    }
                 }
                 else
-                    expectedChargeDelta = Normalize(orderMargin.Charges);
-
-                if (!AreEqual(chargeDelta, expectedChargeDelta))
                 {
-                    errors.Add(
-                        $"Charge mismatch. Expected: {expectedChargeDelta}, Actual: {chargeDelta}");
+                    if (!AreEqual(actualBlocked, 0))
+                    {
+                        errors.Add(
+                            "Margin blocked even though order was not accepted.");
+                    }
+
+                    if (!AreEqual(chargeDelta, 0))
+                    {
+                        errors.Add(
+                            "Charges applied even though order was rejected.");
+                    }
                 }
 
-                //UsedMargin internal consistency
+                // ------------------------------------------------------------------
+                // Internal UsedMargin Consistency
+                // ------------------------------------------------------------------
+
                 if (!AreEqual(postLimit.UsedMargin,
                     postLimit.UsedMarginWithoutCharges + postLimit.Charges))
                 {
                     errors.Add("UsedMargin internal calculation mismatch");
                 }
 
-                //Transferable & Withdrawable
+                // ------------------------------------------------------------------
+                // Transferable / Withdrawable Consistency
+                // ------------------------------------------------------------------
+
                 if (!AreEqual(postLimit.TransferableAmount, postLimit.RemainingMargin))
                     errors.Add("TransferableAmount mismatch");
 
                 if (!AreEqual(postLimit.WithdrawableAmount, postLimit.RemainingMargin))
                     errors.Add("WithdrawableAmount mismatch");
 
-                //TotalCash stability
                 if (!AreEqual(preLimit.TotalCash, postLimit.TotalCash))
                     errors.Add("TotalCash changed unexpectedly");
 
-                //Percentage log
-                decimal calculatedUsedPercent =
-                    Normalize((postLimit.UsedMargin / postLimit.TotalCash) * 100);
+                // ------------------------------------------------------------------
+                // Position-Based Validations
+                // ------------------------------------------------------------------
 
-                $"UsedMarginPercentage API : {postLimit.UsedMarginPercentage}".Warn();
-                $"UsedMarginPercentage CALC: {calculatedUsedPercent}".Warn();
+                var prePositions = _cache.Get<List<PositionBookModel>>(Constants.PrePositions);
+                var postPositions = _cache.Get<List<PositionBookModel>>(Constants.PostPositions);
 
-                _cache.Set("PostLimitMargin", postLimit);
+                if (prePositions != null && postPositions != null)
+                {
+                    var symbol = _cache.Get<string>(Constants.OrderSymbol);
+                    var product = _cache.Get<string>(Constants.OrderProduct);
+                    var side = _cache.Get<string>(Constants.OrderSide);
+                    int orderQty = _cache.Get<int>(Constants.TotalQuantity);
+
+                    var prePosition = prePositions.FirstOrDefault(p =>
+                        p.Symbol == symbol && p.ProductType == product);
+
+                    var postPosition = postPositions.FirstOrDefault(p =>
+                        p.Symbol == symbol && p.ProductType == product);
+
+                    int preQty = prePosition?.NetQty ?? 0;
+                    int postQty = postPosition?.NetQty ?? 0;
+
+                    // ------------------------------------------------------------------
+                    // Square-Off Detection (non-zero → zero)
+                    // ------------------------------------------------------------------
+
+                    if (preQty != 0 && postQty == 0)
+                    {
+                        decimal usedBefore = Normalize(preLimit.UsedMarginWithoutPL);
+                        decimal usedAfter = Normalize(postLimit.UsedMarginWithoutPL);
+
+                        if (Normalize(usedBefore - usedAfter) <= 0)
+                        {
+                            errors.Add(
+                                $"Square-off margin release failed. " +
+                                $"Before: {usedBefore}, After: {usedAfter}");
+                        }
+                    }
+
+                    // ------------------------------------------------------------------
+                    // Fresh Exposure Validation (Flip Case)
+                    // Example: -2 + Buy 3 → +1 (1 fresh lot)
+                    // ------------------------------------------------------------------
+
+                    if (side != null)
+                    {
+                        int signedOrderQty = side.Equals("Buy", StringComparison.OrdinalIgnoreCase)
+                            ? orderQty
+                            : -orderQty;
+
+                        int netAfter = preQty + signedOrderQty;
+
+                        if (preQty != 0 && Math.Sign(preQty) != Math.Sign(netAfter))
+                        {
+                            int closingQty = Math.Min(Math.Abs(preQty), orderQty);
+                            int freshQty = orderQty - closingQty;
+
+                            if (freshQty > 0)
+                            {
+                                decimal marginPerLot =
+                                    Normalize(orderMargin.OrderMargin / orderQty);
+
+                                decimal requiredFreshMargin =
+                                    Normalize(marginPerLot * freshQty);
+
+                                if (preLimit.RemainingMargin < requiredFreshMargin &&
+                                    postLimit.UsedMarginWithoutPL > preLimit.UsedMarginWithoutPL)
+                                {
+                                    errors.Add(
+                                        $"RMS allowed fresh exposure without sufficient margin. " +
+                                        $"FreshQty: {freshQty}, Required: {requiredFreshMargin}, " +
+                                        $"Available: {preLimit.RemainingMargin}");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ------------------------------------------------------------------
+                // Full Insufficient Margin Validation
+                // ------------------------------------------------------------------
+
+                if (preLimit.RemainingMargin < orderMargin.OrderMargin &&
+                    postLimit.UsedMarginWithoutPL > preLimit.UsedMarginWithoutPL)
+                {
+                    errors.Add(
+                        $"RMS allowed execution despite insufficient margin. " +
+                        $"Available: {preLimit.RemainingMargin}, " +
+                        $"Required: {orderMargin.OrderMargin}");
+                }
+
+                _cache.Set(Constants.PostLimitMargin, postLimit);
+                _cache.Set(Constants.ShouldBlockMargin, false);
 
                 if (errors.Any())
                 {
-                    var message = string.Join(" | ", errors);
-                    return message.FailWithLog(false);
+                    return string.Join(" | ", errors).FailWithLog(false);
                 }
 
                 return ActivityResult.Success();
             }
             catch (Exception ex)
             {
-                return $"Error in ExtractPostLimitMarginHandler: {ex.Message}"
-                    .FailWithLog();
+                $"Error in ExtractPostLimitMarginHandler: {ex.Message} {ex.InnerException}".Warn();
+                throw;
             }
         }
 

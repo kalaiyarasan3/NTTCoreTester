@@ -24,16 +24,27 @@ namespace NTTCoreTester.Activities
                 if (clientOrdId == null)
                     return $"Client order Id not found in {endpoint}".FailWithLog();
 
+                $"Client order id: {clientOrdId}".Warn();
+
                 var relatedTrades = tradesArray
                     .Where(t => t["ClientOrdId"]?.Value<string>() == clientOrdId);
 
-                int totalFilledQty = relatedTrades
-                    .Sum(t => t["TradedQty"]?.Value<int>() ?? 0);
+                int totalSignedQty = relatedTrades.Sum(t =>
+                {
+                    int qty = t["TradedQty"]?.Value<int>() ?? 0;
+                    string side = t["BuySell"]?.Value<string>() ?? "";
 
-                if (totalFilledQty == 0)
-                    return "No quantity filled yet".FailWithLog(false);
+                    return side.Equals("Buy", StringComparison.OrdinalIgnoreCase)
+                        ? qty
+                        : -qty;
+                });
 
-                _cache.Set(Constants.FilledQty, totalFilledQty);
+                $"Total quantity filled: {totalSignedQty}".Warn();
+
+                if (totalSignedQty == 0)
+                    return "No quantity filled yet".FailWithLog(true);              
+
+                _cache.Set(Constants.FilledQty, totalSignedQty);
 
                 return ActivityResult.Success();
             }

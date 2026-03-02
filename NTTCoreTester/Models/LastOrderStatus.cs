@@ -40,7 +40,7 @@ namespace NTTCoreTester.Models
         public string? ExchangeStatus { get; set; }
 
         [JsonProperty("qty")]
-        public string? Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         [JsonProperty("prc")]
         public string? Price { get; set; }
