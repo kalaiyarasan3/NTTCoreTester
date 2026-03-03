@@ -1,4 +1,6 @@
-﻿namespace NTTCoreTester.Models
+﻿using CsvHelper.Configuration;
+
+namespace NTTCoreTester.Models
 {
     public class CsvReportEntry
     {
@@ -31,6 +33,30 @@
             ValidationErrors = "";
             PerformanceStatus = "FAIL";
             BusinessStatus = "UNKNOWN";
+        }
+    }
+
+    public sealed class CsvReportEntryMap : ClassMap<CsvReportEntry>
+    {
+        public CsvReportEntryMap()
+        {
+            Map(m => m.Timestamp);
+            Map(m => m.Endpoint);
+            Map(m => m.ResponseTimeMs);
+            Map(m => m.PerformanceStatus);
+            Map(m => m.HttpStatusCode);
+            Map(m => m.Message);
+            Map(m => m.BusinessStatus);
+            Map(m => m.SchemaValid);
+            Map(m => m.ValidationErrors);
+            Map(m => m.SyncFieldMismatches);
+            Map(m => m.OrdenttmRaw);
+            Map(m => m.PlaceOrderToOrderBookMs);
+            Map(m => m.PlaceOrderToActivityBookMs);
+            Map(m => m.PlaceOrderToExchangeMs);
+            Map(m => m.ExchangeStatus);
+            Map(m => m.OrderActivityStatus);
+            Map(m => m.JsonResponse);
         }
     }
 }

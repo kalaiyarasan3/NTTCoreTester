@@ -104,7 +104,7 @@ namespace NTTCoreTester.Services
                         result.Endpoint);
                 }
 
-                bool finalSuccess = validation.IsSuccess && activityResult.IsSuccess;
+                //bool finalSuccess = validation.IsSuccess && activityResult.IsSuccess;
 
                 if (!string.IsNullOrWhiteSpace(activityResult.Message))
                     validation.Message = activityResult.Message;

@@ -81,66 +81,28 @@ namespace NTTCoreTester.Reporting
             _entries.Add(entry);
         }
 
+       
+
         public async Task Save()
         {
-            var sb = new StringBuilder();
-
-            sb.AppendLine(
-                "Timestamp,Endpoint,ResponseTimeMs,PerformanceStatus,HttpStatusCode,Message," +
-                "BusinessStatus,SchemaValid,ValidationErrors," +
-                "SyncFieldMismatches,OrdenttmRaw," +
-                "PlaceOrderToOrderBookMs,PlaceOrderToActivityBookMs,PlaceOrderToExchangeMs," +
-                "ExchangeStatus,OrderActivityStatus," +
-                "JsonResponse");
-
-            foreach (var entry in _entries)
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                sb.AppendLine(
-                    $"{entry.Timestamp:yyyy-MM-dd HH:mm:ss.fff}," +
-                    $"{entry.Endpoint}," +
-                    $"{entry.ResponseTimeMs}," +
-                    $"{entry.PerformanceStatus}," +
-                    $"{entry.HttpStatusCode}," +
-                    $"{EscapeForCsv(entry.Message ?? "")}," +
-                    $"{entry.BusinessStatus}," +
-                    $"{(entry.SchemaValid ? "VALID" : "INVALID")}," +
-                    $"{EscapeForCsv(entry.ValidationErrors)}," +
-                    $"{EscapeForCsv(entry.SyncFieldMismatches ?? "")}," +
-                    $"{EscapeForCsv(entry.OrdenttmRaw ?? "")}," +
-                    $"{entry.PlaceOrderToOrderBookMs?.ToString() ?? ""}," +
-                    $"{entry.PlaceOrderToActivityBookMs?.ToString() ?? ""}," +
-                    $"{entry.PlaceOrderToExchangeMs?.ToString() ?? ""}," +
-                    $"{entry.ExchangeStatus ?? ""}," +
-                    $"{entry.OrderActivityStatus ?? ""}," +
-                    $"{EscapeForCsv(entry.JsonResponse)}");
-            }
+                HasHeaderRecord = true,
+            };
 
-            await File.WriteAllTextAsync(_fullPath, sb.ToString());
-            Console.WriteLine($"\n CSV Report saved: {_fullPath}");
-            Console.WriteLine($"   Total Entries: {_entries.Count}");
-            Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
+            await using var writer = new StreamWriter(_fullPath, false, Encoding.UTF8);
+            await using var csv = new CsvWriter(writer, config);
+
+            csv.Context.RegisterClassMap<CsvReportEntryMap>();
+
+            await csv.WriteRecordsAsync(_entries);
+
+            Console.WriteLine($"\nCSV Report saved: {_fullPath}");
+            Console.WriteLine($"Total Entries: {_entries.Count}");
+            Console.WriteLine($"Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
         }
 
-        //public async Task Save()
-        //{
-        //    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        //    {
-        //        HasHeaderRecord = true,
-        //    };
 
-        //    using (var writer = new StreamWriter(_fullPath))
-        //    using (var csv = new CsvWriter(writer, config))
-        //    {
-        //        // Write records directly - CsvHelper handles all escaping
-        //        await csv.WriteRecordsAsync(_entries);
-        //    }
-
-        //    Console.WriteLine($"\n CSV Report saved: {_fullPath}");
-        //    Console.WriteLine($"   Total Entries: {_entries.Count}");
-        //    Console.WriteLine($"   Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
-        //}
-
-      
 
         public string GetPath()
          {

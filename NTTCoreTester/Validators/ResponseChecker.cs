@@ -30,7 +30,7 @@ namespace NTTCoreTester.Validators
                 if (!IsBusinessSuccess(result, validation)) return validation;
 
                 validation.IsSchemaValid = Check(result.Endpoint, result.ResponseBody, out var schemaErrors);
-                Console.WriteLine("|| {0}", string.Join(" || ", schemaErrors));
+                Console.WriteLine(string.Join(" || ", schemaErrors));
                 validation.Errors.AddRange(schemaErrors);
                 validation.IsSuccess = true;
                 //foreach (var error in schemaErrors)
@@ -48,7 +48,7 @@ namespace NTTCoreTester.Validators
             return validation;
         }
 
-        // ─── Validate() Helpers
+        //  Validate() Helpers
 
         private bool IsHttpSuccess(ApiExecutionResult result, ValidationResult validation)
         {
@@ -94,10 +94,11 @@ namespace NTTCoreTester.Validators
             string message = json[Constants.Message]?.Value<string>() ?? "";
 
             var status = businessCode.ToBusinessStatus();
+
             validation.Message = message;
             validation.BusinessStatus = status.GetDisplayName();
 
-            if (status == HTTPEnumStatus.Success) return true;
+            if (status == ApiBusinessStatus.Success) return true;
 
             validation.IsSuccess = false;
             validation.Errors.Add($"Business StatusCode: {businessCode}");
@@ -105,7 +106,7 @@ namespace NTTCoreTester.Validators
             return false;
         }
 
-        // ─── Schema Check ────────────────────────────────────────────────────────
+        //  Schema Check ──
 
         public bool Check(string endpoint, string responseJson, out List<string> validationErrors)
         {
@@ -141,7 +142,7 @@ namespace NTTCoreTester.Validators
             }
         }
 
-        // ─── Core Recursive Validator ─────────────────────────────────────────────
+        //  Core Recursive Validator 
 
         private static void ValidateElement(JsonElement expected, JsonElement actual, string path, List<string> errors)
         {
@@ -175,7 +176,7 @@ namespace NTTCoreTester.Validators
             }
         }
 
-        // ─── String Validation 
+        //  String Validation 
 
         private static void ValidateString(JsonElement expected, JsonElement actual, string path, List<string> errors)
         {

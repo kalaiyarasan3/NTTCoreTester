@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace NTTCoreTester.Enums
 {
-    public enum HTTPEnumStatus
+    public enum ApiBusinessStatus
     {
         [Display(Name = "Success")]
         Success,
@@ -52,20 +52,20 @@ namespace NTTCoreTester.Enums
 
             return enumValue.ToString();
         }
-        public static HTTPEnumStatus ToBusinessStatus(this int statusCode)
+        public static ApiBusinessStatus ToBusinessStatus(this int statusCode)
         {
             return statusCode switch
             {
-                0 => HTTPEnumStatus.Success,
-                1 => HTTPEnumStatus.Error,
-                2 => HTTPEnumStatus.Exception,
-                3 => HTTPEnumStatus.Invalid,
-                5 => HTTPEnumStatus.InvalidData,
-                6 => HTTPEnumStatus.SessionExpired,
-                7 => HTTPEnumStatus.AuthendicationFailed,
-                8 => HTTPEnumStatus.AuthorizationFailed,
-                9 => HTTPEnumStatus.MoreActionRequired,
-                _ => HTTPEnumStatus.Failed
+                0 => ApiBusinessStatus.Success,
+                1 => ApiBusinessStatus.Error,
+                2 => ApiBusinessStatus.Exception,
+                3 => ApiBusinessStatus.Invalid,
+                5 => ApiBusinessStatus.InvalidData,
+                6 => ApiBusinessStatus.SessionExpired,
+                7 => ApiBusinessStatus.AuthendicationFailed,
+                8 => ApiBusinessStatus.AuthorizationFailed,
+                9 => ApiBusinessStatus.MoreActionRequired,
+                _ => ApiBusinessStatus.Failed
             };
         }
 
