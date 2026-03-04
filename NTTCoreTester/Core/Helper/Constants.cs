@@ -23,6 +23,7 @@ namespace NTTCoreTester.Core.Helper
         public const string PrePositions = "PrePositions";
         public const string PostPositions = "PostPositions";
         public const string FilledQty = "FilledQty";
+        public const string PledgeOrderSymbol = "PledgeOrderSymbol";
         public const string OrderSymbol = "OrderSymbol";
         public const string OrderProduct = "OrderProduct";
         public const string OrderSide = "OrderSide";
