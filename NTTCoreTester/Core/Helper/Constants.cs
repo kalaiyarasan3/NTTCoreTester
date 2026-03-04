@@ -26,6 +26,7 @@ namespace NTTCoreTester.Core.Helper
         public const string OrderSymbol = "OrderSymbol";
         public const string OrderProduct = "OrderProduct";
         public const string OrderSide = "OrderSide";
+        public const string IsTransferred = "IsTransferred";
         // Common response keys
         public const string StatusCode = "StatusCode";
         public const string Message = "Message";

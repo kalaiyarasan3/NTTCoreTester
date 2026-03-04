@@ -45,6 +45,11 @@ namespace NTTCoreTester.Activities
 
             if (filledOrder == null)
             {
+                if(relatedOrders.Any(x => x.Status == "1111" || x.Status =="0000"))
+                {
+                    $"Order is pending set block margin true".Warn();
+                    cache.Set(Constants.ShouldBlockMargin, true);
+                }
                 var statuses = string.Join(" | ",
                     relatedOrders
                         .Select(x => $"[{x.Status}] {x.Remarks ?? "No Remarks"}")
