@@ -18,11 +18,12 @@ namespace NTTCoreTester.Activities
             {
                 var errors = new List<string>();
 
-                var postLimit = GetPrimaryLimitMargin(result);
+                var postLimits = GetPrimaryLimitMargin(result);
+                var postLimit = postLimits?.FirstOrDefault(x => x.TemplateId == 1); 
                 if (postLimit == null)
                     return "Post Limit margin not found".FailWithLog(true);
 
-                var preLimit = _cache.Get<LimitMarginDetails>(Constants.PreLimitMargin);
+                var preLimit = _cache.Get<List<LimitMarginDetails>>(Constants.PreLimitMargin)?.FirstOrDefault(x => x.TemplateId == 1);
                 var orderMargin = _cache.Get<OrderMarginDetails>(Constants.GetOrderMargin);
 
                 if (preLimit == null)
@@ -245,7 +246,7 @@ namespace NTTCoreTester.Activities
             }
         }
 
-        private LimitMarginDetails? GetPrimaryLimitMargin(ApiExecutionResult result)
+        private List<LimitMarginDetails>? GetPrimaryLimitMargin(ApiExecutionResult result)
         {
             var marginsArray = result.DataObject?[Constants.AllMargins];
 
@@ -255,7 +256,7 @@ namespace NTTCoreTester.Activities
             var selected = marginsArray
                 .FirstOrDefault(x => x[Constants.TemplateId]?.Value<int>() == 1);
 
-            return selected?.ToObject<LimitMarginDetails>();
+            return marginsArray?.ToObject< List<LimitMarginDetails>>();
         }
     }
 }

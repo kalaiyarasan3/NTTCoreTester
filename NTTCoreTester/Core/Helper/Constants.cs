@@ -31,6 +31,7 @@ namespace NTTCoreTester.Core.Helper
         public const string OrderBookAddedOn = "OrderBookAddedOn";
 
 
+        public const string IsTransferred = "IsTransferred";
         // Common response keys
         public const string StatusCode = "StatusCode";
         public const string Message = "Message";
