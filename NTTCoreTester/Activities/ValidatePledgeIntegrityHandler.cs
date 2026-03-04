@@ -18,7 +18,7 @@ namespace NTTCoreTester.Activities
                 if (holdings == null || holdings.Type != JTokenType.Array)
                     return "Holdings not found".FailWithLog();
 
-                var symbol = cache.Get<string>(Constants.OrderSymbol);
+                var symbol = cache.Get<string>(Constants.PledgeOrderSymbol);
 
                 var holding = holdings
                     .FirstOrDefault(x => x["ExchangeData"]?["tsym"]?.ToString() == symbol);
