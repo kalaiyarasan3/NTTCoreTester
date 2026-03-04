@@ -5,7 +5,10 @@ namespace NTTCoreTester.Models
     public class CsvReportEntry
     {
         public DateTime Timestamp { get; set; }
+
+        public string ConfigName { get; set; }
         public string Endpoint { get; set; }
+        public string Description { get; set; } //Endpoint description
         public string ActivityName { get; set; }
         public long ResponseTimeMs { get; set; }
         public int HttpStatusCode { get; set; }
@@ -32,6 +35,7 @@ namespace NTTCoreTester.Models
         public CsvReportEntry()
         {
             Timestamp = DateTime.Now;
+            ConfigName = "";
             Endpoint = "";
             JsonResponse = "";
             ValidationErrors = "";
@@ -46,7 +50,9 @@ namespace NTTCoreTester.Models
         public CsvReportEntryMap()
         {
             Map(m => m.Timestamp);
+            Map(m => m.ConfigName);
             Map(m => m.Endpoint);
+            Map(m => m.Description);
             Map(m => m.ActivityName);
             Map(m => m.ResponseTimeMs);
             Map(m => m.HttpStatusCode);

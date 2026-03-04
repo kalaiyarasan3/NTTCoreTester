@@ -99,7 +99,7 @@ namespace NTTCoreTester.Services
                 
                 $"\n[{i + 1}/{suiteConfig.Requests.Count}] {request.Endpoint}".Info();
 
-                bool success = await _apiService.ExecuteRequestFromConfig(request);
+                bool success = await _apiService.ExecuteRequestFromConfig(request, suiteConfig);
                     
                 if (success)
                 {

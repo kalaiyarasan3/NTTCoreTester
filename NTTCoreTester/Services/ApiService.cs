@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NTTCoreTester.Configuration;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
@@ -8,14 +7,13 @@ using NTTCoreTester.Reporting;
 using NTTCoreTester.Validators;
 using System.Diagnostics;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace NTTCoreTester.Services
 {
     public interface IApiService
     {
 
-        Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest);
+        Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest, TestSuiteConfig testSuiteConfig);
     }
 
     public class ApiService : IApiService
@@ -39,8 +37,11 @@ namespace NTTCoreTester.Services
             _csvReport = csvReport;
         }
 
-        public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest)
+        public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest,TestSuiteConfig testSuiteConfig)
         {
+
+            Console.WriteLine($"Test SuiteName from Api Services{testSuiteConfig.SuiteName}");
+
             $"\n{new string('=', 80)}".Debug();
             $"Executing Api: {configRequest.Endpoint}".Debug();
             $"{new string('=', 80)}".Debug();
@@ -78,14 +79,14 @@ namespace NTTCoreTester.Services
 
             $" Placeholders resolved".Debug();
 
-            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity);
+            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity, configRequest.Description, testSuiteConfig );
         }
 
         private async Task<bool> CallApi(
             string endpoint,
             string requestJson,
             Dictionary<string, string> headers,
-            string activity)
+            string activity,string description, TestSuiteConfig testSuiteconfig)
         {
             try
             {
@@ -104,9 +105,13 @@ namespace NTTCoreTester.Services
                         result.Endpoint);
                 }
 
-               
+            Console.WriteLine($"Test SuiteName from Api Services{testSuiteconfig.SuiteName}");
+
+
                 _csvReport.AddEntry(
+                    testSuiteconfig.SuiteName,
                     result.Endpoint,
+                    description,
                     string.IsNullOrWhiteSpace(activity)? "No Activity": activity,
                     result.ResponseTime,
                     result.StatusCode,

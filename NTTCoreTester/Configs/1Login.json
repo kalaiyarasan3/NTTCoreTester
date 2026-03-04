@@ -1,11 +1,11 @@
 {
-  "suiteName": "Live_AllCargo",
-  "description": "   ",
+  "suiteName": "Login Auth",
+  "description": "Checkin Login, Check Login endpoints and stores Auth Token",
   "stopOnFailure": true,
   "requests": [
     {
       "endpoint": "Login",
-      "method": "POST",
+      "description": "Authenticate user and generate session token",
       "headers": {},
       "activity": "ExtractSession",
       "payload": {
@@ -17,7 +17,7 @@
     },
     {
       "endpoint": "CheckLogin",
-      "method": "POST",
+      "description": "Verify that session token is valid",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"
@@ -27,7 +27,7 @@
     },
     {
       "endpoint": "GetClientBankInfo",
-      "method": "POST",
+      "description": "Fetch bank details linked to client account",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",

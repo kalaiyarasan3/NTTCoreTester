@@ -21,7 +21,7 @@ namespace NTTCoreTester.Activities
 
         public string Name => "ExtractClientOrdId";
 
-        public ActivityResult Execute(ApiExecutionResult result, string endpoint, int status)
+        public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
             var clOrdId = result.DataObject?["cl_ord_id"]?.Value<string>();
             var requestTimeRaw = result.DataObject?["request_time"]?.Value<string>();
@@ -40,6 +40,8 @@ namespace NTTCoreTester.Activities
 
             return ActivityResult.Success();
         }
+
+    
     }
 
 }
