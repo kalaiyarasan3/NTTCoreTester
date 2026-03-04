@@ -4,6 +4,9 @@ namespace NTTCoreTester.Models
 {
     public class LimitMarginDetails     //LimitMargin response model
     {
+        [JsonProperty("TemplateId")]
+        public int TemplateId { get; set; }
+
         [JsonProperty("UsedMargin")]
         public decimal UsedMargin { get; set; }
 

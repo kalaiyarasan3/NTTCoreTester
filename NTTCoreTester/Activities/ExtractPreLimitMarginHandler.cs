@@ -16,12 +16,13 @@ namespace NTTCoreTester.Activities
         {
             try
             {
-                var margin = GetPrimaryLimitMargin(result);
+                var marginLimits = GetPrimaryLimitMargin(result);
 
-                if (margin == null)
+                if (marginLimits == null)
                     return "Failed to parse LimitMarginDetails".FailWithLog();
 
-                _cache.Set(Constants.PreLimitMargin, margin);
+                _cache.Set(Constants.IsTransferred, false);
+                _cache.Set(Constants.PreLimitMargin, marginLimits);
 
                 return ActivityResult.Success();
             }
@@ -31,17 +32,14 @@ namespace NTTCoreTester.Activities
             }
         }
 
-        private LimitMarginDetails? GetPrimaryLimitMargin(ApiExecutionResult result)
+        private List<LimitMarginDetails>? GetPrimaryLimitMargin(ApiExecutionResult result)
         {
             var marginsArray = result.DataObject?[Constants.AllMargins];
 
             if (marginsArray == null || marginsArray.Type != JTokenType.Array)
-                return null;
+                return null;             
 
-            var selected = marginsArray
-                .FirstOrDefault(x => x[Constants.TemplateId]?.Value<int>() == 1);
-
-            return selected?.ToObject<LimitMarginDetails>();
+            return marginsArray?.ToObject<List<LimitMarginDetails>>();
         }
     }
 }

@@ -23,6 +23,7 @@ namespace NTTCoreTester.Core.Helper
         public const string PrePositions = "PrePositions";
         public const string PostPositions = "PostPositions";
         public const string FilledQty = "FilledQty";
+        public const string PledgeOrderSymbol = "PledgeOrderSymbol";
         public const string OrderSymbol = "OrderSymbol";
         public const string OrderProduct = "OrderProduct";
         public const string OrderSide = "OrderSide";
@@ -31,6 +32,7 @@ namespace NTTCoreTester.Core.Helper
         public const string OrderBookAddedOn = "OrderBookAddedOn";
 
 
+        public const string IsTransferred = "IsTransferred";
         // Common response keys
         public const string StatusCode = "StatusCode";
         public const string Message = "Message";
