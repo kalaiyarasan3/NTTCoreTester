@@ -53,42 +53,6 @@ namespace NTTCoreTester.Reporting
             _entries.Add(entry);
         }
 
-        public void AddSyncEntry(
-            string endpoint, long responseMs, int httpCode, string businessStatus,
-            string jsonResponse, bool schemaValid, string validationErrors, string? message,
-            string? syncFieldMismatches, string? ordenttmRaw,
-            string? PlaceorderTime, string? orderBookTime, string? activityOrderBookTime,
-            string? placeOrderToOrderBookMs, string? placeOrderToActivityBookMs, string? placeOrderToExchangeMs,
-            string? exchangeStatus, string? orderActivityStatus)
-        {
-            var entry = new CsvReportEntry
-            {
-                Timestamp = DateTime.Now,
-                Endpoint = endpoint,
-                ResponseTimeMs = responseMs,
-                HttpStatusCode = httpCode,
-                BusinessStatus = businessStatus,
-                JsonResponse = jsonResponse,
-                SchemaValid = schemaValid,
-                ValidationErrors = validationErrors ?? "",
-                Message = message,
-                SyncFieldMismatches = syncFieldMismatches,
-                OrdenttmRaw = ordenttmRaw,
-                PlaceorderTime = PlaceorderTime,
-                OrderBookTime = orderBookTime,
-                ActivityOrderBookTime = activityOrderBookTime,
-                PlaceOrderToOrderBookMs = placeOrderToOrderBookMs,
-                PlaceOrderToActivityBookMs = placeOrderToActivityBookMs,
-                PlaceOrderToExchangeMs = placeOrderToExchangeMs,
-                ExchangeStatus = exchangeStatus,
-                OrderActivityStatus = orderActivityStatus
-            };
-
-            _entries.Add(entry);
-        }
-
-       
-
         public async Task Save()
         {
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -108,29 +72,11 @@ namespace NTTCoreTester.Reporting
             Console.WriteLine($"Performance Threshold: {PERFORMANCE_THRESHOLD_MS}ms");
         }
 
-
-
         public string GetPath()
          {
              return _fullPath;
          }
 
-         private string EscapeForCsv(string value)
-         {
-             if (string.IsNullOrEmpty(value))
-                 return "";
-
-             value = value.Replace("\r\n", " ")
-                          .Replace("\n", " ")
-                          .Replace("\r", " ")
-                          .Replace("\t", " ");
-
-             value = value.Replace("\"", "\"\"");
-
-             return $"\"{value}\"";
-         }
-        
-
-
+      
     }
 }

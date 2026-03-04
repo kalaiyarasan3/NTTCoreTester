@@ -20,7 +20,6 @@ namespace NTTCoreTester.Activities
         private readonly PlaceholderCache _cache;
         private readonly CsvReport _csvReport;
 
-        private const string ORDENTTM_FORMAT = "yyyy-MM-dd HH:mm:ss:ffff";
 
         public string Name => "ValidateOrderBookSync";
 
@@ -64,13 +63,6 @@ namespace NTTCoreTester.Activities
 
             if (groupOrders == null || !groupOrders.Any())
             {
-                _csvReport.AddSyncEntry(
-                    "ActivityOrderBook[Sync]", 0, 0, "NOT_FOUND",
-                    "", false,
-                    $"cl_ord_id={clOrdId} not found in ActivityOrderBook",
-                    "Order not in DB",
-                    null, null, null,null,null,null, null, null, null, null);
-
                 return ActivityResult.SoftFail($"Order {clOrdId} not found in ActivityOrderBook");
             }
 
@@ -191,32 +183,20 @@ namespace NTTCoreTester.Activities
             $"ValidateOrderBookSync: PlaceOrder to OrderBook={placeOrderToOrderBookMs}ms | PlaceOrder to ActivityOrderBook={placeOrderToActivityBookMs}ms | PlaceOrder to Exchange={placeOrderToExchangeMs}ms".Info();
             $"ValidateOrderBookSync: exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}".Info();
 
-            //  7. CSV row 
-            _csvReport.AddSyncEntry(
-                "ActivityOrderBook[Sync]",
-                0,
-                200,
-                mismatches.Any() ? "MISMATCH" : "SYNC_OK",
-                "",
-                !mismatches.Any(),
-                mismatches.Any() ? string.Join(" | ", mismatches) : "",
-                $"exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}",
-                mismatches.Any() ? string.Join(" | ", mismatches) : "",
-                ordenttmRaw,
-                placeOrderParsed.HasValue ? placeOrderParsed.Value.ToString("o") : "N/A",
-                orderBookAddedOnParsed.HasValue ? orderBookAddedOnParsed.Value.ToString("o") : "N/A",
-                activityBookAddedOnParsed.HasValue ? activityBookAddedOnParsed.Value.ToString("o") : "N/A",
-                placeOrderToOrderBookMs.ToString(),
-                placeOrderToActivityBookMs.ToString(),
-                placeOrderToExchangeMs.ToString(),
-                latestRow.ExchangeStatus,
-                latestRow.Status);
-
+           
             if (mismatches.Any())
                 return ActivityResult.SoftFail($"Sync mismatches: {string.Join(" | ", mismatches)}");
 
             return ActivityResult.Success(
-                $"Sync OK | exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}");
+                             $"PlaceOrder time: {(placeOrderParsed?.ToString("o") ?? "N/A")} | " +
+                             $"OrderBook AddedOn: {(orderBookAddedOnParsed?.ToString("o") ?? "N/A")} | " +
+                             $"ActivityOrderBook AddedOn: {(activityBookAddedOnParsed?.ToString("o") ?? "N/A")} | " +
+                             $"ordenttm: {ordenttmRaw} | " +
+                             $"PlaceOrder→OrderBook={placeOrderToOrderBookMs}ms | " +
+                             $"PlaceOrder→ActivityOrderBook={placeOrderToActivityBookMs}ms | " +
+                             $"PlaceOrder→Exchange={placeOrderToExchangeMs}ms | " +
+                             $"Sync OK | exchsts={latestRow.ExchangeStatus} | Current status={latestRow.Status}"
+ );
         }
 
         //  helpers 
