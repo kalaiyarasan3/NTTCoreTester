@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Models
 {
+
+    class Response
+    {
+        public LastOrderStatus ResponceDataObject { get; set; }
+    }
     class LastOrderStatus
     {
         [JsonProperty("AllOrders")]

@@ -24,7 +24,6 @@ namespace NTTCoreTester
             services.AddSingleton<ResponseChecker>();
             services.AddSingleton<ConfigRunner>();
             services.AddSingleton<ActivityExecutor>();
-            services.AddSingleton<ReportManager>();
 
             services.AddTransient<IActivityHandler, ExtractSessionHandler>();
             services.AddTransient<IActivityHandler, ExtractOTPHandler>();

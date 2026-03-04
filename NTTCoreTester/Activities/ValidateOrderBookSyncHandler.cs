@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
@@ -49,17 +49,18 @@ namespace NTTCoreTester.Activities
 
             $"ValidateOrderBookSync: start | cl_ord_id={clOrdId} | tsym={refSymbol} qty={refQty}".Info();
 
-            //  2. Find the order in ActivityOrderBook response ─
-            var allOrdersToken = result.DataObject?["AllOrders"];
-            if (allOrdersToken == null || allOrdersToken.Type != JTokenType.Array)
-                return "ValidateOrderBookSync: AllOrders not found in ActivityOrderBook response".FailWithLog();
+            //  2. Find the order in ActivityOrderBook response 
+            if (string.IsNullOrEmpty(result.ResponseBody))
+                return "ActivityOrderBook: ResponseBody is null".FailWithLog();
 
-            var orders = allOrdersToken.ToObject<List<OrderDetails>>();
+            var response = JsonConvert.DeserializeObject<Response>(result.ResponseBody);
+            var orders = response?.ResponceDataObject?.AllOrders;
+
             var groupOrders = orders?
                 .Where(o => o.ClientOrderId == clOrdId
                          || o.NewClientOrderId == clOrdId
                          || o.OriginalClientOrderId == clOrdId)
-                .ToList();
+                .ToList() ?? new List<OrderDetails>();
 
             if (groupOrders == null || !groupOrders.Any())
             {
@@ -68,7 +69,7 @@ namespace NTTCoreTester.Activities
                     "", false,
                     $"cl_ord_id={clOrdId} not found in ActivityOrderBook",
                     "Order not in DB",
-                    null, null, null, null, null, null, null);
+                    null, null, null,null,null,null, null, null, null, null);
 
                 return ActivityResult.SoftFail($"Order {clOrdId} not found in ActivityOrderBook");
             }
@@ -86,7 +87,7 @@ namespace NTTCoreTester.Activities
                 CheckField(mismatches, "tsym", refSymbol, placementRow.TypeSymbol);
                 CheckField(mismatches, "prd", refProduct, placementRow.Product);
                 CheckField(mismatches, "trantype", refSide, placementRow.TransactionType);
-               // CheckField(mismatches, "qty", refQty, placementRow.Quantity);
+                // CheckField(mismatches, "qty", refQty, placementRow.Quantity);
             }
             else
             {
@@ -96,7 +97,7 @@ namespace NTTCoreTester.Activities
             if (mismatches.Any())
                 $"ValidateOrderBookSync: mismatches → {string.Join(" | ", mismatches)}".Error();
             else
-                "ValidateOrderBookSync: all fields match ✓".Info();
+                "ValidateOrderBookSync: all fields match".Info();
 
             //  5. Timing calculations 
 
@@ -156,10 +157,21 @@ namespace NTTCoreTester.Activities
             long? placeOrderToExchangeMs = null;
             if (!string.IsNullOrWhiteSpace(ordenttmRaw))
             {
-                if (TryParseOrdenttm(ordenttmRaw, out var ordenttmParsed))
+                //var normalized = ordenttmRaw.Trim();
+                //int lastColon = normalized.LastIndexOf(':');
+
+                //if (lastColon > 0)
+                //    normalized = normalized.Remove(lastColon, 1).Insert(lastColon, ".");
+
+                if (DateTime.TryParseExact(ordenttmRaw.Trim(),
+                        "yyyy-MM-dd HH:mm:ss:ffff",
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None,
+                        out var ordenttmParsed))
                 {
                     if (placeOrderParsed.HasValue)
-                        placeOrderToExchangeMs = (long)(ordenttmParsed - placeOrderParsed.Value).TotalMilliseconds;
+                        placeOrderToExchangeMs =
+                            (long)(ordenttmParsed - placeOrderParsed.Value).TotalMilliseconds;
                 }
                 else
                 {
@@ -173,9 +185,9 @@ namespace NTTCoreTester.Activities
 
             //  6. Console 
             $"PlaceOrder time: {(placeOrderParsed.HasValue ? placeOrderParsed.Value.ToString("o") : "N/A")}".Info();
-                $"OrderBook AddedOn: {(orderBookAddedOnParsed.HasValue ? orderBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
-                $"ActivityOrderBook AddedOn: {(activityBookAddedOnParsed.HasValue ? activityBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
-                $"ordenttm: {ordenttmRaw}".Info();
+            $"OrderBook AddedOn: {(orderBookAddedOnParsed.HasValue ? orderBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
+            $"ActivityOrderBook AddedOn: {(activityBookAddedOnParsed.HasValue ? activityBookAddedOnParsed.Value.ToString("o") : "N/A")}".Info();
+            $"ordenttm: {ordenttmRaw}".Info();
             $"ValidateOrderBookSync: PlaceOrder to OrderBook={placeOrderToOrderBookMs}ms | PlaceOrder to ActivityOrderBook={placeOrderToActivityBookMs}ms | PlaceOrder to Exchange={placeOrderToExchangeMs}ms".Info();
             $"ValidateOrderBookSync: exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}".Info();
 
@@ -191,9 +203,12 @@ namespace NTTCoreTester.Activities
                 $"exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}",
                 mismatches.Any() ? string.Join(" | ", mismatches) : "",
                 ordenttmRaw,
-                placeOrderToOrderBookMs,
-                placeOrderToActivityBookMs,
-                placeOrderToExchangeMs,
+                placeOrderParsed.HasValue ? placeOrderParsed.Value.ToString("o") : "N/A",
+                orderBookAddedOnParsed.HasValue ? orderBookAddedOnParsed.Value.ToString("o") : "N/A",
+                activityBookAddedOnParsed.HasValue ? activityBookAddedOnParsed.Value.ToString("o") : "N/A",
+                placeOrderToOrderBookMs.ToString(),
+                placeOrderToActivityBookMs.ToString(),
+                placeOrderToExchangeMs.ToString(),
                 latestRow.ExchangeStatus,
                 latestRow.Status);
 
@@ -204,7 +219,7 @@ namespace NTTCoreTester.Activities
                 $"Sync OK | exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}");
         }
 
-        //  Private helpers ─
+        //  helpers 
 
         private static void CheckField(List<string> mismatches, string field,
                                         string? expected, string? actual)
@@ -213,21 +228,8 @@ namespace NTTCoreTester.Activities
 
             if (!string.Equals(expected.Trim(), actual?.Trim(), StringComparison.OrdinalIgnoreCase))
                 mismatches.Add($"{field}: expected='{expected}' actual='{actual}'");
-        } 
-
-        private static bool TryParseOrdenttm(string raw, out DateTime result)
-        {
-            result = default;
-            if (string.IsNullOrWhiteSpace(raw)) return false;
-
-            if (DateTime.TryParseExact(raw.Trim(), ORDENTTM_FORMAT,
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    System.Globalization.DateTimeStyles.None, out result))
-                return true;
-
-            return DateTime.TryParse(raw.Trim(),
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None, out result);
         }
+
+
     }
 }

@@ -104,16 +104,14 @@ namespace NTTCoreTester.Services
                         result.Endpoint);
                 }
 
-                //bool finalSuccess = validation.IsSuccess && activityResult.IsSuccess;
-
-                if (!string.IsNullOrWhiteSpace(activityResult.Message))
-                    validation.Message = activityResult.Message;
-
+               
                 _csvReport.AddEntry(
                     result.Endpoint,
+                    string.IsNullOrWhiteSpace(activity)? "No Activity": activity,
                     result.ResponseTime,
                     result.StatusCode,
                     validation.BusinessStatus,
+                    activityResult.Message,//remarks
                     result.ResponseBody,
                     validation.IsSchemaValid,
                     string.Join("; ", validation.Errors),

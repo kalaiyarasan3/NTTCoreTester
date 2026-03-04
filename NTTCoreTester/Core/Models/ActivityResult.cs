@@ -12,6 +12,7 @@ namespace NTTCoreTester.Core.Models
         public bool IsSuccess { get; set; }
         public bool ContinueExecution { get; set; } = true;
         public string Message { get; set; } = "";
+
         public static ActivityResult Success(string message = "") => new()
         { IsSuccess = true, ContinueExecution = true, Message = message };
 

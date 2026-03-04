@@ -12,6 +12,7 @@ namespace NTTCoreTester.Core.Models
         public string Endpoint { get; set; }
         public int StatusCode { get; set; }
         public string ResponseBody { get; set; }
+
         public JObject Json { get; set; }
         public long ResponseTime { get; set; }
 

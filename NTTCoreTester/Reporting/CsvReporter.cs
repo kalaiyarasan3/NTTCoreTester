@@ -30,17 +30,18 @@ namespace NTTCoreTester.Reporting
             _fullPath = Path.Combine(_cfg.OutputFolder, _filename);
         }
 
-        public void AddEntry(string endpoint, long responseMs, int httpCode, string businessStatus,
+        public void AddEntry(string endpoint,string activityName, long responseMs, int httpCode, string businessStatus,string remarks,
                             string jsonResponse, bool schemaValid, string validationErrors,string? meaaage = null)
         {
             var entry = new CsvReportEntry
             {
                 Timestamp = DateTime.Now,
                 Endpoint = endpoint,
+                ActivityName = activityName,
                 ResponseTimeMs = responseMs,
-                PerformanceStatus = responseMs <= PERFORMANCE_THRESHOLD_MS ? "PASS" : "FAIL",
                 HttpStatusCode = httpCode,
                 BusinessStatus = businessStatus,
+                Remarks = remarks,
                 JsonResponse = jsonResponse,
                 SchemaValid = schemaValid,
                 ValidationErrors = validationErrors ?? "",
@@ -54,7 +55,8 @@ namespace NTTCoreTester.Reporting
             string endpoint, long responseMs, int httpCode, string businessStatus,
             string jsonResponse, bool schemaValid, string validationErrors, string? message,
             string? syncFieldMismatches, string? ordenttmRaw,
-            long? placeOrderToOrderBookMs, long? placeOrderToActivityBookMs, long? placeOrderToExchangeMs,
+            string? PlaceorderTime, string? orderBookTime, string? activityOrderBookTime,
+            string? placeOrderToOrderBookMs, string? placeOrderToActivityBookMs, string? placeOrderToExchangeMs,
             string? exchangeStatus, string? orderActivityStatus)
         {
             var entry = new CsvReportEntry
@@ -62,7 +64,6 @@ namespace NTTCoreTester.Reporting
                 Timestamp = DateTime.Now,
                 Endpoint = endpoint,
                 ResponseTimeMs = responseMs,
-                PerformanceStatus = responseMs <= PERFORMANCE_THRESHOLD_MS ? "PASS" : "FAIL",
                 HttpStatusCode = httpCode,
                 BusinessStatus = businessStatus,
                 JsonResponse = jsonResponse,
@@ -71,6 +72,9 @@ namespace NTTCoreTester.Reporting
                 Message = message,
                 SyncFieldMismatches = syncFieldMismatches,
                 OrdenttmRaw = ordenttmRaw,
+                PlaceorderTime = PlaceorderTime,
+                OrderBookTime = orderBookTime,
+                ActivityOrderBookTime = activityOrderBookTime,
                 PlaceOrderToOrderBookMs = placeOrderToOrderBookMs,
                 PlaceOrderToActivityBookMs = placeOrderToActivityBookMs,
                 PlaceOrderToExchangeMs = placeOrderToExchangeMs,

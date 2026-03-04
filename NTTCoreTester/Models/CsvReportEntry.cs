@@ -6,20 +6,24 @@ namespace NTTCoreTester.Models
     {
         public DateTime Timestamp { get; set; }
         public string Endpoint { get; set; }
+        public string ActivityName { get; set; }
         public long ResponseTimeMs { get; set; }
-        public string PerformanceStatus { get; set; }  // PASS/FAIL based on 100ms threshold
         public int HttpStatusCode { get; set; }
         public string BusinessStatus { get; set; }     // SUCCESS/FAILED based on StatusCode
+        public string Remarks { get; set; }
         public string JsonResponse { get; set; }
         public bool SchemaValid { get; set; }
         public string ValidationErrors { get; set; }
         public string? Message { get; set; }
 
         public string? SyncFieldMismatches { get; set; }        
-        public string? OrdenttmRaw { get; set; }               
-        public long? PlaceOrderToOrderBookMs { get; set; }    
-        public long? PlaceOrderToActivityBookMs { get; set; }   
-        public long? PlaceOrderToExchangeMs { get; set; }      
+        public string? OrdenttmRaw { get; set; }
+        public string? PlaceorderTime { get; set; }
+        public string? OrderBookTime { get; set; }
+        public string? ActivityOrderBookTime { get; set; }  
+        public string? PlaceOrderToOrderBookMs { get; set; }    
+        public string? PlaceOrderToActivityBookMs { get; set; }   
+        public string? PlaceOrderToExchangeMs { get; set; }      
         public string? ExchangeStatus { get; set; }            
         public string? OrderActivityStatus { get; set; }
 
@@ -31,8 +35,9 @@ namespace NTTCoreTester.Models
             Endpoint = "";
             JsonResponse = "";
             ValidationErrors = "";
-            PerformanceStatus = "FAIL";
             BusinessStatus = "UNKNOWN";
+            ActivityName = "";
+            Remarks = "";
         }
     }
 
@@ -42,15 +47,19 @@ namespace NTTCoreTester.Models
         {
             Map(m => m.Timestamp);
             Map(m => m.Endpoint);
+            Map(m => m.ActivityName);
             Map(m => m.ResponseTimeMs);
-            Map(m => m.PerformanceStatus);
             Map(m => m.HttpStatusCode);
             Map(m => m.Message);
             Map(m => m.BusinessStatus);
+            Map(m => m.Remarks);
             Map(m => m.SchemaValid);
             Map(m => m.ValidationErrors);
             Map(m => m.SyncFieldMismatches);
             Map(m => m.OrdenttmRaw);
+            Map(m => m.PlaceorderTime);
+            Map(m => m.OrderBookTime);
+            Map(m=>m.ActivityOrderBookTime);
             Map(m => m.PlaceOrderToOrderBookMs);
             Map(m => m.PlaceOrderToActivityBookMs);
             Map(m => m.PlaceOrderToExchangeMs);
