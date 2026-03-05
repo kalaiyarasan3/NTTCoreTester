@@ -1,0 +1,139 @@
+{
+  "suiteName": "Pledge",
+  "description": "Validate pledge and unpledge integrity",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "Holdings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      },
+      "activity": "ExtractPledgeSymbolHandler"
+    },
+
+    {
+      "endpoint": "CreatePledgeHoldings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "DealerUCC": "{{uid}}",
+        "ClientUCC": "{{uid}}",
+        "SymbolData": [
+          {
+            "Quantity": 5,
+            "SymbolName": "{{PledgeOrderSymbol}}",
+            "HoldingExchange": "NSE",
+            "Exchange": "ALL",
+            "Segment": "ALL",
+            "Product": "MTF"
+          }
+        ]
+      }
+    },
+
+    {
+      "endpoint": "Holdings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      },
+      "activity": "ValidatePledgeIntegrityHandler"
+    },
+
+    {
+      "endpoint": "CreateUnpledgeHoldings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "DealerUCC": "{{uid}}",
+        "ClientUCC": "{{uid}}",
+        "SymbolData": [
+          {
+            "Quantity": "1",
+            "SymbolName": "{{PledgeOrderSymbol}}",
+            "HoldingExchange": "NSE",
+            "Exchange": "ALL",
+            "Segment": "ALL",
+            "Product": "MTF"
+          }
+        ]
+      }
+    },
+
+    {
+      "endpoint": "Holdings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      },
+      "activity": "ValidatePledgeIntegrityHandler"
+    },
+
+    {
+      "endpoint": "CreateUnpledgeHoldings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "DealerUCC": "{{uid}}",
+        "ClientUCC": "{{uid}}",
+        "SymbolData": [
+          {
+            "Quantity": 1,
+            "SymbolName": "{{PledgeOrderSymbol}}",
+            "HoldingExchange": "NSE",
+            "Exchange": "ALL",
+            "Segment": "ALL",
+            "Product": "MTF"
+          }
+        ]
+      }
+    },
+
+    {
+      "endpoint": "Holdings",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      },
+      "activity": "ValidatePledgeIntegrityHandler"
+    }
+
+  ]
+}

@@ -25,26 +25,14 @@ namespace NTTCoreTester
             services.AddSingleton<ConfigRunner>();
             services.AddSingleton<ActivityExecutor>();
 
-            services.AddTransient<IActivityHandler, ExtractSessionHandler>();
-            services.AddTransient<IActivityHandler, ExtractOTPHandler>();
-            services.AddTransient<IActivityHandler, ExtractClientOrdIdHandler>();
-            services.AddTransient<IActivityHandler, GetLastOrderStatusHandler>();
-            services.AddTransient<IActivityHandler, ExtractSecurityInfoHandler>();
-            services.AddTransient<IActivityHandler, GetOrderMarginHandler>();
-            services.AddTransient<IActivityHandler, ExtractPostLimitMarginHandler>();
-            services.AddTransient<IActivityHandler, ExtractPreLimitMarginHandler>();
-            services.AddTransient<IActivityHandler, ExtractPrePositionsHandler>();
-            services.AddTransient<IActivityHandler, ExtractTradeFillHandler>();
-            services.AddTransient<IActivityHandler, ValidatePostPositionsHandler>();
-            services.AddTransient<IActivityHandler, ConfirmOrderStatusHandler>();
-            services.AddTransient<IActivityHandler, ExtractSquareOffOrderHandler>();
-            services.AddTransient<IActivityHandler, MarketWatcListID>();
-            services.AddTransient<IActivityHandler, ValidateOrderBookSyncHandler>();
-            services.AddTransient<IActivityHandler, SaveOrdersHandler>();
-            services.AddTransient<IActivityHandler, ValidateRejectedOrderImmutabilityHandler>();
-            services.AddTransient<IActivityHandler, ExtractFundTransferStatusHandler>();
-            services.AddTransient<IActivityHandler, ValidateFundTransferFailureReasonHandler>();
-
+            services.Scan(scan => scan
+            .FromAssemblyOf<ExtractSessionHandler>()
+            .AddClasses(classes => classes
+                .AssignableTo<IActivityHandler>()
+                .Where(t => !t.IsAbstract && !t.IsInterface))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+            );
 
             services.AddHttpClient<IApiService, ApiService>()
                   .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler

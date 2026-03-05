@@ -1,0 +1,56 @@
+{
+  "suiteName": "MTF Fund Transfer",
+  "description": "",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "FundTransfer",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractFundTransferStatusHandler",
+      "payload": {
+        "DealerUCC": "{{uid}}",
+        "ClientUCC": "{{uid}}",
+        "FromExchange": "ALL",
+        "ToExchange": "ALL",
+        "FromSegment": "ALL",
+        "ToSegment": "ALL",
+        "FromProduct": "MTF",
+        "ToProduct": "ALL",
+        "Amount": 1
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ValidateFundTransferFailureReasonHandler",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    }
+  ]
+}
