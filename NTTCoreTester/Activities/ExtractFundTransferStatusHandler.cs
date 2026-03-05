@@ -13,9 +13,22 @@ namespace NTTCoreTester.Activities
         {
             try
             {
-                cache.Set(Constants.IsTransferred, true);
+                var request = JObject.Parse(result.Request);
 
-                $"Fund transfer succeeded".Warn();
+                string fromProduct = request["FromProduct"]?.ToString();
+                string toProduct = request["ToProduct"]?.ToString();
+
+                string direction;
+
+                if (fromProduct == "MTF")
+                    direction = "MTF_TO_NON_MTF";
+                else if (toProduct == "MTF")
+                    direction = "NON_MTF_TO_MTF";
+                else
+                    direction = "UNKNOWN";
+                $"Fund transfer succeeded direction {direction}".Warn();
+                cache.Set(Constants.TransferDirection, direction);
+                cache.Set(Constants.IsTransferred, true);
 
                 return ActivityResult.Success();
             }

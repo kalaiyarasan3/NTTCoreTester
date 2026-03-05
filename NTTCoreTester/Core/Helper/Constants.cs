@@ -33,6 +33,7 @@ namespace NTTCoreTester.Core.Helper
 
 
         public const string IsTransferred = "IsTransferred";
+        public const string TransferDirection = "TransferDirection";
         // Common response keys
         public const string StatusCode = "StatusCode";
         public const string Message = "Message";
