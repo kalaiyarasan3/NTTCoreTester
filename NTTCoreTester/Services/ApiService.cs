@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using NTTCoreTester.Configuration;
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;

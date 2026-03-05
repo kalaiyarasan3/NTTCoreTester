@@ -45,7 +45,7 @@
     },
     {
       "endpoint": "GetOrderMargin",
-      "description": "Extracting Order Margin for placing order and also to get margin details for calculating available margin after placing order.","
+      "description": "Extracting Order Margin for placing order and also to get margin details for calculating available margin after placing order.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"

@@ -3,11 +3,7 @@ using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
 using NTTCoreTester.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace NTTCoreTester.Activities
 {
@@ -24,7 +20,7 @@ namespace NTTCoreTester.Activities
                 var positionsArray = result.DataObject?["Positions"] as JArray;
 
                 if (positionsArray == null)
-                    return ActivityResult.HardFail("No positions yet");
+                    return ActivityResult.SoftFail("No positions yet.");
 
                 var positions = positionsArray
                     .Select(p => new PositionBookModel
@@ -38,7 +34,10 @@ namespace NTTCoreTester.Activities
 
                 _cache.Set(Constants.PrePositions, positions);
 
-                return ActivityResult.Success("Positions Extracted and Stored");
+                var log = string.Join(" | ", positions.Select(p =>
+                $"{p.Symbol}-{p.ProductType}-Qty:{p.NetQty}-Avg:{p.NetAvgPrice}"));
+
+                return ActivityResult.Success($"Positions Extracted and Stored{log}");
             }
             catch (Exception ex)
             {

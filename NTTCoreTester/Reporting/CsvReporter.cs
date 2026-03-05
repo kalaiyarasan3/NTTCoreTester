@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using NTTCoreTester.Configuration;
+using NTTCoreTester.Core.Models;
 using NTTCoreTester.Models;
 using System.Globalization;
 using System.Text;

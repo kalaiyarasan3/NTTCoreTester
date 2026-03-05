@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    internal class ExtractSecurityInfoHandler: IActivityHandler
+    internal class ExtractSecurityInfoHandler : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
@@ -35,13 +35,15 @@ namespace NTTCoreTester.Activities
             _cache.Set("tsym", tsym);
             _cache.Set("lp", lp);
 
+            var log = string.Join("|", $"exch: {exch}", $"tsym: {tsym}", $"lp: {lp}");
+
             //Console.Write($"Enter qty: ");
             //int? qty = Convert.ToInt32(Console.ReadLine());
             //_cache.Set("qty", qty);
 
-            return ActivityResult.Success();
+            return ActivityResult.Success($"Etracted Sysmbol: {log}");
         }
 
-      
+
     }
 }
