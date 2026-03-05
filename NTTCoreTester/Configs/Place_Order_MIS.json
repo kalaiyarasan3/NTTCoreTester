@@ -1,6 +1,6 @@
 {
   "suiteName": "Order Request MIS",
-  "description": "Place Order (Sell) and checking positions are updated and margin checking",
+  "description": "Place Order (Sell, MIS) and checking positions are updated and margin checking",
   "stopOnFailure": true,
   "requests": [
     {
@@ -147,6 +147,20 @@
       "activity": "ValidateOrderBookSync"
     },
     {
+      "endpoint": "ActivityOrderBook",
+      "description": "checking activity orderBook for checking order status",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ConfirmOrderStatus"
+    },
+    {
       "endpoint": "TradeBook",
       "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
       "headers": {
@@ -186,54 +200,8 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       }
-    },
-    {
-      "endpoint": "ActivityOrderBook",
-      "description": "Checking weather the order is placed or not",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
-      "payload": {
-        "uid": "{{uid}}",
-        "actid": "{{uid}}",
-        "status": "ALL"
-      },
-      "activity": "GetLastOrderStatus"
-    },
-    {
-      "endpoint": "ModifyOrder",
-      "description": "Modifying the same order to MKT order type and also changing the qty to 15 to check whether modification is working or not for MIS product type.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
-      "activity": "ExtractClientOrdId",
-      "payload": {
-        "exch": "{{exch}}",
-        "ordno": "{{ordno}}",
-        "prctyp": "MKT",
-        "prc": "{{lp}}",
-        "qty": 15,
-        "tsym": "{{tsym}}",
-        "ret": "",
-        "mkt_protection": "0",
-        "trgprc": "0.00",
-        "dscqty": 0,
-        "ext_remarks": "",
-        "cl_ord_id": "{{cl_ord_id}}",
-        "uid": "{{uid}}",
-        "actid": "{{uid}}",
-        "bpprc": "0",
-        "blprc": "0",
-        "trailprc": "0",
-        "ordersource": "Web",
-        "orderactivity": 1,
-        "prd": "MIS",
-        "tqty": 50
-      }
     }
-
+   
   ]
 }
 

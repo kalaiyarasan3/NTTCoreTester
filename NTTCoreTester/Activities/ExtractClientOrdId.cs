@@ -34,11 +34,12 @@ namespace NTTCoreTester.Activities
             _cache.Set(Constants.ClientOrdId, clOrdId);
             _cache.Set(Constants.PlaceOrderTime, requestTimeRaw);
 
-            $"cl_ord_id={clOrdId} | PlaceOrderTime={requestTimeRaw}".Info();
+            var log = $"cl_ord_id={clOrdId} | PlaceOrderTime={requestTimeRaw}";
+            log.Info();
 
             _cache.Set(Constants.ShouldBlockMargin, false);
 
-            return ActivityResult.Success();
+            return ActivityResult.Success(log);
         }
 
     

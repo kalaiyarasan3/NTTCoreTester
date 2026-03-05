@@ -37,9 +37,6 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Order_Modify.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Configs\Place_Ord&amp;Mod_CNC.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

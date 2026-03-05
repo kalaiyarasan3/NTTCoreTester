@@ -15,7 +15,7 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       },
-      "activity": "ExtractPledgeSymbolHandler"
+      "activity": "ExtractPledgeSymbol"
     },
     {
       "endpoint": "CreatePledgeHoldings",
@@ -53,7 +53,7 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       },
-      "activity": "ValidatePledgeIntegrityHandler"
+      "activity": "ValidatePledgeIntegrity"
     },
 
     {
@@ -91,7 +91,7 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       },
-      "activity": "ValidatePledgeIntegrityHandler"
+      "activity": "ValidatePledgeIntegrity"
     },
     {
       "endpoint": "CreateUnpledgeHoldings",
@@ -128,7 +128,7 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       },
-      "activity": "ValidatePledgeIntegrityHandler"
+      "activity": "ValidatePledgeIntegrity"
     }
 
   ]

@@ -21,7 +21,7 @@ namespace NTTCoreTester.Activities
         private readonly CsvReport _csvReport;
 
 
-        public string Name =>nameof(ValidateOrderBookSync);
+        public string Name => nameof(ValidateOrderBookSync);
 
         public ValidateOrderBookSync(PlaceholderCache cache, CsvReport csvReport)
         {
@@ -44,13 +44,13 @@ namespace NTTCoreTester.Activities
                 return "ValidateOrderBookSync: cl_ord_id not in cache".FailWithLog();
 
             if (string.IsNullOrWhiteSpace(refSymbol))
-                return "ValidateOrderBookSync: OrderBook fields not in cache — SaveOrders may have failed".FailWithLog();
+                return "ValidateOrderBookSync: OrderBook fields not in cache — SaveOrders may have failed".FailWithLog(true);
 
             $"ValidateOrderBookSync: start | cl_ord_id={clOrdId} | tsym={refSymbol} qty={refQty}".Info();
 
             //  2. Find the order in ActivityOrderBook response 
             if (string.IsNullOrEmpty(result.ResponseBody))
-                return "ActivityOrderBook: ResponseBody is null".FailWithLog();
+                return "ActivityOrderBook: ResponseBody is null".FailWithLog(true);
 
             var response = JsonConvert.DeserializeObject<Response>(result.ResponseBody);
             var orders = response?.ResponceDataObject?.AllOrders;
@@ -183,7 +183,7 @@ namespace NTTCoreTester.Activities
             $"ValidateOrderBookSync: PlaceOrder to OrderBook={placeOrderToOrderBookMs}ms | PlaceOrder to ActivityOrderBook={placeOrderToActivityBookMs}ms | PlaceOrder to Exchange={placeOrderToExchangeMs}ms".Info();
             $"ValidateOrderBookSync: exchsts={latestRow.ExchangeStatus} | status={latestRow.Status}".Info();
 
-           
+
             if (mismatches.Any())
                 return ActivityResult.SoftFail($"Sync mismatches: {string.Join(" | ", mismatches)}");
 
@@ -195,8 +195,7 @@ namespace NTTCoreTester.Activities
                              $"PlaceOrder→OrderBook={placeOrderToOrderBookMs}ms | " +
                              $"PlaceOrder→ActivityOrderBook={placeOrderToActivityBookMs}ms | " +
                              $"PlaceOrder→Exchange={placeOrderToExchangeMs}ms | " +
-                             $"Sync OK | exchsts={latestRow.ExchangeStatus} | Current status={latestRow.Status}"
- );
+                             $"Sync OK | exchsts={latestRow.ExchangeStatus} | Current status={latestRow.Status}");
         }
 
         //  helpers 

@@ -51,7 +51,8 @@ namespace NTTCoreTester.Activities
 
                 int preQty = preRow?.NetQty ?? 0;
 
-                $"PreQty: {preQty}, FilledQty: {filledQty}, PostQty: {postQty}".Warn();
+                var log = $"PreQty: {preQty}, FilledQty: {filledQty}, PostQty: {postQty}"; 
+                log.Warn();
 
                 int expectedQty = preQty + filledQty;
                 if (postQty != expectedQty)
@@ -60,7 +61,7 @@ namespace NTTCoreTester.Activities
                 }
 
                 _cache.Set(Constants.PostPositions, postPositions);
-                return ActivityResult.Success();
+                return ActivityResult.Success(log);
             }
             catch (Exception ex)
             {

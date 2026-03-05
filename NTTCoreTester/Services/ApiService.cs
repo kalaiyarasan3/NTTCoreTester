@@ -39,7 +39,6 @@ namespace NTTCoreTester.Services
         public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest, TestSuiteConfig testSuiteConfig)
         {
 
-            Console.WriteLine($"Test SuiteName from Api Services{testSuiteConfig.SuiteName}");
 
             $"\n{new string('=', 80)}".Debug();
             $"Executing Api: {configRequest.Endpoint}".Debug();
@@ -110,6 +109,7 @@ namespace NTTCoreTester.Services
                     result.Endpoint,
                     description,
                     string.IsNullOrWhiteSpace(activity) ? "No Activity" : activity,
+                    activityResult.IsSuccess ? "Success" : "Failed",
                     result.ResponseTime,
                     result.StatusCode,
                     validation.BusinessStatus,

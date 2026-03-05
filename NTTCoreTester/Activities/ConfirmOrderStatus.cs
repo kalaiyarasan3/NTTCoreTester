@@ -56,7 +56,7 @@ namespace NTTCoreTester.Activities
                         .Distinct());
 
                 return $"Current states: {statuses}"
-                    .FailWithLog();
+                    .FailWithLog(false);
             }
             cache.Set(Constants.ShouldBlockMargin, true);
 

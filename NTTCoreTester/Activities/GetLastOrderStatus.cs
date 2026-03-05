@@ -23,48 +23,55 @@ namespace NTTCoreTester.Activities
             var dataObject = result.DataObject;
 
             if (dataObject == null)
-                return "ResponseDataObject not found".FailWithLog();
+                return "ResponseDataObject not found".FailWithLog(true);
 
             var ordersToken = dataObject["AllOrders"];
 
             if (ordersToken == null || ordersToken.Type != JTokenType.Array)
-                return "AllOrders not found".FailWithLog();
+                return "AllOrders not found".FailWithLog(true);
 
             var orders = ordersToken.ToObject<List<OrderDetails>>();
 
             var key = _cache.Get<string>(Constants.ClientOrdId);
-             
+
             var relatedOrders = orders?
                 .Where(x => x.ClientOrderId == key)
                 .ToList();
 
             if (relatedOrders == null || !relatedOrders.Any())
-                return $"Order {key} not found".FailWithLog();
+                return $"Order {key} not found".FailWithLog(true);
 
             var pendingOrder = relatedOrders.FirstOrDefault(x => x.Status == "1111");
 
             var orderToUse = pendingOrder ?? relatedOrders.First();
 
-            _cache.Set(Constants.OrderNumber, pendingOrder?.OrderNumber ?? orderToUse.OrderNumber);  
-            _cache.Set(Constants.TotalQuantity, pendingOrder?.Quantity ?? orderToUse.Quantity);       
-            _cache.Set(Constants.OrderSymbol, orderToUse.TypeSymbol);    
-            _cache.Set(Constants.OrderProduct, orderToUse.Product);      
+            _cache.Set(Constants.OrderNumber, pendingOrder?.OrderNumber ?? orderToUse.OrderNumber);
+            _cache.Set(Constants.TotalQuantity, pendingOrder?.Quantity ?? orderToUse.Quantity);
+            _cache.Set(Constants.OrderSymbol, orderToUse.TypeSymbol);
+            _cache.Set(Constants.OrderProduct, orderToUse.Product);
             _cache.Set(Constants.OrderSide, orderToUse.TransactionType);
 
-            $"ordno: {pendingOrder?.OrderNumber} qty: {pendingOrder?.Quantity} symbol: {orderToUse.TypeSymbol} product: {orderToUse.Product} type: {orderToUse.TransactionType}".Info();
 
             if (pendingOrder == null)
             {
-                var statuses = string.Join(" | ",
+                if (relatedOrders.Any(x => x.Status == "1118" || x.Status == "0000"))
+                {
+                    $"Set block margin true".Warn();
+                    _cache.Set(Constants.ShouldBlockMargin, true);
+                }
+                var status = string.Join(" | ",
                     relatedOrders
                         .Select(x => $"[{x.Status}] {x.Remarks ?? "No Remarks"}")
                         .Distinct());
 
-                return $"1111 not found. Current states: {statuses}"
+                return $"1111 not found. Current status: {status}"
                     .FailWithLog(false);
             }
+
+            var log = $"ordno: {pendingOrder?.OrderNumber} remarks: {pendingOrder?.Remarks} qty: {pendingOrder?.Quantity} symbol: {orderToUse.TypeSymbol} product: {orderToUse.Product} type: {orderToUse.TransactionType}"; log.Info();
+
             _cache.Set(Constants.ShouldBlockMargin, true);
-            return ActivityResult.Success(pendingOrder.Remarks ?? "");
+            return ActivityResult.Success(log);
         }
     }
 

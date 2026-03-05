@@ -29,7 +29,7 @@ namespace NTTCoreTester.Reporting
             _fullPath = Path.Combine(_cfg.OutputFolder, _filename);
         }
 
-        public void AddEntry(string configName,string endpoint,string description, string activityName, long responseMs, int httpCode, string businessStatus,string remarks,
+        public void AddEntry(string configName,string endpoint,string description, string activityName,string result, long responseMs, int httpCode, string businessStatus,string remarks,
                             string jsonResponse, bool schemaValid, string validationErrors,string? meaaage = null)
         {
             var entry = new CsvReportEntry
@@ -39,6 +39,7 @@ namespace NTTCoreTester.Reporting
                 Endpoint = endpoint,
                 Description = description,
                 ActivityName = activityName,
+                Result = result,
                 ResponseTimeMs = responseMs,
                 HttpStatusCode = httpCode,
                 BusinessStatus = businessStatus,

@@ -10,6 +10,7 @@ namespace NTTCoreTester.Core.Models
         public string Endpoint { get; set; }
         public string Description { get; set; } //Endpoint description
         public string ActivityName { get; set; }
+        public string Result { get; set; }
         public long ResponseTimeMs { get; set; }
         public int HttpStatusCode { get; set; }
         public string BusinessStatus { get; set; }     // SUCCESS/FAILED based on StatusCode
@@ -46,6 +47,7 @@ namespace NTTCoreTester.Core.Models
             Map(m => m.Endpoint);
             Map(m => m.Description);
             Map(m => m.ActivityName);
+            Map(m => m.Result);
             Map(m => m.ResponseTimeMs);
             Map(m => m.HttpStatusCode);
             Map(m => m.Message);

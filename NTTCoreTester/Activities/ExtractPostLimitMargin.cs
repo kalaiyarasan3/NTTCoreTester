@@ -237,7 +237,7 @@ namespace NTTCoreTester.Activities
                     return string.Join(" | ", errors).FailWithLog(false);
                 }
 
-                return ActivityResult.Success();
+                return ActivityResult.Success(debugMessage);
             }
             catch (Exception ex)
             {

@@ -25,8 +25,8 @@
       },
       "activity": "ExtractSecurityInfo",
       "payload": {
-        "exch": "BSE",
-        "token": "500325"
+        "exch": "NSE",
+        "token": "2885"
       }
     },
     {
@@ -42,7 +42,7 @@
         "exch": "{{exch}}",
         "tsym": "{{tsym}}",
         "qty": "100",
-        "trantype": "Sell",
+        "trantype": "Buy",
         "ordno": "0",
         "prc": "1400",
         "trgprc": "0",
@@ -59,8 +59,35 @@
       "activity": "ExtractGetOrderMargin"
     },
     {
+      "endpoint": "Limits",
+      "description": "Extracting Limits to check the margin release and block before placing order.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "description": "Extracting Position book before ordering",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractPrePositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
       "endpoint": "PlaceOrder",
-      "description": "Placing Sell Order with MIS product type and Limit order type.",
+      "description": "Placing Buy Order with CNC product type and Limit order type.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"
@@ -70,7 +97,7 @@
         "uid": "{{uid}}",
         "actid": "{{uid}}",
         "exch": "{{exch}}",
-        "trantype": "Sell",
+        "trantype": "Buy",
         "norenordno": "0",
         "segment": "EQ",
         "tsym": "{{tsym}}",
@@ -133,32 +160,18 @@
       "activity": "ValidateOrderBookSync"
     },
     {
-      "endpoint": "TradeBook",
-      "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
+      "endpoint": "ActivityOrderBook",
+      "description": "checking the order status.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"
       },
-      "activity": "ExtractTradeFill",
       "payload": {
-        "actid": "{{uid}}",
         "uid": "{{uid}}",
-        "prd": ""
-      }
-    },
-    {
-      "endpoint": "PositionBook",
-      "description": "Extracting Position Book to check the order is in position book or not and also to get the position details for comparing with trade book.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
+        "actid": "{{uid}}",
+        "status": "ALL"
       },
-      "activity": "ValidatePostPositions",
-      "payload": {
-        "actid": "{{uid}}",
-        "uid": "{{uid}}",
-        "prd": ""
-      }
+      "activity": "GetLastOrderStatus"
     },
     {
       "endpoint": "Limits",
@@ -189,7 +202,7 @@
     },
     {
       "endpoint": "ModifyOrder",
-      "description": "Modifying the same order to MKT order type and also changing the qty to 15 to check whether modification is working or not for MIS product type.",
+      "description": "Modifying the same order to MKT order type and also changing the qty to 150 to check whether modification is working or not for CNC product type.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"
@@ -198,7 +211,7 @@
       "payload": {
         "exch": "{{exch}}",
         "ordno": "{{ordno}}",
-        "prctyp": "LMT",
+        "prctyp": "MKT",
         "prc": "{{lp}}",
         "qty": 150,
         "tsym": "{{tsym}}",
@@ -215,8 +228,36 @@
         "trailprc": "0",
         "ordersource": "Web",
         "orderactivity": 1,
-        "prd": "MIS",
-        "tqty": 50
+        "prd": "CNC",
+        "tqty": 150
+      }
+    },
+    {
+      "endpoint": "TradeBook",
+      "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "description": "Extracting Position Book to check the order is in position book or not and also to get the position details for comparing with trade book.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
       }
     }
 

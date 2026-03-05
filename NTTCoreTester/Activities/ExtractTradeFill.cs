@@ -42,11 +42,14 @@ namespace NTTCoreTester.Activities
                 $"Total quantity filled: {totalSignedQty}".Warn();
 
                 if (totalSignedQty == 0)
-                    return "No quantity filled yet".FailWithLog(true);              
+                    return "No quantity filled yet".FailWithLog(false);              
 
                 _cache.Set(Constants.FilledQty, totalSignedQty);
 
-                return ActivityResult.Success();
+                var log= $"Extracted trade fill for client order id {clientOrdId}: Total filled quantity = {totalSignedQty}";
+                log.Info();
+
+                return ActivityResult.Success(log);
             }
             catch (Exception ex)
             {

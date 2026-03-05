@@ -20,7 +20,7 @@ namespace NTTCoreTester.Activities
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
-           
+
             if (string.IsNullOrEmpty(result.ResponseBody))
                 return "SaveOrders: ResponseBody is null".FailWithLog();
 
@@ -49,9 +49,10 @@ namespace NTTCoreTester.Activities
             _cache.Set(Constants.TotalQuantity, order.Quantity);
             _cache.Set(Constants.OrderBookAddedOn, order.AddedOn);
 
-            $"SaveOrders: tsym={order.TypeSymbol} qty={order.Quantity} prd={order.Product} trantype={order.TransactionType}".Info();
+            var log = $"SaveOrders: tsym={order.TypeSymbol} qty={order.Quantity} prd={order.Product} trantype={order.TransactionType}";
+            log.Info();
 
-            return ActivityResult.Success();
+            return ActivityResult.Success(log);
         }
     }
 }

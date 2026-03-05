@@ -21,7 +21,7 @@ namespace NTTCoreTester.Core.Models
 
         public static ActivityResult HardFail(string message) =>
             new ActivityResult { IsSuccess = false, ContinueExecution = false, Message = message };
-        
+
 
     }
     public static class ActivityResultExtesnion
@@ -38,11 +38,9 @@ namespace NTTCoreTester.Core.Models
         public static ActivityResult FailWithLog(this string message, bool hardFail = true)
         {
             message.Error();
-            return hardFail
-                ? ActivityResult.HardFail(message)
-                : ActivityResult.SoftFail(message);
+            return hardFail ? ActivityResult.HardFail(message) : ActivityResult.SoftFail(message);
         }
-       
+
     }
 
 }
