@@ -5,11 +5,10 @@
   "requests": [
     {
       "endpoint": "TradeBook",
-      "method": "POST",
+      "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ExtractTradeFill",
       "payload": {
@@ -20,11 +19,10 @@
     },
     {
       "endpoint": "PositionBook",
-      "method": "POST",
+      "description": "Extracting Position Book to check the order is in position book or not and also to get the position details for comparing with trade book.",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ValidatePostPositions",
       "payload": {
@@ -35,11 +33,10 @@
     },
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Extracting Limits to check the margin release and block after placing order. using Prelimit margin activity",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ExtractPostLimitMargin",
       "payload": {

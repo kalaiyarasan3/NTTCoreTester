@@ -24,7 +24,7 @@ namespace NTTCoreTester.Activities
                 _cache.Set(Constants.IsTransferred, false);
                 _cache.Set(Constants.PreLimitMargin, marginLimits);
 
-                return ActivityResult.Success();
+                return ActivityResult.Success("Fethed Users Fund Details");
             }
             catch (Exception ex)
             {

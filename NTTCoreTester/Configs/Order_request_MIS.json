@@ -5,11 +5,10 @@
   "requests": [
     {
       "endpoint": "PositionBook",
-      "method": "POST",
+      "description": "Extract Positions to compare after order is filled",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ExtractPrePositions",
       "payload": {
@@ -20,11 +19,10 @@
     },
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Storing users fund details for after placing order it Used to calculate.",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ExtractPreLimitMargin",
       "payload": {
@@ -34,11 +32,10 @@
     },
     {
       "endpoint": "GetSecurityInfo",
-      "method": "POST",
+      "description": "Extracting Security Info for placing order and also to get lot size for calculating qty.",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ExtractSecurityInfo",
       "payload": {
@@ -48,11 +45,10 @@
     },
     {
       "endpoint": "GetOrderMargin",
-      "method": "POST",
+      "description": "Extracting Order Margin for placing order and also to get margin details for calculating available margin after placing order.","
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
+        "Module": "OrderService"
       },
       "payload": {
         "uid": "{{uid}}",
@@ -78,11 +74,10 @@
     },
     {
       "endpoint": "PlaceOrder",
-      "method": "POST",
+      "description": "Placing Sell Order with MIS product type and Limit order type.",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ExtractClientOrdId",
       "payload": {
@@ -126,11 +121,10 @@
     },
     {
       "endpoint": "OrderBook",
-      "method": "POST",
+      "description": "Extracting Order Book to get order details using cl_ord_id.",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "SaveOrders",
       "payload": {
@@ -140,11 +134,10 @@
     },
     {
       "endpoint": "ActivityOrderBook",
-      "method": "POST",
+      "description": "Validating Order Book Sync activity to check whether order book is syncing properly or not and also checking the time difference between placeOrder to ActivityBook",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
+        "Module": "OrderService"
       },
       "payload": {
         "uid": "{{uid}}",
@@ -155,11 +148,10 @@
     },
     {
       "endpoint": "ActivityOrderBook",
-      "method": "POST",
+      "description": "Checking weather the order is placed or not",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
+        "Module": "OrderService"
       },
       "payload": {
         "uid": "{{uid}}",
@@ -170,11 +162,10 @@
     },
     {
       "endpoint": "ModifyOrder",
-      "method": "POST",
+      "description": "Modifying the same order to MKT order type and also changing the qty to 15 to check whether modification is working or not for MIS product type.",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "ExtractClientOrdId",
       "payload": {

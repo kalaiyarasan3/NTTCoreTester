@@ -24,7 +24,7 @@ namespace NTTCoreTester.Activities
                 var positionsArray = result.DataObject?["Positions"] as JArray;
 
                 if (positionsArray == null)
-                    return ActivityResult.HardFail("Positions not found");
+                    return ActivityResult.HardFail("No positions yet");
 
                 var positions = positionsArray
                     .Select(p => new PositionBookModel
@@ -38,7 +38,7 @@ namespace NTTCoreTester.Activities
 
                 _cache.Set(Constants.PrePositions, positions);
 
-                return ActivityResult.Success();
+                return ActivityResult.Success("Positions Extracted and Stored");
             }
             catch (Exception ex)
             {

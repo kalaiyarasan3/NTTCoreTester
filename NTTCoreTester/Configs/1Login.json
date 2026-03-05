@@ -30,8 +30,7 @@
       "description": "Fetch bank details linked to client account",
       "headers": {
         "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
+        "Module": "OrderService"
       },
       "activity": "",
       "payload": {
