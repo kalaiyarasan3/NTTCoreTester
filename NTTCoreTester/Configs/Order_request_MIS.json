@@ -1,11 +1,11 @@
 {
-  "suiteName": "Order ",
-  "description": "Place Order (Sell)",
+  "suiteName": "Order Request MIS",
+  "description": "Place Order (Sell) and checking positions are updated and margin checking",
   "stopOnFailure": true,
   "requests": [
     {
       "endpoint": "PositionBook",
-      "description": "Extract Positions to compare after order is filled",
+      "description": "Extract Pre Positions to compare after order is filled",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"
@@ -19,7 +19,7 @@
     },
     {
       "endpoint": "Limits",
-      "description": "Storing users fund details for after placing order it Used to calculate.",
+      "description": "Storing users current fund details for after placing order it Used to calculate.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"
@@ -145,6 +145,47 @@
         "status": "ALL"
       },
       "activity": "ValidateOrderBookSync"
+    },
+    {
+      "endpoint": "TradeBook",
+      "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "description": "Extracting Position Book to check the order is in position book or not and also to get the position details for comparing with trade book.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Extracting Limits to check the margin release and block after placing order. using Prelimit margin activity",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
     },
     {
       "endpoint": "ActivityOrderBook",
