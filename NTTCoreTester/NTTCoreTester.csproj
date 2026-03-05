@@ -40,7 +40,7 @@
     <Content Include="Configs\Order_Modify.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Place_Order_CNC.json">
+    <Content Include="Configs\Place_Ord&amp;Mod_CNC.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Pledge_request.json">

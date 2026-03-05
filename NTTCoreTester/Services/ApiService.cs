@@ -20,7 +20,7 @@ namespace NTTCoreTester.Services
         private readonly HttpClient _http;
         private readonly ApiConfiguration _config;
         private readonly ResponseChecker _checker;
-        private readonly ActivityExecutor _activityExecutor; 
+        private readonly ActivityExecutor _activityExecutor;
         private readonly PlaceholderCache _cache;
         private readonly CsvReport _csvReport;
 
@@ -36,7 +36,7 @@ namespace NTTCoreTester.Services
             _csvReport = csvReport;
         }
 
-        public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest,TestSuiteConfig testSuiteConfig)
+        public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest, TestSuiteConfig testSuiteConfig)
         {
 
             Console.WriteLine($"Test SuiteName from Api Services{testSuiteConfig.SuiteName}");
@@ -53,7 +53,7 @@ namespace NTTCoreTester.Services
 
             if (!variableResult.IsSuccess)
             {
-                $" Failed to resolve placeholders: {variableResult.Error}".Error(); 
+                $" Failed to resolve placeholders: {variableResult.Error}".Error();
                 return false;
             }
 
@@ -69,7 +69,7 @@ namespace NTTCoreTester.Services
                     var headerVariable = _cache.ReplaceVariables(header.Value);
                     if (!headerVariable.IsSuccess)
                     {
-                       $" Failed to resolve placeholder in header: {header.Key}".Error();
+                        $" Failed to resolve placeholder in header: {header.Key}".Error();
                         return false;
                     }
                     resolvedHeaders[header.Key] = headerVariable.Text;
@@ -78,14 +78,14 @@ namespace NTTCoreTester.Services
 
             $" Placeholders resolved".Debug();
 
-            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity, configRequest.Description, testSuiteConfig );
+            return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity, configRequest.Description, testSuiteConfig);
         }
 
         private async Task<bool> CallApi(
             string endpoint,
             string requestJson,
             Dictionary<string, string> headers,
-            string activity,string description, TestSuiteConfig testSuiteconfig)
+            string activity, string description, TestSuiteConfig testSuiteconfig)
         {
             try
             {
@@ -97,22 +97,19 @@ namespace NTTCoreTester.Services
 
                 if (validation.IsSuccess && !string.IsNullOrEmpty(activity))
                 {
-                   $"\n Executing activity: {activity}".Debug();
+                    $"\n Executing activity: {activity}".Debug();
                     result.Request = requestJson;
-                    activityResult = _activityExecutor.Execute(
-                        activity,
-                        result,
-                        result.Endpoint);
+                    activityResult = _activityExecutor.Execute(activity, result, result.Endpoint);
                 }
 
-            Console.WriteLine($"Test SuiteName from Api Services{testSuiteconfig.SuiteName}");
+                $"Message: {activityResult.Message}".Info();
 
 
                 _csvReport.AddEntry(
                     testSuiteconfig.SuiteName,
                     result.Endpoint,
                     description,
-                    string.IsNullOrWhiteSpace(activity)? "No Activity": activity,
+                    string.IsNullOrWhiteSpace(activity) ? "No Activity" : activity,
                     result.ResponseTime,
                     result.StatusCode,
                     validation.BusinessStatus,

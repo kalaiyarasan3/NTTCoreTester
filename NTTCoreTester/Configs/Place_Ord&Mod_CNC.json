@@ -1,5 +1,5 @@
 {
-  "suiteName": "Order Request CNC",
+  "suiteName": "Order Request CNC NSE",
   "description": "Place Order (Buy) and checking positions are updated and margin checking",
   "stopOnFailure": true,
   "requests": [
@@ -25,8 +25,8 @@
       },
       "activity": "ExtractSecurityInfo",
       "payload": {
-        "exch": "NSE",
-        "token": "10604"
+        "exch": "BSE",
+        "token": "500325"
       }
     },
     {
@@ -44,10 +44,10 @@
         "qty": "100",
         "trantype": "Sell",
         "ordno": "0",
-        "prc": "{{lp}}",
+        "prc": "1400",
         "trgprc": "0",
         "dscqty": "0",
-        "prd": "MIS",
+        "prd": "CNC",
         "prctyp": "Limit",
         "ordersource": "Web",
         "blprc": "0",
@@ -74,11 +74,11 @@
         "norenordno": "0",
         "segment": "EQ",
         "tsym": "{{tsym}}",
-        "qty": 10,
-        "prc": "{{lp}}",
+        "qty": 100,
+        "prc": "1400",
         "trgprc": "0",
         "dscqty": 0,
-        "prd": "MIS",
+        "prd": "CNC",
         "prctyp": "Limit",
         "mkt_protection": "0",
         "ret": "DAY",
@@ -198,9 +198,9 @@
       "payload": {
         "exch": "{{exch}}",
         "ordno": "{{ordno}}",
-        "prctyp": "MKT",
+        "prctyp": "LMT",
         "prc": "{{lp}}",
-        "qty": 15,
+        "qty": 150,
         "tsym": "{{tsym}}",
         "ret": "",
         "mkt_protection": "0",
@@ -222,5 +222,3 @@
 
   ]
 }
-
-

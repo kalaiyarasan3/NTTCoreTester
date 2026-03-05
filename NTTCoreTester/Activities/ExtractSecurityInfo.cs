@@ -1,12 +1,5 @@
 ﻿using NTTCoreTester.Core;
 using NTTCoreTester.Core.Models;
-using NTTCoreTester.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
@@ -19,7 +12,7 @@ namespace NTTCoreTester.Activities
             _cache = cache;
         }
 
-        public string Name => nameof(ExtractSecurityInfo);
+        public string Name => "ExtractSecurityInfo";
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
