@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration;
 
-namespace NTTCoreTester.Models
+namespace NTTCoreTester.Core.Models
 {
     public class CsvReportEntry
     {
