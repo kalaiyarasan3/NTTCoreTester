@@ -98,6 +98,7 @@ namespace NTTCoreTester.Services
                 if (validation.IsSuccess && !string.IsNullOrEmpty(activity))
                 {
                    $"\n Executing activity: {activity}".Debug();
+                    result.Request = requestJson;
                     activityResult = _activityExecutor.Execute(
                         activity,
                         result,

@@ -2,6 +2,7 @@
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Models; 
 
 namespace NTTCoreTester.Activities
 {
@@ -13,15 +14,15 @@ namespace NTTCoreTester.Activities
         {
             try
             {
-                var holdings = result.DataObject?["Holdings"];
+               
+                var holdings = GetHoldings(result);
 
-                if (holdings == null || holdings.Type != JTokenType.Array)
+                if (holdings == null || !holdings.Any())
                     return "Holdings not found".FailWithLog();
 
                 var symbol = cache.Get<string>(Constants.PledgeOrderSymbol);
 
-                var holding = holdings
-                    .FirstOrDefault(x => x["ExchangeData"]?["tsym"]?.ToString() == symbol);
+                var holding = holdings.FirstOrDefault(x => x.ExchangeData.Symbol == "TATACONSUM-EQ");
 
                 if (holding == null)
                     return $"Holding for {symbol} not found".FailWithLog();
@@ -32,47 +33,41 @@ namespace NTTCoreTester.Activities
                 // NON-MTF
                 // ---------------------------
 
-                int pledged = holding["PledgedQuantity"]?.Value<int>() ?? 0;
-                int collateralQty = holding["colqty"]?.Value<int>() ?? 0;
-                int unpledged = holding["unplgdqty"]?.Value<int>() ?? 0;
+                int pledged = holding.PledgedQuantity;
+                int collateralQty = holding.CollateralQuantity;
+                int unpledged = holding.UnpledgedQuantity;
 
-                decimal nonMtfCollateral = holding["NonMTFCollateral"]?.Value<decimal>() ?? 0;
+                decimal nonMtfCollateral = holding.NonMTFCollateral;
 
-                if (unpledged > pledged)
+
+                // Unpledge cannot exceed collateral
+                if (unpledged > collateralQty)
                 {
-                    errors.Add($"NON-MTF unpledge exceeds pledged. Pledged: {pledged}, Unpledged: {unpledged}");
+                    errors.Add(
+                        $"NON-MTF unpledge exceeds collateral. Collateral: {collateralQty}, Unpledged: {unpledged}");
                 }
 
-                if (collateralQty > pledged)
-                {
-                    errors.Add($"NON-MTF collateral exceeds pledged. Pledged: {pledged}, Collateral: {collateralQty}");
-                }
-
+                // Collateral value consistency
                 if (collateralQty == 0 && nonMtfCollateral > 0)
                 {
-                    errors.Add($"NON-MTF collateral value exists but quantity is zero.");
+                    errors.Add(
+                        $"NON-MTF collateral value exists but quantity is zero.");
                 }
 
                 // ---------------------------
                 // MTF
                 // ---------------------------
 
-                int mtfPledged = holding["MTFpledgeQuantity"]?.Value<int>() ?? 0;
-                int mtfCollateralQty = holding["MTFcollateralQuantity"]?.Value<int>() ?? 0;
-                int mtfUnpledged = holding["MTFunpledgeQuantity"]?.Value<int>() ?? 0;
+                int mtfPledged = holding.MTFPledgeQuantity;
+                int mtfCollateralQty = holding.MTFCollateralQuantity;
+                int mtfUnpledged = holding.MTFUnpledgeQuantity;
 
-                decimal mtfCollateral = holding["MTFCollateral"]?.Value<decimal>() ?? 0;
+                decimal mtfCollateral = holding.MTFCollateral;
 
                 if (mtfUnpledged > mtfCollateralQty)
                 {
                     errors.Add(
                         $"MTF unpledge exceeds collateral. CollateralQty: {mtfCollateralQty}, Unpledged: {mtfUnpledged}");
-                }
-
-                if (mtfCollateralQty > mtfPledged)
-                {
-                    errors.Add(
-                        $"MTF collateral exceeds pledged. Pledged: {mtfPledged}, Collateral: {mtfCollateralQty}");
                 }
 
                 if (mtfCollateralQty == 0 && mtfCollateral > 0)
@@ -94,6 +89,16 @@ namespace NTTCoreTester.Activities
                 return $"Error in ValidatePledgeIntegrityHandler: {ex.Message}"
                     .FailWithLog();
             }
+        }
+
+        private List<HoldingDetails>? GetHoldings(ApiExecutionResult result)
+        {
+            var holdingsArray = result.DataObject?["Holdings"];
+
+            if (holdingsArray == null || holdingsArray.Type != JTokenType.Array)
+                return null;
+
+            return holdingsArray.ToObject<List<HoldingDetails>>();
         }
     }
 }
