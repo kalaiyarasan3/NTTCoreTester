@@ -20,15 +20,7 @@ namespace NTTCoreTester.Models
         public string? Message { get; set; }
 
         public string? SyncFieldMismatches { get; set; }        
-        public string? OrdenttmRaw { get; set; }
-        public string? PlaceorderTime { get; set; }
-        public string? OrderBookTime { get; set; }
-        public string? ActivityOrderBookTime { get; set; }  
-        public string? PlaceOrderToOrderBookMs { get; set; }    
-        public string? PlaceOrderToActivityBookMs { get; set; }   
-        public string? PlaceOrderToExchangeMs { get; set; }      
-        public string? ExchangeStatus { get; set; }            
-        public string? OrderActivityStatus { get; set; }
+      
 
 
 
@@ -62,15 +54,6 @@ namespace NTTCoreTester.Models
             Map(m => m.SchemaValid);
             Map(m => m.ValidationErrors);
             Map(m => m.SyncFieldMismatches);
-            Map(m => m.OrdenttmRaw);
-            Map(m => m.PlaceorderTime);
-            Map(m => m.OrderBookTime);
-            Map(m=>m.ActivityOrderBookTime);
-            Map(m => m.PlaceOrderToOrderBookMs);
-            Map(m => m.PlaceOrderToActivityBookMs);
-            Map(m => m.PlaceOrderToExchangeMs);
-            Map(m => m.ExchangeStatus);
-            Map(m => m.OrderActivityStatus);
             Map(m => m.JsonResponse);
         }
     }
