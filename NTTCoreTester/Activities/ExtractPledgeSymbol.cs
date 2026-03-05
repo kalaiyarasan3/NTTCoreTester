@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractPledgeSymbolHandler(PlaceholderCache cache) : IActivityHandler
+    public class ExtractPledgeSymbol(PlaceholderCache cache) : IActivityHandler
     {
-        public string Name => nameof(ExtractPledgeSymbolHandler);
+        public string Name => nameof(ExtractPledgeSymbol);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

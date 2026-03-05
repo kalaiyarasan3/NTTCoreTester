@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractClientOrdIdHandler : IActivityHandler
+    public class ExtractClientOrdId : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public ExtractClientOrdIdHandler(PlaceholderCache cache)
+        public ExtractClientOrdId(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "ExtractClientOrdId";
+        public string Name => nameof(ExtractClientOrdId);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

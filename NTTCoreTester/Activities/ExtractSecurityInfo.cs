@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    internal class ExtractSecurityInfoHandler : IActivityHandler
+    internal class ExtractSecurityInfo : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public ExtractSecurityInfoHandler(PlaceholderCache cache)
+        public ExtractSecurityInfo(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "ExtractSecurityInfo";
+        public string Name => nameof(ExtractSecurityInfo);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

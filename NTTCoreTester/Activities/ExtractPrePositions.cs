@@ -7,11 +7,11 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractPrePositionsHandler(PlaceholderCache cache) : IActivityHandler
+    public class ExtractPrePositions(PlaceholderCache cache) : IActivityHandler
     {
         private readonly PlaceholderCache _cache = cache;
 
-        public string Name => "ExtractPrePositions";
+        public string Name => nameof(ExtractPrePositions);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

@@ -6,16 +6,16 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ValidateRejectedOrderImmutabilityHandler : IActivityHandler
+    public class ValidateRejectedOrderImmutability : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public ValidateRejectedOrderImmutabilityHandler(PlaceholderCache cache)
+        public ValidateRejectedOrderImmutability(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "ValidateRejectedOrderImmutability";
+        public string Name =>nameof(ValidateRejectedOrderImmutability);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

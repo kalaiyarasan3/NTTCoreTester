@@ -10,16 +10,16 @@ using NTTCoreTester.Core.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractSessionHandler : IActivityHandler
+    public class ExtractSession : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public ExtractSessionHandler(PlaceholderCache cache)
+        public ExtractSession(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "ExtractSession";
+        public string Name =>nameof(ExtractSession);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

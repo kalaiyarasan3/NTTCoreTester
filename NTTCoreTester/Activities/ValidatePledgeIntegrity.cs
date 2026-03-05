@@ -6,9 +6,9 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ValidatePledgeIntegrityHandler(PlaceholderCache cache) : IActivityHandler
+    public class ValidatePledgeIntegrity(PlaceholderCache cache) : IActivityHandler
     {
-        public string Name => nameof(ValidatePledgeIntegrityHandler);
+        public string Name => nameof(ValidatePledgeIntegrity);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

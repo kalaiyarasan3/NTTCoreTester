@@ -11,9 +11,9 @@ namespace NTTCoreTester.Activities
     If the position becomes zero, the square-off order must be properly completed (Filled). 
     Otherwise, the validation fails.
     */
-    public class ValidateSquareOffOrderStatusHandler(PlaceholderCache cache) : IActivityHandler
+    public class ValidateSquareOffOrderStatus(PlaceholderCache cache) : IActivityHandler
     {
-        public string Name => "ValidateSquareOffOrderStatus";
+        public string Name => nameof(ValidateSquareOffOrderStatus);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

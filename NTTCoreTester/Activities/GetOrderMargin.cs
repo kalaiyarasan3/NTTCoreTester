@@ -13,11 +13,11 @@ using NTTCoreTester.Core.Models;
 namespace NTTCoreTester.Activities
 {
 
-    public class GetOrderMarginHandler(PlaceholderCache cache) : IActivityHandler
+    public class GetOrderMargin(PlaceholderCache cache) : IActivityHandler
     {
         private readonly PlaceholderCache _cache = cache;
 
-        public string Name => "ExtractGetOrderMargin";
+        public string Name =>nameof(GetOrderMargin);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

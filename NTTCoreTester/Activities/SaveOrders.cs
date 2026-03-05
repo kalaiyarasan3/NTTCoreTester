@@ -7,16 +7,16 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class SaveOrdersHandler : IActivityHandler
+    public class SaveOrders : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public SaveOrdersHandler(PlaceholderCache cache)
+        public SaveOrders(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "SaveOrders";
+        public string Name => nameof(SaveOrders);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

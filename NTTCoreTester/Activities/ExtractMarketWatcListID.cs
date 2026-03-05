@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    internal class MarketWatcListID : IActivityHandler
+    internal class ExtractMarketWatcListID : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public MarketWatcListID(PlaceholderCache cache)
+        public ExtractMarketWatcListID(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "MarketWatcListID";
+        public string Name => nameof(ExtractMarketWatcListID);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

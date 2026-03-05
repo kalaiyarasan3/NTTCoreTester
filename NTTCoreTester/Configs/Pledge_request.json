@@ -5,7 +5,7 @@
   "requests": [
     {
       "endpoint": "Holdings",
-      "method": "POST",
+      "description": "Fetch holdings and extract a symbol to place a pledge order (uses current holding symbol)",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -17,10 +17,9 @@
       },
       "activity": "ExtractPledgeSymbolHandler"
     },
-
     {
       "endpoint": "CreatePledgeHoldings",
-      "method": "POST",
+      "description": "Create a pledge request for the selected symbol and quantity",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -44,7 +43,7 @@
 
     {
       "endpoint": "Holdings",
-      "method": "POST",
+      "description": "Verify that the pledged quantity is updated correctly",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -59,7 +58,7 @@
 
     {
       "endpoint": "CreateUnpledgeHoldings",
-      "method": "POST",
+      "description": "Create an unpledge request for the selected symbol with maximum quantity",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -80,10 +79,9 @@
         ]
       }
     },
-
     {
       "endpoint": "Holdings",
-      "method": "POST",
+      "description": "Verify that the unpledged quantity is updated correctly",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -95,10 +93,9 @@
       },
       "activity": "ValidatePledgeIntegrityHandler"
     },
-
     {
       "endpoint": "CreateUnpledgeHoldings",
-      "method": "POST",
+      "description": "Send a duplicate unpledge request to test system validation",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -119,10 +116,9 @@
         ]
       }
     },
-
     {
       "endpoint": "Holdings",
-      "method": "POST",
+      "description": "Verify that the duplicate unpledge request is handled correctly",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",

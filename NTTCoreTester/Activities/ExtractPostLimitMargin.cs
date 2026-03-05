@@ -6,11 +6,11 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractPostLimitMarginHandler(PlaceholderCache cache) : IActivityHandler
+    public class ExtractPostLimitMargin(PlaceholderCache cache) : IActivityHandler
     {
         private readonly PlaceholderCache _cache = cache;
 
-        public string Name => "ExtractPostLimitMargin";
+        public string Name => nameof(ExtractPostLimitMargin);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

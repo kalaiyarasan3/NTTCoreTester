@@ -5,7 +5,7 @@
   "requests": [
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Storing users current fund details for Checking the Fundtransfer",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -19,7 +19,7 @@
     },
     {
       "endpoint": "FundTransfer",
-      "method": "POST",
+      "description": "Fund Transfer from main to trading account",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -40,7 +40,7 @@
     },
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Checking the Fundtransfer is success or not by checking the fund details after fund transfer",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",

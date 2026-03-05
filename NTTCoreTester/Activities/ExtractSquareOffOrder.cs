@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractSquareOffOrderHandler(PlaceholderCache cache) : IActivityHandler
+    public class ExtractSquareOffOrder(PlaceholderCache cache) : IActivityHandler
     {
         private readonly PlaceholderCache _cache = cache;
 
-        public string Name => "ExtractSquareOffOrder";
+        public string Name => nameof(ExtractSquareOffOrder);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

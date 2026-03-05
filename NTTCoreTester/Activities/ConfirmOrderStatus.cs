@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    public class ConfirmOrderStatusHandler(PlaceholderCache cache) : IActivityHandler
+    public class ConfirmOrderStatus(PlaceholderCache cache) : IActivityHandler
     {
-        public string Name => "ConfirmOrderStatus";
+        public string Name => nameof(ConfirmOrderStatus);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

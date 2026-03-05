@@ -5,11 +5,11 @@ using NTTCoreTester.Core.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractTradeFillHandler(PlaceholderCache cache) : IActivityHandler
+    public class ExtractTradeFill(PlaceholderCache cache) : IActivityHandler
     {
         private readonly PlaceholderCache _cache = cache;
 
-        public string Name => "ExtractTradeFill";
+        public string Name => nameof(ExtractTradeFill);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

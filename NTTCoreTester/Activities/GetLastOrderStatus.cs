@@ -7,16 +7,16 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class GetLastOrderStatusHandler : IActivityHandler
+    public class GetLastOrderStatus : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public GetLastOrderStatusHandler(PlaceholderCache cache)
+        public GetLastOrderStatus(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "GetLastOrderStatus";
+        public string Name => nameof(GetLastOrderStatus);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

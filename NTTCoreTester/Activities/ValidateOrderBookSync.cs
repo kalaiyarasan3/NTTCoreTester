@@ -15,15 +15,15 @@ namespace NTTCoreTester.Activities
     ///   2. Fields match between OrderBook and ActivityOrderBook (tsym, qty, prd, trantype)
     ///   3. Timing: PlaceOrder→OrderBook | PlaceOrder→ActivityOrderBook | PlaceOrder→Exchange
     /// </summary>
-    public class ValidateOrderBookSyncHandler : IActivityHandler
+    public class ValidateOrderBookSync : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
         private readonly CsvReport _csvReport;
 
 
-        public string Name => "ValidateOrderBookSync";
+        public string Name =>nameof(ValidateOrderBookSync);
 
-        public ValidateOrderBookSyncHandler(PlaceholderCache cache, CsvReport csvReport)
+        public ValidateOrderBookSync(PlaceholderCache cache, CsvReport csvReport)
         {
             _cache = cache;
             _csvReport = csvReport;

@@ -5,12 +5,7 @@ using NTTCoreTester.Reporting;
 using NTTCoreTester.Services;
 using NTTCoreTester.UI;
 using NTTCoreTester.Validators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester
 {
@@ -26,7 +21,7 @@ namespace NTTCoreTester
             services.AddSingleton<ActivityExecutor>();
 
             services.Scan(scan => scan
-            .FromAssemblyOf<ExtractSessionHandler>()
+            .FromAssemblyOf<ExtractSession>()
             .AddClasses(classes => classes
                 .AssignableTo<IActivityHandler>()
                 .Where(t => !t.IsAbstract && !t.IsInterface))

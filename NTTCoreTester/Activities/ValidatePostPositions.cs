@@ -6,11 +6,11 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ValidatePostPositionsHandler(PlaceholderCache cache) : IActivityHandler
+    public class ValidatePostPositions(PlaceholderCache cache) : IActivityHandler
     {
         private readonly PlaceholderCache _cache = cache;
 
-        public string Name => "ValidatePostPositions";
+        public string Name => nameof(ValidatePostPositions);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {

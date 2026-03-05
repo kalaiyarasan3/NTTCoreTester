@@ -1,0 +1,226 @@
+{
+  "suiteName": "Order Request CNC",
+  "description": "Place Order (Buy) and checking positions are updated and margin checking",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "Limits",
+      "description": "Storing users current fund details for after placing order it Used to calculate.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "GetSecurityInfo",
+      "description": "Extracting Security Info for placing order and also to get lot size for calculating qty.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractSecurityInfo",
+      "payload": {
+        "exch": "NSE",
+        "token": "10604"
+      }
+    },
+    {
+      "endpoint": "GetOrderMargin",
+      "description": "Extracting Order Margin for placing order and also to get margin details for calculating available margin after placing order.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "100",
+        "trantype": "Sell",
+        "ordno": "0",
+        "prc": "{{lp}}",
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "MIS",
+        "prctyp": "Limit",
+        "ordersource": "Web",
+        "blprc": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0",
+        "snonum": "0"
+      },
+      "activity": "ExtractGetOrderMargin"
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "description": "Placing Sell Order with MIS product type and Limit order type.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Sell",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "{{lp}}",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "MIS",
+        "prctyp": "Limit",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
+      }
+    },
+    {
+      "endpoint": "OrderBook",
+      "description": "Extracting Order Book to get order details using cl_ord_id.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "SaveOrders",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Validating Order Book Sync activity to check whether order book is syncing properly or not and also checking the time difference between placeOrder to ActivityBook",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "ValidateOrderBookSync"
+    },
+    {
+      "endpoint": "TradeBook",
+      "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "description": "Extracting Position Book to check the order is in position book or not and also to get the position details for comparing with trade book.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Extracting Limits to check the margin release and block after placing order. using Prelimit margin activity",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Checking weather the order is placed or not",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      },
+      "activity": "GetLastOrderStatus"
+    },
+    {
+      "endpoint": "ModifyOrder",
+      "description": "Modifying the same order to MKT order type and also changing the qty to 15 to check whether modification is working or not for MIS product type.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "exch": "{{exch}}",
+        "ordno": "{{ordno}}",
+        "prctyp": "MKT",
+        "prc": "{{lp}}",
+        "qty": 15,
+        "tsym": "{{tsym}}",
+        "ret": "",
+        "mkt_protection": "0",
+        "trgprc": "0.00",
+        "dscqty": 0,
+        "ext_remarks": "",
+        "cl_ord_id": "{{cl_ord_id}}",
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ordersource": "Web",
+        "orderactivity": 1,
+        "prd": "MIS",
+        "tqty": 50
+      }
+    }
+
+  ]
+}
+
+

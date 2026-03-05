@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractOTPHandler : IActivityHandler
+    public class ExtractOTP : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 
-        public ExtractOTPHandler(PlaceholderCache cache)
+        public ExtractOTP(PlaceholderCache cache)
         {
             _cache = cache;
         }
 
-        public string Name => "ExtractOTP";
+        public string Name => nameof(ExtractOTP);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
