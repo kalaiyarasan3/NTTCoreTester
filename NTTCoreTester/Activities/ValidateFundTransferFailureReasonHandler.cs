@@ -21,7 +21,7 @@ namespace NTTCoreTester.Activities
                 if (isTransferred)
                 {
                     "Transfer succeeded. Skipping failure diagnostics.".Warn();
-                    return ActivityResult.Success();
+                    return ActivityResult.Success("Transfer succeeded. Skipping failure diagnostics.");
                 }
 
                 var preLimits = cache.Get<List<LimitMarginDetails>>(Constants.PreLimitMargin);
@@ -29,15 +29,22 @@ namespace NTTCoreTester.Activities
                 if (preLimits == null)
                     return "PreLimits missing".FailWithLog(true);
 
-                var mtf = preLimits
-                    .FirstOrDefault(x => x.TemplateId == 2);
+                string direction = cache.Get<string>(Constants.TransferDirection);
 
-                if (mtf == null)
-                    return "MTF margin block not found".FailWithLog(true);
+                LimitMarginDetails? source = null;
 
-                decimal transferable = mtf.TransferableAmount;
-                decimal remaining = mtf.RemainingMargin;
-                decimal used = mtf.UsedMarginWithoutPL;
+                if (direction == "MTF_TO_NON_MTF")
+                    source = preLimits.FirstOrDefault(x => x.TemplateId == 2);
+
+                else if (direction == "NON_MTF_TO_MTF")
+                    source = preLimits.FirstOrDefault(x => x.TemplateId == 1);
+
+                if (source == null)
+                    return $"Source margin bucket not found for direction {direction}".FailWithLog(true);
+
+                decimal transferable = source.TransferableAmount;
+                decimal remaining = source.RemainingMargin;
+                decimal used = source.UsedMarginWithoutPL;
 
                 if (transferable <= 0)
                 {
@@ -45,15 +52,10 @@ namespace NTTCoreTester.Activities
                         .FailWithLog(false);
                 }
 
-                if (used > 0)
-                {
-                    return $"Transfer rejected because margin is already used. UsedMarginWithoutPL = {used}"
-                        .FailWithLog(false);
-                }
-
-                var message = $"Transfer failed despite transferable margin available. " +
-                       $"TransferableAmount = {transferable}, RemainingMargin = {remaining}";
-
+                var message =
+                   $"Transfer failed despite transferable margin available. " +
+                    $"Direction={direction}, TransferableAmount={transferable}, RemainingMargin={remaining}";
+                
                 return message.FailWithLog(true);
             }
             catch (Exception ex)
