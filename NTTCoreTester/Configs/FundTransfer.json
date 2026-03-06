@@ -51,6 +51,56 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Storing users current fund details for Checking the Fundtransfer",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "FundTransfer",
+      "description": "Fund Transfer from main to trading account",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractFundTransferStatusHandler",
+      "payload": {
+        "DealerUCC": "{{uid}}",
+        "ClientUCC": "{{uid}}",
+        "FromExchange": "ALL",
+        "ToExchange": "ALL",
+        "FromSegment": "ALL",
+        "ToSegment": "ALL",
+        "FromProduct": "ALL",
+        "ToProduct": "MTF",
+        "Amount": 1
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Checking the Fundtransfer is success or not by checking the fund details after fund transfer",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ValidateFundTransferFailureReasonHandler",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
     }
+
   ]
 }
