@@ -2,6 +2,7 @@
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Enums;
 using NTTCoreTester.Models;
 
 
@@ -41,7 +42,7 @@ namespace NTTCoreTester.Activities
             if (relatedOrders == null || !relatedOrders.Any())
                 return $"Order {key} not found".FailWithLog(true);
 
-            var pendingOrder = relatedOrders.FirstOrDefault(x => x.Status == "1111");
+            var pendingOrder = relatedOrders.FirstOrDefault(x => x.OrderStatus is OrderEnumStatus.Pending);
 
             var orderToUse = pendingOrder ?? relatedOrders.First();
 

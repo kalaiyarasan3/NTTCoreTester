@@ -10,7 +10,7 @@
       "activity": "ExtractSession",
       "payload": {
         "uid": "90255961",
-        "pwd": "Navia@123",
+        "pwd": "Hemanath@123",
         "otp": "7657768",
         "TwoFA": 1
       }
@@ -25,56 +25,7 @@
       "activity": "",
       "payload": {}
     },
-    {
-      "endpoint": "Limits",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
-      "activity": "ExtractPreLimitMargin",
-      "payload": {
-        "actid": "{{uid}}",
-        "uid": "{{uid}}"
-      }
-    },
-    {
-      "endpoint": "FundTransfer",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
-      "activity": "ExtractFundTransferStatusHandler",
-      "payload": {
-        "DealerUCC": "{{uid}}",
-        "ClientUCC": "{{uid}}",
-        "FromExchange": "ALL",
-        "ToExchange": "ALL",
-        "FromSegment": "ALL",
-        "ToSegment": "ALL",
-        "FromProduct": "MTF",
-        "ToProduct": "ALL",
-        "Amount": 1
-      }
-    },
-    {
-      "endpoint": "Limits",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
-      "activity": "ValidateFundTransferFailureReasonHandler",
-      "payload": {
-        "actid": "{{uid}}",
-        "uid": "{{uid}}"
-      }
-    },
-     
+   
    
 
     {
@@ -93,21 +44,6 @@
       }
     },
     {
-      "endpoint": "Holdings",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
-      "activity": "",
-      "payload": {
-        "actid": "{{uid}}",
-        "uid": "{{uid}}",
-        "prd": ""
-      }
-    },
-    {
       "endpoint": "GetSecurityInfo",
       "method": "POST",
       "headers": {
@@ -118,7 +54,7 @@
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
-        "token": "3432"
+        "token": "13501"
       }
     },
    
@@ -149,13 +85,13 @@
         "actid": "{{uid}}",
         "exch": "{{exch}}",
         "tsym": "{{tsym}}",
-        "qty": "10",
+        "qty": "1",
         "trantype": "Buy",
         "ordno": "0",
         "prc": "{{lp}}",
         "trgprc": "0",
         "dscqty": "0",
-        "prd": "CNC",
+        "prd": "MIS",
         "prctyp": "Limit",
         "ordersource": "Web",
         "blprc": "0",
@@ -183,11 +119,11 @@
         "norenordno": "0",
         "segment": "EQ",
         "tsym": "{{tsym}}",
-        "qty": 10,
-        "prc": "1050.3",
+        "qty": 1,
+        "prc": "7",
         "trgprc": "0",
         "dscqty": 0,
-        "prd": "CNC",
+        "prd": "MIS",
         "prctyp": "Limit",
         "mkt_protection": "0",
         "ret": "DAY",
@@ -271,13 +207,13 @@
         "actid": "{{uid}}",
         "exch": "{{exch}}",
         "tsym": "{{tsym}}",
-        "qty": "5",
+        "qty": "2",
         "trantype": "Buy",
         "ordno": "0",
         "prc": "{{lp}}",
         "trgprc": "0",
         "dscqty": "0",
-        "prd": "CNC",
+        "prd": "MIS",
         "prctyp": "Market",
         "ordersource": "Web",
         "blprc": "0",
@@ -301,7 +237,7 @@
         "ordno": "{{ordno}}",
         "prctyp": "MKT",
         "prc": "0",
-        "qty": 5,
+        "qty": 2,
         "tsym": "{{tsym}}",
         "ret": "",
         "mkt_protection": "0",
@@ -316,8 +252,8 @@
         "trailprc": "0",
         "ordersource": "Web",
         "orderactivity": 1,
-        "prd": "CNC",
-        "tqty": 5
+        "prd": "MIS",
+        "tqty": 2
       }
     },
     {
@@ -482,15 +418,6 @@
         "actid": "{{uid}}",
         "status": "ALL"
       }
-    },
-    {
-      "endpoint": "Logout",
-      "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}"
-      },
-      "activity": "",
-      "payload": {}
     }
   ]
 }

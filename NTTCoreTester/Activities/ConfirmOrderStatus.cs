@@ -2,6 +2,7 @@
 using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Enums;
 using NTTCoreTester.Models;
 using System;
 using System.Collections.Generic;
@@ -41,11 +42,11 @@ namespace NTTCoreTester.Activities
                 return $"Order {key} not found".FailWithLog();
 
             var filledOrder = relatedOrders
-                .FirstOrDefault(x => x.Status == "1118");
+                .FirstOrDefault(x => x.OrderStatus == Enums.OrderEnumStatus.Filled);
 
             if (filledOrder == null)
             {
-                if(relatedOrders.Any(x => x.Status == "1111" || x.Status =="0000"))
+                if(relatedOrders.Any(x => x.OrderStatus is OrderEnumStatus.Pending or OrderEnumStatus.OrderReceived))
                 {
                     $"Order is pending set block margin true".Warn();
                     cache.Set(Constants.ShouldBlockMargin, true);

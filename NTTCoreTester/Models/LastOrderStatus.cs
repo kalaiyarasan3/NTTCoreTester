@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NTTCoreTester.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,9 @@ namespace NTTCoreTester.Models
 
         [JsonProperty("status")]
         public string? Status { get; set; }
+        public int? NumericStatus => Status != null && int.TryParse(Status.TrimStart('0'), out int v) ? v : null;
+
+        public OrderEnumStatus? OrderStatus => Status?.ToOrderStatus();
 
         [JsonProperty("exchsts")]
         public string? ExchangeStatus { get; set; }
