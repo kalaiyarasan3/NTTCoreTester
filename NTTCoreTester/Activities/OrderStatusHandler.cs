@@ -57,7 +57,7 @@ namespace NTTCoreTester.Activities
 
                     cache.Set(Constants.ShouldBlockMargin, true);
 
-                    return ActivityResult.Success(log);
+                    return ActivityResult.Success(log);                     
 
                 case OrderEnumStatus.ORDER_CANCELLED:
                 case OrderEnumStatus.RMS_PENDING:
