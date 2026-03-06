@@ -33,8 +33,8 @@ namespace NTTCoreTester.Activities
 
                 _cache.Set(Constants.PrePositions, positions);
 
-                var log = string.Join(" | ", positions.Select(p =>
-                $"{p.Symbol}-{p.ProductType}-Qty:{p.NetQty}-Avg:{p.NetAvgPrice}"));
+                var log = string.Join(" || ", positions.Select(p =>
+                $"{p.Symbol}-{p.ProductType} Qty:{p.NetQty} Avg:{p.NetAvgPrice}"));
 
                 return ActivityResult.Success($"Positions Extracted and Stored{log}");
             }

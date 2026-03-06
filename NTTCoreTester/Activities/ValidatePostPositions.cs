@@ -50,7 +50,7 @@ namespace NTTCoreTester.Activities
 
                 int preQty = preRow?.NetQty ?? 0;
 
-                var log = $"PreQty: {preQty}, FilledQty: {filledQty}, PostQty: {postQty}"; 
+                var log = $"PreQty: {preQty} | FilledQty: {filledQty} | PostQty: {postQty}"; 
                 log.Warn();
 
                 int expectedQty = preQty + filledQty;

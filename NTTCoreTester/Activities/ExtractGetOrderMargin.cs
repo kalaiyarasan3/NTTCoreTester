@@ -41,8 +41,9 @@ namespace NTTCoreTester.Activities
                 {
                     _cache.Set(Constants.PreviousOrderMargin, existing);
                 }
-                var log = $"Available margin; {newOrderMargin.MarginUsedPrev}, " +
-                    $"Required order margin {newOrderMargin.OrderMargin}, charges: {newOrderMargin.Charges}";
+                var log = var log = $"Available margin: {newOrderMargin.MarginUsedPrev} | " +
+                         $"Required order margin: {newOrderMargin.OrderMargin} | " +
+                         $"Charges: {newOrderMargin.Charges}";
 
                 $"{log}".Warn();
 

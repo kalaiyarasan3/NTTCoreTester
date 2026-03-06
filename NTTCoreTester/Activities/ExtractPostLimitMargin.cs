@@ -46,11 +46,11 @@ namespace NTTCoreTester.Activities
                 // ----------------------------------------------------
 
                 var debug =
-                    $"preLimit.RemainingMargin: {preLimit.RemainingMargin}\n" +
-                    $"postLimit.RemainingMargin: {postLimit.RemainingMargin}\n" +
-                    $"preLimit.UsedMarginWithoutPL: {preLimit.UsedMarginWithoutPL}\n" +
-                    $"postLimit.UsedMarginWithoutPL: {postLimit.UsedMarginWithoutPL}\n" +
-                    $"orderMargin.OrderMargin: {orderMargin.OrderMargin}\n" +
+                    $"preLimit.RemainingMargin: {preLimit.RemainingMargin} | " +
+                    $"postLimit.RemainingMargin: {postLimit.RemainingMargin} | " +
+                    $"preLimit.UsedMarginWithoutPL: {preLimit.UsedMarginWithoutPL} | " +
+                    $"postLimit.UsedMarginWithoutPL: {postLimit.UsedMarginWithoutPL} | " +
+                    $"orderMargin.OrderMargin: {orderMargin.OrderMargin} | " +
                     $"orderMargin.MarginUsedPrev: {orderMargin.MarginUsedPrev}";
 
                 debug.Warn();
@@ -62,7 +62,7 @@ namespace NTTCoreTester.Activities
                 if (!AreEqual(orderMargin.MarginUsedPrev, preLimit.UsedMarginWithoutPL))
                 {
                     errors.Add(
-                        $"MarginUsedPrev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, " +
+                        $"MarginUsedPrev mismatch. Expected: {preLimit.UsedMarginWithoutPL" +
                         $"Actual: {orderMargin.MarginUsedPrev}");
                 }
 
@@ -188,10 +188,10 @@ namespace NTTCoreTester.Activities
                 if (!AreEqual(postLimit.UsedMargin, calculatedUsed))
                 {
                     errors.Add(
-                        $"UsedMargin internal calculation mismatch. " +
-                        $"UsedMargin: {postLimit.UsedMargin}, " +
-                        $"UsedMarginWithoutCharges: {postLimit.UsedMarginWithoutCharges}, " +
-                        $"Charges: {postLimit.Charges}, " +
+                        $"UsedMargin internal calculation mismatch. | " +
+                        $"UsedMargin: {postLimit.UsedMargin} | " +
+                        $"UsedMarginWithoutCharges: {postLimit.UsedMarginWithoutCharges} | " +
+                        $"Charges: {postLimit.Charges}" | +
                         $"CalculatedUsedMargin: {calculatedUsed}");
                 }
                 /*

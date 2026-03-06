@@ -27,7 +27,7 @@ namespace NTTCoreTester.Activities
             _cache.Set("tsym", tsym);
             _cache.Set("lp", lp);
 
-            var log = string.Join("|", $"exch: {exch}", $"tsym: {tsym}", $"lp: {lp}");
+            var log = string.Join(" | ", $"exch: {exch}", $"tsym: {tsym}", $"lp: {lp}");
 
             //Console.Write($"Enter qty: ");
             //int? qty = Convert.ToInt32(Console.ReadLine());

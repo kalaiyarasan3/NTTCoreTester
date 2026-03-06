@@ -48,7 +48,7 @@ namespace NTTCoreTester.Activities
             _cache.Set(Constants.TotalQuantity, order.Quantity);
             _cache.Set(Constants.OrderBookAddedOn, order.AddedOn);
 
-            var log = $"SaveOrders: tsym={order.TypeSymbol} qty={order.Quantity} prd={order.Product} trantype={order.TransactionType}";
+            var log = $"SaveOrders: tsym={order.TypeSymbol} | qty={order.Quantity} | prd={order.Product} | trantype={order.TransactionType}";
             log.Info();
 
             return ActivityResult.Success(log);
