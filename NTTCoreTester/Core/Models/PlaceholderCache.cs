@@ -1,8 +1,7 @@
-﻿using NTTCoreTester.Core.Models;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace NTTCoreTester.Core
+namespace NTTCoreTester.Core.Models
 {
     public class PlaceholderCache
     {

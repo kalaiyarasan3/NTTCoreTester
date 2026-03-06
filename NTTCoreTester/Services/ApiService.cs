@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
 using NTTCoreTester.Reporting;
@@ -105,7 +104,7 @@ namespace NTTCoreTester.Services
 
 
                 _csvReport.AddEntry(
-                    testSuiteconfig.SuiteName,
+                    testSuiteconfig.TestName,
                     result.Endpoint,
                     description,
                     string.IsNullOrWhiteSpace(activity) ? "No Activity" : activity,

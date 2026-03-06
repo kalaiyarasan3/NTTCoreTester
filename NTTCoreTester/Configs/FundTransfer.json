@@ -1,5 +1,5 @@
 {
-  "suiteName": "MTF Fund Transfer",
+  "testName": "MTF Fund Transfer",
   "description": "",
   "stopOnFailure": true,
   "requests": [

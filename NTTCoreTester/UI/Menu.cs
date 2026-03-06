@@ -1,5 +1,5 @@
-﻿using NTTCoreTester.Core;
-using NTTCoreTester.Core.Helper;
+﻿using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Core.Models;
 using NTTCoreTester.Services;
 
 namespace NTTCoreTester.UI
@@ -29,13 +29,26 @@ namespace NTTCoreTester.UI
                     return;
                 }
 
+                var masterTests = _configRunner.GetAvailableMasterTest();
                 var suites = _configRunner.GetAvailableSuites();
 
-                if (int.TryParse(choice, out int index) && index > 0 && index <= suites.Count)
+                int totalOptions = masterTests.Count + suites.Count;
+
+                if(int.TryParse(choice, out int index) && index > 0 && index <= totalOptions)
                 {
-                    string selectedSuite = suites[index - 1];
-                    await _configRunner.RunSuite(selectedSuite);
+                    if(index <= suites.Count)
+                    {
+                        string selectedSuite = suites[index - 1];
+                        await _configRunner.RunSuite(selectedSuite);
+                    }
+                    else
+                    {
+                        int masterIndex = index - suites.Count;
+                        string selectedMaster = masterTests[masterIndex - 1];
+                        await _configRunner.RunMasterTest(selectedMaster);
+                    }
                 }
+
                 else
                 {
                     "\nInvalid option!".Error();
@@ -76,17 +89,25 @@ namespace NTTCoreTester.UI
             "AVAILABLE TEST SUITES:".Info();
             $"{new string('─', 64)}".Info();
 
+            var masterTests = _configRunner.GetAvailableMasterTest();
             var suites = _configRunner.GetAvailableSuites();
 
-            if (suites.Count == 0)
+            if (suites.Count == 0 && masterTests.Count == 0)
             {
                 "No config files found in Configs/ folder".Warn();
             }
             else
             {
-                for (int i = 0; i < suites.Count; i++)
+                int index = 1;
+
+                foreach (var suite in suites)
                 {
-                    $" {i + 1}. {suites[i]}".Info();
+                    $"{index++}. {suite}".Info();
+                }
+
+                foreach (var master in masterTests)
+                {
+                    $"{index++}. {master}".Info();
                 }
             }
 

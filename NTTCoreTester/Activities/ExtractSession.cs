@@ -1,5 +1,4 @@
-﻿using NTTCoreTester.Core;
-using NTTCoreTester.Core.Helper;
+﻿using NTTCoreTester.Core.Helper;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

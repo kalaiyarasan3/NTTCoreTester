@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NTTCoreTester.Activities;
-using NTTCoreTester.Core;
+using NTTCoreTester.Core.Models;
 using NTTCoreTester.Reporting;
 using NTTCoreTester.Services;
 using NTTCoreTester.UI;

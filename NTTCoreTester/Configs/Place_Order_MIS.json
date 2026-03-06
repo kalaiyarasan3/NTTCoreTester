@@ -1,5 +1,5 @@
 {
-  "suiteName": "Order Request MIS",
+  "testName": "Order Request MIS",
   "description": "Place Order (Sell, MIS) and checking positions are updated and margin checking",
   "stopOnFailure": true,
   "requests": [

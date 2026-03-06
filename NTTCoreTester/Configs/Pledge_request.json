@@ -1,5 +1,5 @@
 {
-  "suiteName": "Pledge",
+  "testName": "Pledge",
   "description": "Validate pledge and unpledge integrity",
   "stopOnFailure": true,
   "requests": [

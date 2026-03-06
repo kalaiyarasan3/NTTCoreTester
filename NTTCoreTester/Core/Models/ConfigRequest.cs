@@ -1,4 +1,4 @@
-﻿namespace NTTCoreTester.Core
+﻿namespace NTTCoreTester.Core.Models
 {
     public class ConfigRequest
     {

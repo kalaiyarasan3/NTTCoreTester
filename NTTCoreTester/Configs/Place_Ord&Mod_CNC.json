@@ -1,21 +1,8 @@
 {
-  "suiteName": "Order Request CNC NSE",
+  "testName": "Order Request CNC NSE",
   "description": "Place Order (Buy) and checking positions are updated and margin checking",
   "stopOnFailure": true,
   "requests": [
-    {
-      "endpoint": "Limits",
-      "description": "Storing users current fund details for after placing order it Used to calculate.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
-      "activity": "ExtractPreLimitMargin",
-      "payload": {
-        "actid": "{{uid}}",
-        "uid": "{{uid}}"
-      }
-    },
     {
       "endpoint": "GetSecurityInfo",
       "description": "Extracting Security Info for placing order and also to get lot size for calculating qty.",

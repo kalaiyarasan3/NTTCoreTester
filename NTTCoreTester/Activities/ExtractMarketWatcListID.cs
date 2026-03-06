@@ -1,5 +1,4 @@
-﻿using NTTCoreTester.Core;
-using NTTCoreTester.Core.Models;
+﻿using NTTCoreTester.Core.Models;
 using NTTCoreTester.Models;
 using System;
 using System.Collections.Generic;

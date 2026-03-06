@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
-using NTTCoreTester.Core;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
-using NTTCoreTester.Models; 
+using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {

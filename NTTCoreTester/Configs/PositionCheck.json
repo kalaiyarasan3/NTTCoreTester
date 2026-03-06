@@ -1,5 +1,5 @@
 {
-  "suiteName": "Position Checking",
+  "testName": "Position Checking",
   "description": "Checking the Orders are positions if its traded. Checking Margins the Margin Release and Block",
   "stopOnFailure": true,
   "requests": [

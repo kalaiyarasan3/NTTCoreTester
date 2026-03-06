@@ -1,0 +1,13 @@
+{
+  "masterTestName": "Regression_Run",
+  "description": "Runs all important suites",
+  "stopOnFailure": false,
+  "suites": [
+    {
+      "TestName": "1Login",
+      "path": "Configs/!Login.json",
+      "enabled": true
+    }
+    
+  ]
+}

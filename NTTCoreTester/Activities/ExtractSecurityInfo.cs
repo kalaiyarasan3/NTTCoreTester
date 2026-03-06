@@ -1,5 +1,4 @@
-﻿using NTTCoreTester.Core;
-using NTTCoreTester.Core.Models;
+﻿using NTTCoreTester.Core.Models;
 
 namespace NTTCoreTester.Activities
 {
