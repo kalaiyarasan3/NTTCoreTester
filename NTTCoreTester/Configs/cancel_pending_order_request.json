@@ -1,6 +1,6 @@
 {
   "suiteName": "CancelPendingOrderMarginRelease",
-  "description": "Validate margin block for pending order and release after cancel",
+  "description": "(AMO)Validate margin block for pending order and release after cancel",
   "stopOnFailure": true,
   "requests": [
     {

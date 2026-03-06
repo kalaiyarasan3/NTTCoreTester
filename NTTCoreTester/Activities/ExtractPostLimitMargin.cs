@@ -61,8 +61,7 @@ namespace NTTCoreTester.Activities
 
                 if (!AreEqual(orderMargin.MarginUsedPrev, preLimit.UsedMarginWithoutPL))
                 {
-                    errors.Add(
-                        $"MarginUsedPrev mismatch. Expected: {preLimit.UsedMarginWithoutPL" +
+                    errors.Add($"MarginUsedPrev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, " +
                         $"Actual: {orderMargin.MarginUsedPrev}");
                 }
 
@@ -188,11 +187,10 @@ namespace NTTCoreTester.Activities
                 if (!AreEqual(postLimit.UsedMargin, calculatedUsed))
                 {
                     errors.Add(
-                        $"UsedMargin internal calculation mismatch. | " +
-                        $"UsedMargin: {postLimit.UsedMargin} | " +
-                        $"UsedMarginWithoutCharges: {postLimit.UsedMarginWithoutCharges} | " +
-                        $"Charges: {postLimit.Charges}" | +
-                        $"CalculatedUsedMargin: {calculatedUsed}");
+    $"UsedMargin internal calculation mismatch. | " +
+    $"UsedMargin: {postLimit.UsedMargin} | " +
+    $"UsedMarginWithoutCharges: {postLimit.UsedMarginWithoutCharges} | " +
+    $"Charges: {postLimit.Charges} | CalculatedUsedMargin: {calculatedUsed}");
                 }
                 /*
                 if (!AreEqual(postLimit.TransferableAmount, postLimit.RemainingMargin))

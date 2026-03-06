@@ -12,7 +12,7 @@ namespace NTTCoreTester.Services
     {
         private readonly IApiService _apiService;
         private const string CONFIG_FOLDER = "Configs";
-        private const string MASTER_TEST_FILE = "ConfigMaster";
+        private const string MASTER_CONFIG_FOLDER = "ConfigMaster";
         private readonly PlaceholderCache _cache;
 
         public ConfigRunner(IApiService apiService, PlaceholderCache cache)
@@ -21,21 +21,25 @@ namespace NTTCoreTester.Services
 
             if (!Directory.Exists(CONFIG_FOLDER))
                 Directory.CreateDirectory(CONFIG_FOLDER);
+            if (!Directory.Exists(MASTER_CONFIG_FOLDER))
+                Directory.CreateDirectory(MASTER_CONFIG_FOLDER);
             _cache = cache;
         }
 
         public List<string> GetAvailableMasterTest()
         {
-            if(!Directory.Exists(MASTER_TEST_FILE))
+
+            if(!Directory.Exists(MASTER_CONFIG_FOLDER))
                 return new List<string>();
 
-            var files = Directory.GetFiles(MASTER_TEST_FILE, "*.json");
+           
+            var files = Directory.GetFiles(MASTER_CONFIG_FOLDER, "*.json");
             return files.Select(f => Path.GetFileNameWithoutExtension(f)).ToList();
         }
 
         public async Task RunMasterTest(string masterConfigFileName)
         {
-            string filePath=Path.Combine(MASTER_TEST_FILE, $"{masterConfigFileName}.json");
+            string filePath=Path.Combine(MASTER_CONFIG_FOLDER, $"{masterConfigFileName}.json");
 
             if (!File.Exists(filePath))
             {
@@ -46,7 +50,7 @@ namespace NTTCoreTester.Services
             string configContent = await File.ReadAllTextAsync(filePath);
             var mastersuiteConfig=JsonConvert.DeserializeObject<MasterSuite>(configContent);
 
-            if(masterConfigFileName==null||mastersuiteConfig.Suites == null || mastersuiteConfig.Suites.Count == 0)
+            if(mastersuiteConfig == null ||mastersuiteConfig.Suites == null || mastersuiteConfig.Suites.Count == 0)
             {
                 $"\n Invalid master config or no suites found".Error();
                 return;
@@ -54,8 +58,16 @@ namespace NTTCoreTester.Services
 
             foreach(var suite in mastersuiteConfig.Suites)
             {
+                if (!suite.Enabled)
+                    continue;
+
                 $"\n Running suite: {suite.TestName}".Info();
-               await RunSuite(suite.TestName);
+               bool result = await RunSuite(suite.Path);
+                if (!result && mastersuiteConfig.StopOnFailure)
+                {
+                    "\nStopping master execution".Error();
+                    break;
+                }
             }
 
         }
@@ -69,14 +81,14 @@ namespace NTTCoreTester.Services
             return files.Select(f => Path.GetFileNameWithoutExtension(f)).ToList();
         }
 
-        public async Task RunSuite(string configFileName)
+        public async Task<bool> RunSuite(string configFileName)
         {
             string filePath = Path.Combine(CONFIG_FOLDER, $"{configFileName}.json");
 
             if (!File.Exists(filePath))
             {
                 $"\n Config file not found: {filePath}".Error();
-                return;
+                return false;
             }
 
             // Load config
@@ -86,7 +98,7 @@ namespace NTTCoreTester.Services
             if (suiteConfig == null || suiteConfig.Requests == null || suiteConfig.Requests.Count == 0)
             {
                 $"\n Invalid config or no requests found".Error();
-                return;
+                return false;
             }
 
             $"\n{new string('═', 80)}".Success();
@@ -97,6 +109,8 @@ namespace NTTCoreTester.Services
             $"{new string('═', 80)}\n".Success();
 
             int passed = 0, failed = 0;
+
+            
 
             //if (suiteConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP".Info()))
             //{
@@ -150,6 +164,8 @@ namespace NTTCoreTester.Services
             $"   Passed: {passed}".Info();
             $"   Failed: {failed}".Info();
             $"{new string('═', 80)}\n".Success();
+
+            return failed == 0;
         }
     }
 }

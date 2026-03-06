@@ -1,26 +1,26 @@
 {
   "masterTestName": "Regression_Run",
   "description": "Runs all important suites",
-  "stopOnFailure": false,
+  "stopOnFailure": true,
   "suites": [
     {
       "TestName": "1Login",
-      "path": "Configs/!Login.json",
+      "path": "1Login",
       "enabled": true
     },
     {
       "TestName": "Place_Ord&Mod_CNC",
-      "path": "Configs/Place_Ord&Mod_CNC.json",
+      "path": "Place_Ord&Mod_CNC",
       "enabled": true
     },
     {
       "TestName": "Pledge_request",
-      "path": "Configs/Pledge_request.json",
+      "path": "Pledge_request",
       "enabled": true
     },
     {
       "TestName": "FundTransfer",
-      "path": "Configs/FundTransfer.json",
+      "path": "FundTransfer",
       "enabled": true
     }
 
