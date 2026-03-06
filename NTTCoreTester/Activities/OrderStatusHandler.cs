@@ -50,23 +50,18 @@ namespace NTTCoreTester.Activities
             log.Warn();
             switch (order.OrderStatus)
             {
-                case OrderEnumStatus.ORDER_PENDING:
                 case OrderEnumStatus.ORDER_RECEIVED:
-                case OrderEnumStatus.OPEN:
-                case OrderEnumStatus.RMS_PENDING:
-
-                    cache.Set(Constants.ShouldBlockMargin, true);
-
-                    return ActivityResult.Success(log);
-
+                case OrderEnumStatus.ORDER_PENDING:
+                case OrderEnumStatus.ORDER_MODIFIED:
                 case OrderEnumStatus.ORDER_TRADED:
 
                     cache.Set(Constants.ShouldBlockMargin, true);
 
-                    return ActivityResult.Success(log);
+                    return ActivityResult.Success(log);                     
 
                 case OrderEnumStatus.ORDER_CANCELLED:
-                case OrderEnumStatus.ORDER_MODIFIED:
+                case OrderEnumStatus.RMS_PENDING:
+                case OrderEnumStatus.OPEN:
                 case OrderEnumStatus.RMS_ORDER_REJECTED:
                 case OrderEnumStatus.NSE_ADAPTOR_REJECTION:
 
