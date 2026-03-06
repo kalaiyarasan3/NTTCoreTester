@@ -75,7 +75,7 @@ namespace NTTCoreTester.Services
                 }
             }
 
-            $" Placeholders resolved".Debug();
+           // $" Placeholders resolved".Debug();
 
             return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity, configRequest.Description, testSuiteConfig);
         }
@@ -101,7 +101,7 @@ namespace NTTCoreTester.Services
                     activityResult = _activityExecutor.Execute(activity, result, result.Endpoint);
                 }
 
-                $"Message: {activityResult.Message}".Info();
+                //$"Message: {activityResult.Message}".Info();
 
 
                 _csvReport.AddEntry(

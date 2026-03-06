@@ -59,9 +59,11 @@ namespace NTTCoreTester.Activities
                 return $"Current states: {statuses}"
                     .FailWithLog(false);
             }
+            var log = $"Order got filled, Product: {filledOrder.Product}, type: {filledOrder.TransactionType}, Remarks: {filledOrder.Remarks ?? "No Remarks"}. Set block margin true";
+            log.Warn();
             cache.Set(Constants.ShouldBlockMargin, true);
 
-            return ActivityResult.Success(filledOrder.Remarks ?? "");
+            return ActivityResult.Success(log);
         }
     }
 }

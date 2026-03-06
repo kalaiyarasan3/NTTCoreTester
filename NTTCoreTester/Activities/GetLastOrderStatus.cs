@@ -69,7 +69,7 @@ namespace NTTCoreTester.Activities
                     .FailWithLog(false);
             }
 
-            var log = $"ordno: {pendingOrder?.OrderNumber} remarks: {pendingOrder?.Remarks} qty: {pendingOrder?.Quantity} symbol: {orderToUse.TypeSymbol} product: {orderToUse.Product} type: {orderToUse.TransactionType}"; log.Info();
+            var log = $"Product: {orderToUse.Product}, type: {orderToUse.TransactionType}, symbol: {orderToUse.TypeSymbol},  qty: {pendingOrder?.Quantity}, ordno: {pendingOrder?.OrderNumber}, remarks: {pendingOrder?.Remarks}"; log.Warn();
 
             _cache.Set(Constants.ShouldBlockMargin, true);
             return ActivityResult.Success(log);
