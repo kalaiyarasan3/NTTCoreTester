@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
+    <None Remove="Configs\cancel_pending_order_request.json" />
     <None Remove="Configs\Pledge_request.json" />
     <None Remove="Configs\Uat - Copy.json" />
     <None Remove="Configs\Uat_extended_flow.json" />
@@ -37,6 +38,9 @@
 
   <ItemGroup>
     <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\cancel_pending_order_request.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Place_Ord&amp;Mod_CNC.json">

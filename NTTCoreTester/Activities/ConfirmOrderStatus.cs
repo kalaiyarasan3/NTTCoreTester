@@ -41,11 +41,11 @@ namespace NTTCoreTester.Activities
                 return $"Order {key} not found".FailWithLog();
 
             var filledOrder = relatedOrders
-                .FirstOrDefault(x => x.OrderStatus == Enums.OrderEnumStatus.Filled);
+                .FirstOrDefault(x => x.OrderStatus == Enums.OrderEnumStatus.ORDER_TRADED);
 
             if (filledOrder == null)
             {
-                if(relatedOrders.Any(x => x.OrderStatus is OrderEnumStatus.Pending or OrderEnumStatus.OrderReceived))
+                if(relatedOrders.Any(x => x.OrderStatus is OrderEnumStatus.ORDER_PENDING or OrderEnumStatus.ORDER_RECEIVED))
                 {
                     $"Order is pending set block margin true".Warn();
                     cache.Set(Constants.ShouldBlockMargin, true);

@@ -1,30 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NTTCoreTester.Enums
+﻿namespace NTTCoreTester.Enums
 {
     public enum OrderEnumStatus
     {
-        OrderReceived = 0000,
-        RmsRejection = 0001,
-        Pending = 1111,
+        ORDER_RECEIVED = 0000,
+        RMS_ORDER_REJECTED = 0001,
+        ORDER_PENDING = 1111,
         TRANSACTIONNOTALLOWED = 1112,
-        Cancel = 1115,
-        NotFound = 1116,
-        Filled = 1118,
-        Open = 1119,     
-        RmsPending = 1120,
-        NseAdaptorRejection = 1121 
+        ORDER_MODIFIED = 1113,
+        ORDER_CANCELLED = 1115,
+        NOT_FOUND = 1116,
+        ORDER_TRADED = 1118,
+        OPEN = 1119,     
+        RMS_PENDING = 1120,
+        NSE_ADAPTOR_REJECTION = 1121 
     }
     public static class OrderStatusHelper
     { 
         public static OrderEnumStatus ToOrderStatus(this string? statusCode)
         {
             if (string.IsNullOrWhiteSpace(statusCode))
-                return OrderEnumStatus.NotFound; 
+                return OrderEnumStatus.NOT_FOUND; 
 
             // Remove leading zeros if any (e.g. "0000" → "0", "0001" → "1")
             var cleaned = statusCode.TrimStart('0');
@@ -41,7 +36,7 @@ namespace NTTCoreTester.Enums
 
             // Fallback for unknown codes like "1119", "1100", etc.
             // Log it if needed: _logger.LogWarning("Unknown order status: {Status}", statusCode);
-            return OrderEnumStatus.NotFound; // or throw new ArgumentException(...)
+            return OrderEnumStatus.NOT_FOUND; // or throw new ArgumentException(...)
         }
     }    
 
