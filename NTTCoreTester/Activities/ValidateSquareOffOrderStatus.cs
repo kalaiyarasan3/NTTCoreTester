@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Enums;
 using NTTCoreTester.Models;
 using System.Linq;
 
@@ -18,7 +19,7 @@ namespace NTTCoreTester.Activities
         {
             try
             {
-                var postPositions = cache.Get<List<PositionBookModel>>(Constants.PrePositions);
+                var postPositions = cache.Get<List<PositionBookModel>>(Constants.PostPositions);
 
                 if (postPositions == null)
                     return "Post positions missing in cache"
@@ -51,22 +52,19 @@ namespace NTTCoreTester.Activities
 
                 string? clientOrdId = cache.Get<string>(Constants.ClientOrdId);
 
-                var relatedOrders = orders?
-                    .Where(o => o.ClientOrderId == clientOrdId)
-                    .ToList();
+                var relatedOrders = orders?.Where(o => o.NewClientOrderId == clientOrdId).ToList();
 
                 if (relatedOrders == null || !relatedOrders.Any())
                     return $"Order {clientOrdId} not found"
                         .FailWithLog(true);
 
-                var invalidOrders = relatedOrders.Where(o => o.Status != "1118").ToList();
+                bool filled = relatedOrders.Any(o => o.OrderStatus is OrderEnumStatus.Filled);
 
-                if (invalidOrders.Any())
+                if (!filled)
                 {
-                    var states = string.Join(" | ",
-                        invalidOrders.Select(o => o.Status));
+                    var states = string.Join(" | ", relatedOrders.Select(o => o.Status));
 
-                    return $"Position is zero but square-off order not in FILLED state. Current states: {states}"
+                    return $"Position is zero but square-off order not filled. Current states: {states}"
                         .FailWithLog();
                 }
 

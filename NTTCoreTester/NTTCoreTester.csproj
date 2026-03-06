@@ -11,6 +11,7 @@
     <None Remove="appsettings.json" />
     <None Remove="Configs\Pledge_request.json" />
     <None Remove="Configs\Uat - Copy.json" />
+    <None Remove="Configs\Uat_extended_flow.json" />
     <None Remove="ConfigMaster\_.json" />
     <None Remove="ExpectedResponses\BasketOrder_response.json" />
     <None Remove="ExpectedResponses\CancelOrder_response.json" />
@@ -57,6 +58,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Place_Order_MIS.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Uat_extended_flow.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ConfigMaster\_.json">

@@ -23,8 +23,6 @@ namespace NTTCoreTester.Activities
                 if (clientOrdId == null)
                     return $"Client order Id not found in {endpoint}".FailWithLog();
 
-                $"Client order id: {clientOrdId}".Warn();
-
                 var relatedTrades = tradesArray
                     .Where(t => t["ClientOrdId"]?.Value<string>() == clientOrdId);
 
@@ -38,15 +36,13 @@ namespace NTTCoreTester.Activities
                         : -qty;
                 });
 
-                $"Total quantity filled: {totalSignedQty}".Warn();
-
                 if (totalSignedQty == 0)
                     return "No quantity filled yet".FailWithLog(false);              
 
                 _cache.Set(Constants.FilledQty, totalSignedQty);
 
-                var log= $"Extracted trade fill for client order id {clientOrdId}: Total filled quantity = {totalSignedQty}";
-                log.Info();
+                var log= $"Client order id: {clientOrdId}: Total filled quantity = {totalSignedQty}";
+                log.Warn();
 
                 return ActivityResult.Success(log);
             }

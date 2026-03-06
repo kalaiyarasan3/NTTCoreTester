@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Enums;
 using NTTCoreTester.Models;
 
 
@@ -40,7 +41,7 @@ namespace NTTCoreTester.Activities
             if (relatedOrders == null || !relatedOrders.Any())
                 return $"Order {key} not found".FailWithLog(true);
 
-            var pendingOrder = relatedOrders.FirstOrDefault(x => x.Status == "1111");
+            var pendingOrder = relatedOrders.FirstOrDefault(x => x.OrderStatus is OrderEnumStatus.Pending);
 
             var orderToUse = pendingOrder ?? relatedOrders.First();
 
@@ -67,7 +68,7 @@ namespace NTTCoreTester.Activities
                     .FailWithLog(false);
             }
 
-            var log = $"ordno: {pendingOrder?.OrderNumber} remarks: {pendingOrder?.Remarks} qty: {pendingOrder?.Quantity} symbol: {orderToUse.TypeSymbol} product: {orderToUse.Product} type: {orderToUse.TransactionType}"; log.Info();
+            var log = $"Product: {orderToUse.Product}, type: {orderToUse.TransactionType}, symbol: {orderToUse.TypeSymbol},  qty: {pendingOrder?.Quantity}, ordno: {pendingOrder?.OrderNumber}, remarks: {pendingOrder?.Remarks}"; log.Warn();
 
             _cache.Set(Constants.ShouldBlockMargin, true);
             return ActivityResult.Success(log);

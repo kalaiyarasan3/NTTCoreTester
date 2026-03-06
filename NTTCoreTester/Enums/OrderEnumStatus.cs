@@ -8,50 +8,41 @@ namespace NTTCoreTester.Enums
 {
     public enum OrderEnumStatus
     {
-        Pending = 1111,
         OrderReceived = 0000,
+        RmsRejection = 0001,
+        Pending = 1111,
         TRANSACTIONNOTALLOWED = 1112,
+        Cancel = 1115,
         NotFound = 1116,
         Filled = 1118,
-        Cancel = 1115,
-        RmsRejection = 0001,
+        Open = 1119,     
         RmsPending = 1120,
-        NseAdaptorRejection = 1121
+        NseAdaptorRejection = 1121 
     }
     public static class OrderStatusHelper
-    {
-        public static bool TryParse(string? status, out OrderEnumStatus orderStatus)
+    { 
+        public static OrderEnumStatus ToOrderStatus(this string? statusCode)
         {
-            orderStatus = default;
+            if (string.IsNullOrWhiteSpace(statusCode))
+                return OrderEnumStatus.NotFound; 
 
-            if (string.IsNullOrWhiteSpace(status))
-                return false;
+            // Remove leading zeros if any (e.g. "0000" → "0", "0001" → "1")
+            var cleaned = statusCode.TrimStart('0');
+            if (string.IsNullOrEmpty(cleaned))
+                cleaned = "0"; // "0000" becomes 0 → OrderReceived
 
-            if (!int.TryParse(status, out int code))
-                return false;
-
-            if (!Enum.IsDefined(typeof(OrderEnumStatus), code))
-                return false;
-
-            orderStatus = (OrderEnumStatus)code;
-            return true;
-        }
-    }
-    /*
-        if (OrderStatusHelper.TryParse(response.Status, out var orderStatus))
-        {
-            Console.WriteLine($"Order Status Code : {(int)orderStatus}");
-            Console.WriteLine($"Order Status Name : {orderStatus}");
-
-            if (orderStatus == OrderEnumStatus.Open)
+            if (int.TryParse(cleaned, out int code))
             {
-                Console.WriteLine("Order is currently OPEN");
+                if (Enum.IsDefined(typeof(OrderEnumStatus), code))
+                {
+                    return (OrderEnumStatus)code;
+                }
             }
+
+            // Fallback for unknown codes like "1119", "1100", etc.
+            // Log it if needed: _logger.LogWarning("Unknown order status: {Status}", statusCode);
+            return OrderEnumStatus.NotFound; // or throw new ArgumentException(...)
         }
-        else
-        {
-            Console.WriteLine($"Unknown or Invalid Order Status Received: {response.Status}");
-        }
-     */
+    }    
 
 }
