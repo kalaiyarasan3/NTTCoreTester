@@ -58,7 +58,7 @@ namespace NTTCoreTester.Activities
                     return $"Order {clientOrdId} not found"
                         .FailWithLog(true);
 
-                bool filled = relatedOrders.Any(o => o.OrderStatus is OrderEnumStatus.Filled);
+                bool filled = relatedOrders.Any(o => o.OrderStatus is OrderEnumStatus.ORDER_TRADED);
 
                 if (!filled)
                 {
