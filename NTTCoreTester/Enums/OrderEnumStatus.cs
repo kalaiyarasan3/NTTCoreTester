@@ -2,17 +2,20 @@
 {
     public enum OrderEnumStatus
     {
+        // ACTIVE / MARGIN BLOCKING
         ORDER_RECEIVED = 0000,
-        RMS_ORDER_REJECTED = 0001,
-        ORDER_PENDING = 1111,
-        TRANSACTIONNOTALLOWED = 1112,
-        ORDER_MODIFIED = 1113,
-        ORDER_CANCELLED = 1115,
-        NOT_FOUND = 1116,
+        ORDER_PENDING = 1111,        
         ORDER_TRADED = 1118,
-        OPEN = 1119,     
+        ORDER_MODIFIED = 1113,
+
+        // FINAL STATES (NO BLOCK)
+        ORDER_CANCELLED = 1115,
+        OPEN = 1119,
         RMS_PENDING = 1120,
-        NSE_ADAPTOR_REJECTION = 1121 
+        RMS_ORDER_REJECTED = 0001,
+        NSE_ADAPTOR_REJECTION = 1121,
+        NOT_FOUND = 1116,
+        TRANSACTION_NOT_ALLOWED = 1112
     }
     public static class OrderStatusHelper
     { 
