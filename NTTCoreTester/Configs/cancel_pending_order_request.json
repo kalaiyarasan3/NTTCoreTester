@@ -5,7 +5,7 @@
   "requests": [
     {
       "endpoint": "GetSecurityInfo",
-      "method": "POST",
+      "description": "Extracting Security Info for placing order and also to get lot size for calculating qty.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -19,7 +19,7 @@
     },
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Extracting Limits to check the margin release and block before placing order.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -33,7 +33,8 @@
     },
     {
       "endpoint": "GetOrderMargin",
-      "method": "POST",
+      "description": "Extracting Order Margin for placing order and also to get margin details for calculating available margin after placing order.",
+      "
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -63,7 +64,8 @@
     },
     {
       "endpoint": "PlaceOrder",
-      "method": "POST",
+      "description": "Placing AMO Buy order with limit price which is below the current market price to make sure the order goes to pending state and also to check the margin block for pending order.",
+      "
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -90,7 +92,8 @@
 
     {
       "endpoint": "ActivityOrderBook",
-      "method": "POST",
+      "description": "Extracting order book to check the order is in pending state and also to extract the order number for canceling the order.",
+      ""
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -106,7 +109,7 @@
 
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Extracting Limits to check the margin block for pending order after placing order.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -121,7 +124,7 @@
 
     {
       "endpoint": "CancelOrder",
-      "method": "POST",
+      "description": "Canceling the pending order and also to check the margin release after canceling the pending order.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -139,7 +142,8 @@
 
     {
       "endpoint": "ActivityOrderBook",
-      "method": "POST",
+      "description": "Extracting order book to check the order is canceled successfully and also to check the margin release after canceling the pending order.",
+      "
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -155,7 +159,7 @@
 
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Extracting Limits to check the margin release after canceling the pending order.",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
