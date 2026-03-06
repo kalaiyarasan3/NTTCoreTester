@@ -19,7 +19,6 @@ namespace NTTCoreTester
             services.AddSingleton<ResponseChecker>();
             services.AddSingleton<ConfigRunner>();
             services.AddSingleton<ActivityExecutor>();
-            services.AddTransient<IActivityHandler, ExtractSecurityInfo>();
 
             services.Scan(scan => scan
             .FromAssemblyOf<ExtractSession>()

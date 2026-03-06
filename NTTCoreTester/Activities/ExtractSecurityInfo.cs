@@ -3,7 +3,7 @@ using NTTCoreTester.Core.Models;
 
 namespace NTTCoreTester.Activities
 {
-    internal class ExtractSecurityInfo : IActivityHandler
+    public class ExtractSecurityInfo : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 

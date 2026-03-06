@@ -48,7 +48,7 @@
         "opensellavgprc": 0.0,
         "mult": 0.0,
         "pp": 0.0,
-        "PriceIndicator": "0.2||^-?\\d+(\\.\\d+)?$",
+        "PriceIndicator": "0.2||^[+-]?\\d+(\\.\\d+)?$",
         "prcftr": 0.0,
         "ti": 10.0,
         "ls": 1,

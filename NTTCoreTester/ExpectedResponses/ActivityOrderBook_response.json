@@ -31,7 +31,7 @@
         "tqty": 0,
         "mkt_protection": "0||^\\d*$|null",
         "prd": "CNC||^(CNC|MIS|NRML|MTF|BO|CO)$",
-        "s_prdt_ali": "Delivery||^.+$",
+        "s_prdt_ali": "Delivery||^.+$|null",
         "status": "1115||^\\d+$",
         "ExchangeOrderStatus": null,
         "exchsts": "ORDER CANCELLED||^.+$",
