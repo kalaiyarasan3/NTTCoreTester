@@ -41,7 +41,7 @@ namespace NTTCoreTester.Activities
             if (relatedOrders == null || !relatedOrders.Any())
                 return $"Order {key} not found".FailWithLog(true);
 
-            var pendingOrder = relatedOrders.FirstOrDefault(x => x.OrderStatus is OrderEnumStatus.Pending);
+            var pendingOrder = relatedOrders.FirstOrDefault(x => x.OrderStatus is OrderEnumStatus.ORDER_PENDING);
 
             var orderToUse = pendingOrder ?? relatedOrders.First();
 
