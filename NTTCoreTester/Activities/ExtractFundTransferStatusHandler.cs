@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
 
@@ -25,11 +26,12 @@ namespace NTTCoreTester.Activities
                     direction = "NON_MTF_TO_MTF";
                 else
                     direction = "UNKNOWN";
-                $"Fund transfer succeeded direction {direction}".Warn();
+                var log = $"Fund transfer succeeded direction: {direction}"; 
+                log.Warn();
                 cache.Set(Constants.TransferDirection, direction);
                 cache.Set(Constants.IsTransferred, true);
 
-                return ActivityResult.Success();
+                return ActivityResult.Success(log);
             }
             catch (Exception ex)
             {

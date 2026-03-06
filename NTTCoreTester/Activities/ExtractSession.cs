@@ -36,7 +36,9 @@ namespace NTTCoreTester.Activities
             _cache.Set(Constants.SUserToken, token);
             _cache.Set(Constants.UId, userId);
 
-            return ActivityResult.Success("Token Extracted");
+            var log= string.Join(", ", new[] { $"Token: {token}", $"UserId: {userId}" });
+
+            return ActivityResult.Success("Token Extracted "+log);
         }
     }
 

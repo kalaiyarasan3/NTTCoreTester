@@ -23,21 +23,21 @@ namespace NTTCoreTester.Activities
                 if (holdings == null || !holdings.Any())
                     return "Holdings not found".FailWithLog();
 
-                var holding = holdings.FirstOrDefault(x => x.HoldQuantity >= 5);
+                var holding = holdings.FirstOrDefault(x => x.HoldQuantity >= 1);
 
                 if (holding == null)
                     return "No holding with quantity greater than 5 found".FailWithLog(false);
 
-                $"Symbol {holding.ExchangeData.Symbol}, holding qty: {holding.HoldQuantity}".Warn();
+                var log = $"Symbol {holding.ExchangeData.Symbol}, holding qty: {holding.HoldQuantity}";
+                log.Warn();
 
                 cache.Set(Constants.PledgeOrderSymbol, holding.ExchangeData.Symbol);
 
-                return ActivityResult.Success();
+                return ActivityResult.Success(log);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return $"Error extracting pledge symbol: {ex.Message}".FailWithLog();
             }
         }
         private List<HoldingDetails>? GetHoldings(ApiExecutionResult result)
