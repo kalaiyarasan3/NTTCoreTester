@@ -29,6 +29,8 @@ namespace NTTCoreTester.Activities
 
             string? MarketWatchId = dataObject["MarketWatchId"]?.ToString();
             _cache.Set("MarketWatchId", MarketWatchId);
+
+            var log = $"MWId : {MarketWatchId} | Name : TestMWList";
      
             return ActivityResult.Success();
         }

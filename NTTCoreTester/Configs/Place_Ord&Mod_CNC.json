@@ -235,7 +235,7 @@
     },
     {
       "endpoint": "PositionBook",
-      "description": "Extracting Position Book to check the order is in position book or not and also to get the position details for comparing with trade book.",
+      "description": "Extracting Position Book to check the order is in position book or not ",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService"
@@ -245,6 +245,19 @@
         "actid": "{{uid}}",
         "uid": "{{uid}}",
         "prd": ""
+      }
+    }
+    {
+      "endpoint": "Limits",
+      "description": "Extracting Limits to check the margin release and block after placing order. using Prelimit margin activity",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
       }
     }
 

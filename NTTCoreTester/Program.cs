@@ -26,7 +26,7 @@ namespace NTTCoreTester
                     reportCfg = new ReportConfig
                     {
                         OutputFolder = "Reports",
-                        FilePrefix = "auth_test"
+                        FilePrefix = "TestLog"
                     };
                 }
 
@@ -46,7 +46,8 @@ namespace NTTCoreTester
                 services.RegisterServices();
 
                 var provider = services.BuildServiceProvider();
-                 
+                var csvReport = provider.GetRequiredService<CsvReport>();
+
                 Console.Clear();
                 " NTT Core Tester - File-Driven Testing".Info();
                  
@@ -69,7 +70,7 @@ namespace NTTCoreTester
                 $"{new string('=', 80)}".Info();
 
                 //var csvReport = provider.GetRequiredService<CsvReport>();
-                var csvReport = provider.GetRequiredService<CsvReport>();
+               
                 //await csvReport.Save();
                 await csvReport.Save();
 

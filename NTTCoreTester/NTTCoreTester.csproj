@@ -40,6 +40,9 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Configs\MarketWatch.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configs\cancel_pending_order_request.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

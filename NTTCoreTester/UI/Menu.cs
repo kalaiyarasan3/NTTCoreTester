@@ -1,5 +1,6 @@
 ﻿using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Reporting;
 using NTTCoreTester.Services;
 
 namespace NTTCoreTester.UI
@@ -8,11 +9,13 @@ namespace NTTCoreTester.UI
     {
         private readonly ConfigRunner _configRunner;
         private readonly PlaceholderCache _cache;
+        private readonly CsvReport _csvReport;
 
-        public Menu(ConfigRunner configRunner, PlaceholderCache cache)
+        public Menu(ConfigRunner configRunner, PlaceholderCache cache, CsvReport csvReport)
         {
             _configRunner = configRunner;
             _cache = cache;
+            _csvReport = csvReport;
         }
 
         public async Task Start()
@@ -25,9 +28,17 @@ namespace NTTCoreTester.UI
                 if (choice == "0")
                 {
                     "\nExiting... CSV will be saved automatically.".Info();
+                    await _csvReport.Save();
+                    continue;
+                }
+                if (choice == "00")
+                {
+                    "\nExiting... CSV will be saved automatically.".Info();
                     _cache.Clear();
                     return;
                 }
+
+                
 
                 var masterTests = _configRunner.GetAvailableMasterTest();
                 var suites = _configRunner.GetAvailableSuites();
@@ -113,7 +124,8 @@ namespace NTTCoreTester.UI
 
             Console.WriteLine();
 
-            " 0. Exit (Auto-save CSV Report)".Info();
+            "0. Save".Info();
+            "00. Save and Exit".Info();
             $"{new string('─', 64)}".Info();
 
             "\nChoose option: ".Info();   // note: no newline at the end → user types right after

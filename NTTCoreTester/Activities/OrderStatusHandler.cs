@@ -46,7 +46,9 @@ namespace NTTCoreTester.Activities
             cache.Set(Constants.OrderProduct, order.Product);
             cache.Set(Constants.OrderSide, order.TransactionType);
 
-            var log = $"status: {order.ExchangeStatus}, Product: {order.Product}, type: {order.TransactionType}, ordno:{order.OrderNumber}, qty:{order.Quantity}";
+            var rejReason = order.RejectionReason ?? "NA";
+
+            var log = $"Exchsts: {order.ExchangeStatus},RejReeason: {rejReason} | Product: {order.Product} | type: {order.TransactionType} | ordno:{order.OrderNumber} | qty:{order.Quantity}";
             log.Warn();
             switch (order.OrderStatus)
             {
@@ -61,7 +63,7 @@ namespace NTTCoreTester.Activities
 
                 case OrderEnumStatus.ORDER_CANCELLED:
                 case OrderEnumStatus.RMS_PENDING:
-                case OrderEnumStatus.OPEN:
+                case OrderEnumStatus.ORDER_REJECTED:
                 case OrderEnumStatus.RMS_ORDER_REJECTED:
                 case OrderEnumStatus.NSE_ADAPTOR_REJECTION:
 

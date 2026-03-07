@@ -1,0 +1,88 @@
+{
+  "suiteName": "Market Watch List",
+  "description": "Adding MWList and add symbols and checking and delete",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "AddMarketWatchName",
+      "description": "Adding Market Watch List","
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractMarketWatcListID",
+      "payload": {
+        "MarketWatchName": "TestMWList"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|1624"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|13501"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|10604"
+      }
+    },
+    {
+      "endpoint": "MarketWatch",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "wlid": [
+          "{{MarketWatchId}}"
+        ]
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchName",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "",
+      "payload": {
+        "MarketWatchId": "{{MarketWatchId}}",
+        "IsDeleted": 1,
+        "MarketWatchName": "TestMWList"
+      }
+    }
+  ]
+}
