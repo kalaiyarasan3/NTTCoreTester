@@ -58,23 +58,43 @@ namespace NTTCoreTester.Services
             requestJson = variableResult.Text;
 
 
-            Dictionary<string, string> resolvedHeaders = null;
-            if (configRequest.Headers != null && configRequest.Headers.Count > 0)
+            Dictionary<string, string> resolvedHeaders = new Dictionary<string, string>();
+
+            string profileName = configRequest.HeaderProfileName ?? "AuthorizedHeaders";
+
+            if (_config.HeaderProfiles.TryGetValue(profileName, out var profileHeaders))
             {
-                resolvedHeaders = new Dictionary<string, string>();
-                foreach (var header in configRequest.Headers)
+                foreach (var header in profileHeaders)
                 {
                     var headerVariable = _cache.ReplaceVariables(header.Value);
+
                     if (!headerVariable.IsSuccess)
                     {
-                        $" Failed to resolve placeholder in header: {header.Key}".Error();
+                        $"Failed to resolve placeholder in header profile: {header.Key}".Error();
                         return false;
                     }
+
                     resolvedHeaders[header.Key] = headerVariable.Text;
                 }
             }
 
-           // $" Placeholders resolved".Debug();
+
+            //if (configRequest.Headers != null && configRequest.Headers.Count > 0)
+            //{
+            //    resolvedHeaders = new Dictionary<string, string>();
+            //    foreach (var header in configRequest.Headers)
+            //    {
+            //        var headerVariable = _cache.ReplaceVariables(header.Value);
+            //        if (!headerVariable.IsSuccess)
+            //        {
+            //            $" Failed to resolve placeholder in header: {header.Key}".Error();
+            //            return false;
+            //        }
+            //        resolvedHeaders[header.Key] = headerVariable.Text;
+            //    }
+            //}
+
+            // $" Placeholders resolved".Debug();
 
             return await CallApi(configRequest.Endpoint, requestJson, resolvedHeaders, configRequest.Activity, configRequest.Description, testSuiteConfig);
         }
@@ -97,6 +117,10 @@ namespace NTTCoreTester.Services
                 {
                     $"\n Executing activity: {activity}".Debug();
                     result.Request = requestJson;
+                    if(activity== "ExtractMarketWatcListID")
+                    {
+                        Console.WriteLine();
+                    }
                     activityResult = _activityExecutor.Execute(activity, result, result.Endpoint);
                 }
 
@@ -136,31 +160,22 @@ namespace NTTCoreTester.Services
             }
         }
 
-        private async Task<ApiExecutionResult> SendRequest(
-             string endpoint,
-             string requestJson,
-             Dictionary<string, string> headers)
+        private async Task<ApiExecutionResult> SendRequest(string endpoint, string requestJson, Dictionary<string, string> headers)
         {
             try
             {
-                var timer = Stopwatch.StartNew();
-
                 string fullUrl = $"{_config.BaseUrl.TrimEnd('/')}{endpoint}";
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl);
                 request.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
-
-                foreach (var header in _config.DefaultHeaders)
-                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
 
                 if (headers != null)
                 {
                     foreach (var header in headers)
                     {
-                        request.Headers.Remove(header.Key);
                         request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                     }
                 }
-                timer.Restart();
+                var timer = Stopwatch.StartNew();
                 var response = await _http.SendAsync(request);
                 string body = await response.Content.ReadAsStringAsync();
 

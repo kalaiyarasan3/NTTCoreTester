@@ -6,11 +6,6 @@
     {
       "endpoint": "Holdings",
       "description": "Fetch holdings and extract a symbol to place a pledge order (uses current holding symbol)",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "payload": {
         "actid": "{{uid}}",
         "uid": "{{uid}}"
@@ -20,11 +15,6 @@
     {
       "endpoint": "CreatePledgeHoldings",
       "description": "Create a pledge request for the selected symbol and quantity",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "payload": {
         "DealerUCC": "{{uid}}",
         "ClientUCC": "{{uid}}",
@@ -40,30 +30,18 @@
         ]
       }
     },
-
     {
       "endpoint": "Holdings",
       "description": "Verify that the pledged quantity is updated correctly",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "payload": {
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       },
       "activity": "ValidatePledgeIntegrity"
     },
-
     {
       "endpoint": "CreateUnpledgeHoldings",
       "description": "Create an unpledge request for the selected symbol with maximum quantity",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "payload": {
         "DealerUCC": "{{uid}}",
         "ClientUCC": "{{uid}}",
@@ -82,11 +60,6 @@
     {
       "endpoint": "Holdings",
       "description": "Verify that the unpledged quantity is updated correctly",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "payload": {
         "actid": "{{uid}}",
         "uid": "{{uid}}"
@@ -96,11 +69,6 @@
     {
       "endpoint": "CreateUnpledgeHoldings",
       "description": "Send a duplicate unpledge request to test system validation",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "payload": {
         "DealerUCC": "{{uid}}",
         "ClientUCC": "{{uid}}",
@@ -119,17 +87,11 @@
     {
       "endpoint": "Holdings",
       "description": "Verify that the duplicate unpledge request is handled correctly",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "payload": {
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       },
       "activity": "ValidatePledgeIntegrity"
     }
-
   ]
 }

@@ -6,11 +6,6 @@
     {
       "endpoint": "GetSecurityInfo",
       "description": "Extracting Security Info for placing order and also to get lot size for calculating qty.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
@@ -20,11 +15,6 @@
     {
       "endpoint": "Limits",
       "description": "Extracting Limits to check the margin release and block before placing order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "activity": "ExtractPreLimitMargin",
       "payload": {
         "actid": "{{uid}}",
@@ -34,11 +24,6 @@
     {
       "endpoint": "GetOrderMargin",
       "description": "Extracting Order Margin for placing order and also to get margin details for calculating available margin after placing order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
@@ -64,11 +49,6 @@
     {
       "endpoint": "PlaceOrder",
       "description": "Placing AMO Buy order with limit price which is below the current market price to make sure the order goes to pending state and also to check the margin block for pending order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
@@ -91,11 +71,6 @@
     {
       "endpoint": "ActivityOrderBook",
       "description": "Extracting order book to check the order is in pending state and also to extract the order number for canceling the order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
       "activity": "OrderStatusHandler",
       "payload": {
         "uid": "{{uid}}",
@@ -107,11 +82,6 @@
     {
       "endpoint": "Limits",
       "description": "Extracting Limits to check the margin block for pending order after placing order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "activity": "ExtractPostLimitMargin",
       "payload": {
         "actid": "{{uid}}",
@@ -121,10 +91,6 @@
     {
       "endpoint": "OrderBook",
       "description": "Extracting Order Book to get order details using cl_ord_id.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "SaveOrders",
       "payload": {
         "uid": "{{uid}}",
@@ -134,10 +100,6 @@
     {
       "endpoint": "ActivityOrderBook",
       "description": "Validating Order Book Sync activity to check whether order book is syncing properly or not and also checking the time difference between placeOrder to ActivityBook",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
@@ -149,11 +111,6 @@
     {
       "endpoint": "CancelOrder",
       "description": "Canceling the pending order and also to check the margin release after canceling the pending order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "activity": "",
       "payload": {
         "uid": "{{uid}}",
@@ -167,11 +124,6 @@
     {
       "endpoint": "ActivityOrderBook",
       "description": "Extracting order book to check the order is canceled successfully and also to check the margin release after canceling the pending order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "RMS"
-      },
       "activity": "OrderStatusHandler",
       "payload": {
         "uid": "{{uid}}",
@@ -183,11 +135,6 @@
     {
       "endpoint": "Limits",
       "description": "Extracting Limits to check the margin release after canceling the pending order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
       "activity": "ExtractPostLimitMargin",
       "payload": {
         "actid": "{{uid}}",

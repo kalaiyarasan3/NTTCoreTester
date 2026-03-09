@@ -6,11 +6,11 @@
     {
       "endpoint": "Login",
       "description": "Authenticate user and generate session token",
-      "headers": {},
+      "headerProfileName": "LoginHeaders",
       "activity": "ExtractSession",
       "payload": {
-        "uid": "90470544",
-        "pwd": "Live@90470544",
+        "uid": "47054457",
+        "pwd": "Navia@123",
         "otp": "7657768",
         "TwoFA": 1
       }
@@ -18,25 +18,18 @@
     {
       "endpoint": "CheckLogin",
       "description": "Verify that session token is valid",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "",
       "payload": {}
     },
     {
       "endpoint": "GetClientBankInfo",
       "description": "Fetch bank details linked to client account",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "",
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}"
       }
     }
+    
   ]
 }

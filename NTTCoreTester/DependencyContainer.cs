@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NTTCoreTester.Activities;
+using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
 using NTTCoreTester.Reporting;
 using NTTCoreTester.Services;
@@ -19,6 +20,7 @@ namespace NTTCoreTester
             services.AddSingleton<ResponseChecker>();
             services.AddSingleton<ConfigRunner>();
             services.AddSingleton<ActivityExecutor>();
+            services.AddSingleton<ApiCall>();
 
             services.Scan(scan => scan
             .FromAssemblyOf<ExtractSession>()

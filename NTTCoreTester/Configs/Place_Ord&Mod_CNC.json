@@ -6,10 +6,6 @@
     {
       "endpoint": "GetSecurityInfo",
       "description": "Extracting Security Info for placing order and also to get lot size for calculating qty.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
@@ -19,10 +15,6 @@
     {
       "endpoint": "GetOrderMargin",
       "description": "Extracting Order Margin for placing order and also to get margin details for calculating available margin after placing order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
@@ -48,10 +40,6 @@
     {
       "endpoint": "Limits",
       "description": "Extracting Limits to check the margin release and block before placing order.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractPreLimitMargin",
       "payload": {
         "actid": "{{uid}}",
@@ -61,10 +49,6 @@
     {
       "endpoint": "PositionBook",
       "description": "Extracting Position book before ordering",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractPrePositions",
       "payload": {
         "actid": "{{uid}}",
@@ -75,10 +59,6 @@
     {
       "endpoint": "PlaceOrder",
       "description": "Placing Buy Order with CNC product type and Limit order type.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
@@ -122,10 +102,6 @@
     {
       "endpoint": "OrderBook",
       "description": "Extracting Order Book to get order details using cl_ord_id.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "SaveOrders",
       "payload": {
         "uid": "{{uid}}",
@@ -135,10 +111,6 @@
     {
       "endpoint": "ActivityOrderBook",
       "description": "Validating Order Book Sync activity to check whether order book is syncing properly or not and also checking the time difference between placeOrder to ActivityBook",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
@@ -149,10 +121,6 @@
     {
       "endpoint": "ActivityOrderBook",
       "description": "checking the order status.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
@@ -163,10 +131,6 @@
     {
       "endpoint": "Limits",
       "description": "Extracting Limits to check the margin release and block after placing order. using Prelimit margin activity",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractPostLimitMargin",
       "payload": {
         "actid": "{{uid}}",
@@ -176,10 +140,6 @@
     {
       "endpoint": "ActivityOrderBook",
       "description": "Checking weather the order is placed or not",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "payload": {
         "uid": "{{uid}}",
         "actid": "{{uid}}",
@@ -190,10 +150,6 @@
     {
       "endpoint": "ModifyOrder",
       "description": "Modifying the same order to MKT order type and also changing the qty to 150 to check whether modification is working or not for CNC product type.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractClientOrdId",
       "payload": {
         "exch": "{{exch}}",
@@ -222,10 +178,6 @@
     {
       "endpoint": "TradeBook",
       "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractTradeFill",
       "payload": {
         "actid": "{{uid}}",
@@ -236,30 +188,21 @@
     {
       "endpoint": "PositionBook",
       "description": "Extracting Position Book to check the order is in position book or not ",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ValidatePostPositions",
       "payload": {
         "actid": "{{uid}}",
         "uid": "{{uid}}",
         "prd": ""
       }
-    }
+    },
     {
       "endpoint": "Limits",
       "description": "Extracting Limits to check the margin release and block after placing order. using Prelimit margin activity",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
       "activity": "ExtractPostLimitMargin",
       "payload": {
         "actid": "{{uid}}",
         "uid": "{{uid}}"
       }
     }
-
   ]
 }

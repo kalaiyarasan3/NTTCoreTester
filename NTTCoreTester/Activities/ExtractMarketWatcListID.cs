@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {
-    internal class ExtractMarketWatcListID : IActivityHandler
+    public class ExtractMarketWatcListID : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
 

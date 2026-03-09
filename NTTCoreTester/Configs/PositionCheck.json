@@ -6,10 +6,7 @@
     {
       "endpoint": "TradeBook",
       "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
+     
       "activity": "ExtractTradeFill",
       "payload": {
         "actid": "{{uid}}",
@@ -20,10 +17,7 @@
     {
       "endpoint": "PositionBook",
       "description": "Extracting Position Book to check the order is in position book or not and also to get the position details for comparing with trade book.",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
+     
       "activity": "ValidatePostPositions",
       "payload": {
         "actid": "{{uid}}",
@@ -34,10 +28,7 @@
     {
       "endpoint": "Limits",
       "description": "Extracting Limits to check the margin release and block after placing order. using Prelimit margin activity",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
+     
       "activity": "ExtractPostLimitMargin",
       "payload": {
         "actid": "{{uid}}",

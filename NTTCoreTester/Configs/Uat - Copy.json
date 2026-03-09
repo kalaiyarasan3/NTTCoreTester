@@ -18,21 +18,14 @@
     {
       "endpoint": "CheckLogin",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
+      
       "activity": "",
       "payload": {}
     },
     {
       "endpoint": "GetClientBankInfo",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "",
       "payload": {
         "uid": "{{uid}}",
@@ -42,11 +35,7 @@
     {
       "endpoint": "GetLastOrderStatus",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "",
       "payload": {
         "actid": "{{uid}}",
@@ -59,11 +48,7 @@
     {
       "endpoint": "GetSecurityInfo",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NSE",
@@ -73,11 +58,7 @@
     {
       "endpoint": "Limits",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractPreLimitMargin",
       "payload": {
         "actid": "{{uid}}",
@@ -117,11 +98,7 @@
     {
       "endpoint": "PlaceOrder",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
@@ -180,11 +157,7 @@
     {
       "endpoint": "OrderBook",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "SaveOrders",
       "payload": {
         "uid": "{{uid}}",
@@ -209,11 +182,7 @@
     {
       "endpoint": "Limits",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractPostLimitMargin",
       "payload": {
         "actid": "{{uid}}",
@@ -223,11 +192,7 @@
     {
       "endpoint": "ModifyOrder",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractClientOrdId",
       "payload": {
         "exch": "{{exch}}",
@@ -256,10 +221,7 @@
     {
       "endpoint": "ProductConversion",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
+      
       "activity": "",
       "payload": {
         "uid": "{{uid}}",
@@ -278,11 +240,7 @@
     {
       "endpoint": "PlaceOrder",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
@@ -343,11 +301,7 @@
     {
       "endpoint": "PlaceOrder",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
@@ -391,11 +345,7 @@
     {
       "endpoint": "PlaceOrder",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService",
-        "Source": "WEB"
-      },
+      
       "activity": "ExtractClientOrdId",
       "payload": {
         "uid": "{{uid}}",
@@ -439,10 +389,7 @@
     {
       "endpoint": "AddMarketWatchName",
       "method": "POST",
-      "headers": {
-        "AuthToken": "{{token}}",
-        "Module": "OrderService"
-      },
+      
       "activity": "MarketWatcListID",
       "payload": {
         "MarketWatchId": "{{MarketWatchId}}",

@@ -9,7 +9,7 @@ namespace NTTCoreTester.Core.Models
     public class ApiConfiguration
     {
         public string BaseUrl { get; set; }
-        public Dictionary<string, string> DefaultHeaders { get; set; }
+        public Dictionary<string, Dictionary<string, string>> HeaderProfiles { get; set; }
         public string Site { get; set; }
         public int OtpTimeout { get; set; }
         public int MaxResponseTime { get; set; }
