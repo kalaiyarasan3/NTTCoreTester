@@ -10,7 +10,7 @@ namespace NTTCoreTester.Activities
 
         public string Name => nameof(ExtractTradeFill);
 
-        public ActivityResult Execute(ApiExecutionResult result, string endpoint)
+        public async Task<ActivityResult> Execute(ApiExecutionResult result, string endpoint, string payLoad)
         {
             try
             {

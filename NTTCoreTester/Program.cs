@@ -61,7 +61,10 @@ namespace NTTCoreTester
                 Console.Clear();
 
                 // Run tests
+                Console.WriteLine("creating menu");
                 var menu = provider.GetRequiredService<Menu>();
+                Console.WriteLine("menu");
+
                 await menu.Start();
 
                 // Save CSV report at the end

@@ -18,7 +18,7 @@ namespace NTTCoreTester.Activities
 
         public string Name => nameof(GetLastOrderStatus);
 
-        public ActivityResult Execute(ApiExecutionResult result, string endpoint)
+        public async Task<ActivityResult> Execute(ApiExecutionResult result, string endpoint, string payLoad)
         {
             var dataObject = result.DataObject;
 

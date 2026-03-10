@@ -18,7 +18,7 @@ namespace NTTCoreTester.Activities
 
         public string Name => nameof(ExtractOTP);
 
-        public ActivityResult Execute(ApiExecutionResult result, string endpoint)
+        public async Task<ActivityResult> Execute(ApiExecutionResult result, string endpoint, string payLoad)
         {
             Console.Write("Enter OTP: ");
             var otp = Console.ReadLine();

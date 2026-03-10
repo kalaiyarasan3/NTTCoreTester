@@ -9,7 +9,7 @@ namespace NTTCoreTester.Activities
     {
         public string Name => nameof(ValidatePledgeIntegrity);
 
-        public ActivityResult Execute(ApiExecutionResult result, string endpoint)
+        public async Task<ActivityResult> Execute(ApiExecutionResult result, string endpoint, string payLoad)
         {
             try
             {

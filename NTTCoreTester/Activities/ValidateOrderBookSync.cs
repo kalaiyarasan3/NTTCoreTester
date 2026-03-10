@@ -28,7 +28,7 @@ namespace NTTCoreTester.Activities
             _csvReport = csvReport;
         }
 
-        public ActivityResult Execute(ApiExecutionResult result, string endpoint)
+        public async Task<ActivityResult> Execute(ApiExecutionResult result, string endpoint, string payLoad)
         {
             //  1. Read reference fields from cache (from OrderBook via SaveOrdersHandler) 
             var clOrdId = _cache.Get<string>(Constants.ClientOrdId);

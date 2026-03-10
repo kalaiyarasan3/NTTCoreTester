@@ -1,36 +1,34 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NTTCoreTester.Activities;
-using NTTCoreTester.Core;
-using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester.Services
 {
     public class ActivityExecutor
     {
-        private readonly Dictionary<string, IActivityHandler> _handlers;
+        private readonly IServiceProvider _services;
+        private Dictionary<string, IActivityHandler> _handlers;
 
-        public ActivityExecutor(IEnumerable<IActivityHandler> handlers)
+        public ActivityExecutor(IServiceProvider services)
         {
-            _handlers = handlers.ToDictionary(h => h.Name, h => h);
+            _services = services;
+        }
+        private Dictionary<string, IActivityHandler> GetHandlers()
+        {
+            return _handlers ??= _services
+                .GetServices<IActivityHandler>()
+                .ToDictionary(h => h.Name, h => h);
         }
 
-        public ActivityResult Execute(string activityName, ApiExecutionResult result, string endpoint)
+        public async Task<ActivityResult> Execute(string activityName, ApiExecutionResult result, string endpoint, string payLoad)
         {
             if (string.IsNullOrWhiteSpace(activityName))
                 return ActivityResult.Success();
 
-            if (!_handlers.TryGetValue(activityName, out var handler))
+            if (!GetHandlers().TryGetValue(activityName, out var handler))
                 return ActivityResult.HardFail($"Activity '{activityName}' not found.");
 
-            return handler.Execute(result, endpoint);
+            return await handler.Execute(result, endpoint, payLoad);
         }
     }
  /*   public class ActivityExecutor

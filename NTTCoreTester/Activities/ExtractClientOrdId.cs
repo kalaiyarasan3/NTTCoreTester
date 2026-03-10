@@ -20,7 +20,7 @@ namespace NTTCoreTester.Activities
 
         public string Name => nameof(ExtractClientOrdId);
 
-        public ActivityResult Execute(ApiExecutionResult result, string endpoint)
+        public async Task<ActivityResult> Execute(ApiExecutionResult result, string endpoint, string payLoad)
         {
             var clOrdId = result.DataObject?["cl_ord_id"]?.Value<string>();
             var requestTimeRaw = result.DataObject?["request_time"]?.Value<string>();
