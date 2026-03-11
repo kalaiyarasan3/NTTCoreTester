@@ -18,6 +18,7 @@
       "path": "Square_off",
       "enabled": true
     },
+
     {
       "TestName": "FundTransfer",
       "path": "FundTransfer",

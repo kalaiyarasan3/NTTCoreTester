@@ -5,7 +5,7 @@
   "requests": [
     {
       "endpoint": "PositionBook",
-      "method": "POST",
+      "description": "Getting postion book snapshot before sq off",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -21,7 +21,7 @@
 
     {
       "endpoint": "Limits",
-      "method": "POST",
+      "description": "Getting Limits Snap shot before Sq off",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -36,7 +36,7 @@
 
     {
       "endpoint": "PositionSquareOff",
-      "method": "POST",
+      "description": "Sq off all positions",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",
@@ -51,7 +51,7 @@
     },
     {
       "endpoint": "ActivityOrderBook",
-      "method": "POST",
+      "description": "Getting Sq off postion is traded",
       "headers": {
         "AuthToken": "{{token}}",
         "Module": "OrderService",

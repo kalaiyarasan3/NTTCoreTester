@@ -40,6 +40,9 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Configs\CNC_Opt_Buy_PlaceOrder .json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configs\Logout.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
