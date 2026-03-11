@@ -18,53 +18,138 @@ namespace NTTCoreTester.Activities
                 var postArray = result.DataObject?["Positions"] as JArray;
 
                 if (postArray == null)
-                    return "Post positions not found in ValidatePostPositionsHandler".FailWithLog(true);
+                    return "Post positions missing".FailWithLog(true);
+
+                var postPositions = postArray.ToObject<List<PositionBookModel>>() ?? new();
 
                 var prePositions = _cache.Get<List<PositionBookModel>>(Constants.PrePositions);
+
                 if (prePositions == null)
-                    return "Pre positions missing in ValidatePostPositionsHandler".FailWithLog(true);
+                    return "Pre positions missing".FailWithLog(true);
 
-                string? symbol = _cache.Get<string>(Constants.OrderSymbol);
-                string? product = _cache.Get<string>(Constants.OrderProduct);
-                string? transactionType = _cache.Get<string>(Constants.OrderSide);
-                int filledQty = _cache.Get<int>(Constants.FilledQty);
+                var filledQtyBySymbol = _cache.Get<Dictionary<string, int>>(Constants.FilledQtyBySymbol);
 
-                var postPositions = postArray.ToObject<List<PositionBookModel>>();
+                var errors = new List<string>();
+                var logs = new List<string>();
 
-                var postRow = postPositions?.FirstOrDefault(p =>
-                        p.Symbol == symbol &&
-                        p.ProductType == product);
-                $"Position for symbol: {symbol} /product: {product}".Warn();
-
-                if (postRow == null)
+                foreach (var post in postPositions)
                 {
-                    return $"Position for symbol: {symbol} /product: {product} not found in post positions".FailWithLog(true);
+                    string key = $"{post.Symbol}-{post.ProductType}";
+
+                    var pre = prePositions.FirstOrDefault(p =>
+                        p.Symbol == post.Symbol &&
+                        p.ProductType == post.ProductType);
+
+                    int preQty = pre?.NetQty ?? 0;
+                    int postQty = post.NetQty;
+
+                    int tradedQty = postQty - preQty;
+
+                    //-----------------------------------------------------
+                    // Validate against TradeBook
+                    //-----------------------------------------------------
+
+                    if (filledQtyBySymbol != null &&
+                        filledQtyBySymbol.TryGetValue(key, out int filledQty))
+                    {
+                        int expectedPostQty = preQty + filledQty;
+
+                        if (postQty != expectedPostQty)
+                        {
+                            errors.Add(
+                                $"TradeBook mismatch for {key}. " +
+                                $"Pre:{preQty} Filled:{filledQty} Expected:{expectedPostQty} Actual:{postQty}");
+                        }
+                    }
+
+                    if (tradedQty != 0)
+                        logs.Add($"{key} executed qty: {tradedQty}");
+
+                    //-----------------------------------------------------
+                    // New position
+                    //-----------------------------------------------------
+
+                    if (pre == null && postQty != 0)
+                    {
+                        logs.Add($"{key} new position created Qty:{postQty}");
+                        continue;
+                    }
+
+                    //-----------------------------------------------------
+                    // Unchanged
+                    //-----------------------------------------------------
+
+                    if (preQty == postQty)
+                    {
+                        logs.Add($"{key} unchanged");
+                        continue;
+                    }
+
+                    //-----------------------------------------------------
+                    // Square-off
+                    //-----------------------------------------------------
+
+                    if (preQty != 0 && postQty == 0)
+                    {
+                        logs.Add($"{key} fully squared-off. Pre:{preQty} Post:{postQty}");
+                        continue;
+                    }
+
+                    //-----------------------------------------------------
+                    // Partial close
+                    //-----------------------------------------------------
+
+                    if (Math.Sign(preQty) == Math.Sign(postQty) &&
+                        Math.Abs(postQty) < Math.Abs(preQty))
+                    {
+                        logs.Add($"{key} partial close detected");
+                        continue;
+                    }
+
+                    //-----------------------------------------------------
+                    // Position increase
+                    //-----------------------------------------------------
+
+                    if (Math.Sign(preQty) == Math.Sign(postQty) &&
+                        Math.Abs(postQty) > Math.Abs(preQty))
+                    {
+                        logs.Add($"{key} position increased");
+                        continue;
+                    }
+
+                    //-----------------------------------------------------
+                    // Position flip
+                    //-----------------------------------------------------
+
+                    if (Math.Sign(preQty) != Math.Sign(postQty))
+                    {
+                        logs.Add($"{key} position flipped");
+                        continue;
+                    }
+
+                    errors.Add($"Position mismatch for {key}. Pre:{preQty} Post:{postQty}");
                 }
 
-                int postQty = postRow.NetQty;
 
-                var preRow = prePositions
-                    .FirstOrDefault(p =>
-                        p.Symbol == symbol &&
-                        p.ProductType == product);
-
-                int preQty = preRow?.NetQty ?? 0;
-
-                var log = $"PreQty: {preQty} | FilledQty: {filledQty} | PostQty: {postQty}"; 
-                log.Warn();
-
-                int expectedQty = preQty + filledQty;
-                if (postQty != expectedQty)
-                {
-                    return $"Position mismatch. Expected: {expectedQty}, Actual: {postQty}".FailWithLog();
-                }
+                //---------------------------------------------------------
+                // Store post positions for later activities
+                //---------------------------------------------------------
 
                 _cache.Set(Constants.PostPositions, postPositions);
-                return ActivityResult.Success(log);
+
+                _cache.Remove(Constants.ClientOrdIds);
+                _cache.Remove(Constants.FilledQtyBySymbol);
+
+                if (errors.Any())
+                    return string.Join(" | ", errors).FailWithLog(false);
+
+                var response = string.Join(" | ", logs);
+                response.Warn();
+                return ActivityResult.Success(response);
             }
             catch (Exception ex)
             {
-                return $"Error ValidatePostPositionsHandler: {ex.Message}".FailWithLog(true);
+                return $"Error ValidatePostPositions: {ex.Message}".FailWithLog(true);
             }
         }
     }

@@ -9,7 +9,8 @@ namespace NTTCoreTester.Core.Helper
     public static class Constants
     {
         public const string ClientOrdId = "cl_ord_id";
-       // public const string ClientOrdIdTradeBook = "ClientOrdId";
+        public const string ClientOrdIds = "ClientOrdIds";
+        public const string SquareOffClientOrdIds = "SquareOffClientOrdIds";
         public const string OrderNumber = "ordno";
         public const string TotalQuantity = "Total_Quantity";
         public const string ShouldBlockMargin = "ShouldBlockMargin";
@@ -23,6 +24,7 @@ namespace NTTCoreTester.Core.Helper
         public const string PrePositions = "PrePositions";
         public const string PostPositions = "PostPositions";
         public const string FilledQty = "FilledQty";
+        public const string FilledQtyBySymbol = "FilledQtyBySymbol";
         public const string PledgeOrderSymbol = "PledgeOrderSymbol";
         public const string OrderSymbol = "OrderSymbol";
         public const string OrderProduct = "OrderProduct";

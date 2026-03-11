@@ -28,13 +28,15 @@ namespace NTTCoreTester.Activities
                         ProductType = p["prd"]?.Value<string>() ?? "",
                         NetQty = p["netqty"]?.Value<int>() ?? 0,
                         NetAvgPrice = p["netavgprc"]?.Value<decimal>() ?? 0
-                    })
+                    }).Where(p => p.NetQty != 0)
                     .ToList();
 
                 _cache.Set(Constants.PrePositions, positions);
 
                 var log = string.Join(" || ", positions.Select(p =>
                 $"{p.Symbol}-{p.ProductType} Qty:{p.NetQty} Avg:{p.NetAvgPrice}"));
+
+                log.Warn();
 
                 return ActivityResult.Success($"Positions Extracted and Stored{log}");
             }
