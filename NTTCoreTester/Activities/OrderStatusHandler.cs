@@ -7,6 +7,11 @@ using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
+    /// <summary>
+    /// checking the order status.
+    /// set contions if not rejected for it should  block margin
+    /// </summary>
+    /// <param name="cache"></param>
     public class OrderStatusHandler(PlaceholderCache cache) : IActivityHandler
     {
         public string Name => nameof(OrderStatusHandler);

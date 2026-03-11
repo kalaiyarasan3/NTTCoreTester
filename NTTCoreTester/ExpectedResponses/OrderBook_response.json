@@ -97,7 +97,7 @@
         "orderactivity": 0,
         "EntityId": 0,
         "ActivityReference": "1771493886752198753||^\\d+$|null",
-        "OrderEntryTimeStamp": "1771493888||^\\d+$|null",
+        "OrderEntryTimeStamp": "1771493888||^-?\\d+$|null",
         "OrderModifiedTimeStamp": "1771493888||^\\d+$|null",
         "SegmentCombination": null,
         "OrderSource": "Web||^.*$|null",

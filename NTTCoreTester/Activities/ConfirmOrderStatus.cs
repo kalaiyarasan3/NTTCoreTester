@@ -3,11 +3,6 @@ using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
 using NTTCoreTester.Enums;
 using NTTCoreTester.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NTTCoreTester.Activities
 {

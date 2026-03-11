@@ -9,7 +9,7 @@ namespace NTTCoreTester.Core.Models
 {
     public class CsvConfigRow
     {
-        public string SuiteName { get; set; }
+        public string TestName { get; set; }
         public string Description { get; set; }
         public string  StopOnFailure { get; set; }
         public string EndPoint { get; set; }

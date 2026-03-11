@@ -45,22 +45,22 @@ namespace NTTCoreTester.Services
             }
 
             string configContent = await File.ReadAllTextAsync(filePath);
-            var mastersuiteConfig = JsonConvert.DeserializeObject<MasterSuite>(configContent);
+            var masterTestConfig = JsonConvert.DeserializeObject<MasterTest>(configContent);
 
-            if (mastersuiteConfig == null || mastersuiteConfig.Suites == null || mastersuiteConfig.Suites.Count == 0)
+            if (masterTestConfig == null || masterTestConfig.Tests == null || masterTestConfig.Tests.Count == 0)
             {
-                $"\n Invalid master config or no suites found".Error();
+                $"\n Invalid master config or no Tests found".Error();
                 return;
             }
 
-            foreach (var suite in mastersuiteConfig.Suites)
+            foreach (var Test in masterTestConfig.Tests)
             {
-                if (!suite.Enabled)
+                if (!Test.Enabled)
                     continue;
 
-                $"\n Running suite: {suite.TestName}".Info();
-                bool result = await RunSuite(suite.Path);
-                if (!result && mastersuiteConfig.StopOnFailure)
+                $"\n Running Test: {Test.TestName}".Info();
+                bool result = await RunTest(Test.Path);
+                if (!result && masterTestConfig.StopOnFailure)
                 {
                     "\nStopping master execution".Error();
                     break;
@@ -69,7 +69,7 @@ namespace NTTCoreTester.Services
 
         }
 
-        public List<string> GetAvailableSuites()
+        public List<string> GetAvailableTests()
         {
             if (!Directory.Exists(CONFIG_FOLDER))
                 return new List<string>();
@@ -78,7 +78,7 @@ namespace NTTCoreTester.Services
             return files.Select(f => Path.GetFileNameWithoutExtension(f)).ToList();
         }
 
-        public async Task<bool> RunSuite(string configFileName)
+        public async Task<bool> RunTest(string configFileName)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace NTTCoreTester.Services
                 // Load config
 
                 string configContent = await File.ReadAllTextAsync(filePath);
-                var testConfig = JsonConvert.DeserializeObject<TestSuiteConfig>(configContent);
+                var testConfig = JsonConvert.DeserializeObject<TestTestConfig>(configContent);
 
                 if (testConfig == null || testConfig.Requests == null || testConfig.Requests.Count == 0)
                 {
@@ -102,7 +102,7 @@ namespace NTTCoreTester.Services
                 }
 
                 $"\n{new string('═', 80)}".Success();
-                $"  TEST SUITE: {testConfig.TestName}".Info();
+                $"  TEST Test: {testConfig.TestName}".Info();
                 $"  Description: {testConfig.Description}".Info();
                 $"  Total Requests: {testConfig.Requests.Count}".Info();
                 $"  Stop on Failure: {testConfig.StopOnFailure}".Info();
@@ -112,7 +112,7 @@ namespace NTTCoreTester.Services
 
 
 
-                //if (suiteConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP".Info()))
+                //if (TestConfig.Requests.Any(x=>x.Endpoint.Contains("SendOTP".Info()))
                 //{
                 //    Console.Write("Enter Uid: ".Info();
                 //    var uid = Console.ReadLine();
@@ -146,7 +146,7 @@ namespace NTTCoreTester.Services
 
                         if (testConfig.StopOnFailure)
                         {
-                            $" Stopping suite execution due to failure (stopOnFailure=true)".Error();
+                            $" Stopping Test execution due to failure (stopOnFailure=true)".Error();
                             break;
                         }
                     }
@@ -159,7 +159,7 @@ namespace NTTCoreTester.Services
 
                 // Summary
                 $"\n{new string('═', 80)}".Success();
-                $"  SUITE COMPLETE: {testConfig.TestName}".Info();
+                $"  Test COMPLETE: {testConfig.TestName}".Info();
                 $"   Passed: {passed}".Info();
                 $"   Failed: {failed}".Info();
                 $"{new string('═', 80)}\n".Success();
@@ -176,7 +176,7 @@ namespace NTTCoreTester.Services
             }
             catch (Exception ex)
             {
-                $"\n Suite Failed: {configFileName}".Error();
+                $"\n Test Failed: {configFileName}".Error();
                 $"\n {ex}".Error();
                 return false;
             }

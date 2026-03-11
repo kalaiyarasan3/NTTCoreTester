@@ -1,5 +1,5 @@
 {
-  "suiteName": "Login Auth",
+  "TestName": "Login Auth",
   "description": "Checkin Login, Check Login endpoints and stores Auth Token",
   "stopOnFailure": true,
   "requests": [

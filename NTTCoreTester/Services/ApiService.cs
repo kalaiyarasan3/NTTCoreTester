@@ -10,7 +10,7 @@ namespace NTTCoreTester.Services
 {
     public interface IApiService
     {
-        Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest, TestSuiteConfig testSuiteConfig);
+        Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest, TestTestConfig testTestConfig);
 
         Dictionary<string, string> ResolveHeaders(string profileName, string token = "");
 
@@ -43,7 +43,7 @@ namespace NTTCoreTester.Services
             _http.BaseAddress = new Uri(_config.BaseUrl);
         }
 
-        public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest, TestSuiteConfig testSuiteConfig)
+        public async Task<bool> ExecuteRequestFromConfig(ConfigRequest configRequest, TestTestConfig testTestConfig)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace NTTCoreTester.Services
                     headers,
                     configRequest.Activity,
                     configRequest.Description,
-                    testSuiteConfig
+                    testTestConfig
                 );
             }
             catch (Exception ex)
@@ -120,7 +120,7 @@ namespace NTTCoreTester.Services
             Dictionary<string, string> headers,
             string activity,
             string description,
-            TestSuiteConfig testSuiteconfig)
+            TestTestConfig testTestconfig)
         {
             try
             {
@@ -145,7 +145,7 @@ namespace NTTCoreTester.Services
                 }
 
                 _csvReport.AddEntry(
-                    testSuiteconfig.TestName,
+                    testTestconfig.TestName,
                     result.Endpoint,
                     description,
                     string.IsNullOrWhiteSpace(activity) ? "No Activity" : activity,

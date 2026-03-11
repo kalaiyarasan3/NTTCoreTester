@@ -1,27 +1,32 @@
 {
   "masterTestName": "Regression_Run",
-  "description": "Runs all important suites",
+  "description": "Runs all important Tests",
   "stopOnFailure": true,
-  "suites": [
+  "Tests": [
     {
       "TestName": "1Login",
       "path": "1Login",
       "enabled": true
     },
     {
-      "TestName": "Place_Ord&Mod_CNC",
-      "path": "Place_Ord&Mod_CNC",
+      "TestName": "CNC_Fut_PlaceOrder",
+      "path": "CNC_Fut_PlaceOrder",
       "enabled": true
     },
     {
-      "TestName": "Pledge_request",
-      "path": "Pledge_request",
+      "TestName": "Square_off",
+      "path": "Square_off",
       "enabled": true
     },
     {
       "TestName": "FundTransfer",
       "path": "FundTransfer",
-      "enabled": true
+      "enabled": false
+    },
+    {
+      "TestName": "Logout",
+      "path": "Logout",
+      "enabled": false
     }
 
   ]

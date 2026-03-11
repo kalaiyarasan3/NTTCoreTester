@@ -41,20 +41,20 @@ namespace NTTCoreTester.UI
                 
 
                 var masterTests = _configRunner.GetAvailableMasterTest();
-                var suites = _configRunner.GetAvailableSuites();
+                var Tests = _configRunner.GetAvailableTests();
 
-                int totalOptions = masterTests.Count + suites.Count;
+                int totalOptions = masterTests.Count + Tests.Count;
 
                 if(int.TryParse(choice, out int index) && index > 0 && index <= totalOptions)
                 {
-                    if(index <= suites.Count)
+                    if(index <= Tests.Count)
                     {
-                        string selectedSuite = suites[index - 1];
-                        await _configRunner.RunSuite(selectedSuite);
+                        string selectedTest = Tests[index - 1];
+                        await _configRunner.RunTest(selectedTest);
                     }
                     else
                     {
-                        int masterIndex = index - suites.Count;
+                        int masterIndex = index - Tests.Count;
                         string selectedMaster = masterTests[masterIndex - 1];
                         await _configRunner.RunMasterTest(selectedMaster);
                     }
@@ -67,7 +67,7 @@ namespace NTTCoreTester.UI
 
                 "\nPress any key to continue...".Info();
                 Console.ReadKey(true);
-                Console.Clear();
+                //Console.Clear();
             }
         }
 
@@ -97,13 +97,13 @@ namespace NTTCoreTester.UI
 
             $"{new string('─', 64)}".Info();
 
-            "AVAILABLE TEST SUITES:".Info();
+            "AVAILABLE TEST TestS:".Info();
             $"{new string('─', 64)}".Info();
 
             var masterTests = _configRunner.GetAvailableMasterTest();
-            var suites = _configRunner.GetAvailableSuites();
+            var Tests = _configRunner.GetAvailableTests();
 
-            if (suites.Count == 0 && masterTests.Count == 0)
+            if (Tests.Count == 0 && masterTests.Count == 0)
             {
                 "No config files found in Configs/ folder".Warn();
             }
@@ -111,9 +111,9 @@ namespace NTTCoreTester.UI
             {
                 int index = 1;
 
-                foreach (var suite in suites)
+                foreach (var Test in Tests)
                 {
-                    $"{index++}. {suite}".Info();
+                    $"{index++}. {Test}".Info();
                 }
 
                 foreach (var master in masterTests)

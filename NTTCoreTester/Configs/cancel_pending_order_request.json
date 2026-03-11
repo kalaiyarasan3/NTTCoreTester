@@ -1,5 +1,5 @@
 {
-  "suiteName": "CancelPendingOrderMarginRelease",
+  "TestName": "CancelPendingOrderMarginRelease",
   "description": "(AMO)Validate margin block for pending order and release after cancel",
   "stopOnFailure": true,
   "requests": [

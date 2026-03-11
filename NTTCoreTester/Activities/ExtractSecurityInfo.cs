@@ -1,7 +1,12 @@
-﻿using NTTCoreTester.Core.Models;
+﻿using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Core.Models;
 
 namespace NTTCoreTester.Activities
 {
+    /// <summary>
+    /// Extracting security info using exch and token
+    /// it stores exch, tsym and lp
+    /// </summary>
     public class ExtractSecurityInfo : IActivityHandler
     {
         private readonly PlaceholderCache _cache;
@@ -32,6 +37,7 @@ namespace NTTCoreTester.Activities
             //Console.Write($"Enter qty: ");
             //int? qty = Convert.ToInt32(Console.ReadLine());
             //_cache.Set("qty", qty);
+            log.Info();
 
             return ActivityResult.Success($"Etracted Sysmbol: {log}");
         }

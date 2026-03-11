@@ -1,5 +1,5 @@
 {
-  "suiteName": "sq-off",
+  "TestName": "sq-off",
   "description": "Trading validation scenarios",
   "stopOnFailure": false,
   "requests": [

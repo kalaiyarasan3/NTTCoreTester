@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NTTCoreTester.Core.Models
 {
-    public class TestSuiteConfig
+    public class TestTestConfig
     {
         public string TestName { get; set; }
         public string Description { get; set; }
@@ -14,15 +14,15 @@ namespace NTTCoreTester.Core.Models
         public List<ConfigRequest> Requests { get; set; }
     }
 
-    public class MasterSuite
+    public class MasterTest
     {
         public string MasterTestName { get; set; }
         public string Description { get; set; }
         public bool StopOnFailure { get; set; }
-        public List<SuiteInfo> Suites { get; set; }
+        public List<TestInfo> Tests { get; set; }
     }
 
-    public class SuiteInfo
+    public class TestInfo
     {
         public string TestName { get; set; }
         public string Path { get; set; }

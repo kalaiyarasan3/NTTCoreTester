@@ -1,5 +1,5 @@
 {
-  "suiteName": "Uat",
+  "TestName": "Uat",
   "description": "   ",
   "stopOnFailure": false,
   "requests": [

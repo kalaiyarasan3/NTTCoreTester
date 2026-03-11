@@ -185,7 +185,7 @@
         "ParticipantCode": "",
         "QuantityInLots": 1,
         "TemplateName": "NAVIA||^[A-Za-z ]+$",
-        "SideTradeId": "1274200",
+        "SideTradeId": "1274200||^.*$",
         "ModifiedOrderCount": 0,
         "Charge": 0.0006577496,
         "MsgSeqNo": 30.0,
