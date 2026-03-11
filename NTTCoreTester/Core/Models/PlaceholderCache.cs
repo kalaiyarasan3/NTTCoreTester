@@ -12,7 +12,10 @@ namespace NTTCoreTester.Core.Models
         {
             _cache = new Dictionary<string, object>();
         }
-
+        public bool Remove(string key)
+        {
+            return _cache.Remove(key);
+        }
         public void Set<T>(string key, T value)
         {
             _cache[key] = value!;
