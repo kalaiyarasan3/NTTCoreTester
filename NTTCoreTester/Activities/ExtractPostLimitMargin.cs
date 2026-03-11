@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Enums;
 using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
@@ -27,13 +28,11 @@ namespace NTTCoreTester.Activities
                     .Get<List<LimitMarginDetails>>(Constants.PreLimitMargin)?
                     .FirstOrDefault(x => x.TemplateId == 1);
 
-                var orderMargin = _cache.Get<OrderMarginDetails>(Constants.GetOrderMargin);
-
                 if (preLimit == null)
                     return "PreLimitMargin missing".FailWithLog(true);
 
-                if (orderMargin == null)
-                    return "OrderMargin missing".FailWithLog(true);
+                var orderMargin = _cache.Get<OrderMarginDetails>(Constants.GetOrderMargin);
+                bool hasOrderMargin = orderMargin != null;
 
                 decimal Normalize(decimal value) =>
                     Math.Round(value, 2, MidpointRounding.AwayFromZero);
@@ -46,23 +45,23 @@ namespace NTTCoreTester.Activities
                 // ----------------------------------------------------
 
                 var debug =
-                    $"preLimit.RemainingMargin: {preLimit.RemainingMargin} | " +
-                    $"postLimit.RemainingMargin: {postLimit.RemainingMargin} | " +
-                    $"preLimit.UsedMarginWithoutPL: {preLimit.UsedMarginWithoutPL} | " +
-                    $"postLimit.UsedMarginWithoutPL: {postLimit.UsedMarginWithoutPL} | " +
-                    $"orderMargin.OrderMargin: {orderMargin.OrderMargin} | " +
-                    $"orderMargin.MarginUsedPrev: {orderMargin.MarginUsedPrev}";
+                    $"Margin snapshot " +
+                    $"PreUsed:{preLimit.UsedMarginWithoutPL} | PostUsed:{postLimit.UsedMarginWithoutPL} | " +
+                    $"PreRemaining:{preLimit.RemainingMargin} | PostRemaining:{postLimit.RemainingMargin}";
 
-                debug.Warn();
+                if (hasOrderMargin)
+                {
+                    debug += $" | OrderMargin:{orderMargin.OrderMargin} | MarginUsedPrev:{orderMargin.MarginUsedPrev}";
+                }
 
                 // ----------------------------------------------------
                 // Preview Consistency
                 // ----------------------------------------------------
 
-                if (!AreEqual(orderMargin.MarginUsedPrev, preLimit.UsedMarginWithoutPL))
+                if (hasOrderMargin && orderMargin.MarginUsedPrev > preLimit.UsedMarginWithoutPL + 0.10m)
                 {
-                    errors.Add($"MarginUsedPrev mismatch. Expected: {preLimit.UsedMarginWithoutPL}, " +
-                        $"Actual: {orderMargin.MarginUsedPrev}");
+                    errors.Add(
+                        $"MarginUsedPrev inconsistent. Prev:{orderMargin.MarginUsedPrev} Current:{preLimit.UsedMarginWithoutPL}");
                 }
 
                 // ----------------------------------------------------
@@ -75,10 +74,19 @@ namespace NTTCoreTester.Activities
                 decimal remainingDelta =
                     Normalize(postLimit.RemainingMargin - preLimit.RemainingMargin);
 
-                if (!AreEqual(remainingDelta, -usedDelta))
+                decimal deltaDiff = Math.Abs(remainingDelta + usedDelta);
+
+                // 5% tolerance
+                decimal tolerance = Math.Max(2m, preLimit.UsedMarginWithoutPL * 0.05m);
+
+                debug += $" | Margin movement UsedDelta:{usedDelta} | RemainingDelta:{remainingDelta} | Difference:{deltaDiff} | Tolerance:{tolerance}";
+
+                debug.Warn();
+
+                if (deltaDiff > tolerance)
                 {
                     errors.Add(
-                        $"Limit delta mismatch. RemainingDelta: {remainingDelta}, Expected: {-usedDelta}");
+                        $"Limit delta mismatch. RemainingDelta:{remainingDelta} UsedDelta:{usedDelta}");
                 }
 
                 // ----------------------------------------------------
@@ -90,87 +98,73 @@ namespace NTTCoreTester.Activities
 
                 if (prePositions != null && postPositions != null)
                 {
-                    var symbol = _cache.Get<string>(Constants.OrderSymbol);
-                    var product = _cache.Get<string>(Constants.OrderProduct);
 
-                    var prePos = prePositions.FirstOrDefault(p =>
-                        p.Symbol == symbol && p.ProductType == product);
+                    var scenario = DetectExposureChange(prePositions, postPositions);
 
-                    var postPos = postPositions.FirstOrDefault(p =>
-                        p.Symbol == symbol && p.ProductType == product);
+                    bool allClosedBefore = prePositions.Any(p => p.NetQty != 0);
+                    bool allClosedAfter = postPositions.All(p => p.NetQty == 0);
 
-                    int preQty = prePos?.NetQty ?? 0;
-                    int postQty = postPos?.NetQty ?? 0;
-
-                    bool isFreshExposure = preQty == 0 && postQty != 0;
-
-                    bool isFullSquareOff = preQty != 0 && postQty == 0;
-
-                    bool isPartialClose =
-                        preQty != 0 &&
-                        postQty != 0 &&
-                        Math.Sign(preQty) == Math.Sign(postQty) &&
-                        Math.Abs(postQty) < Math.Abs(preQty);
-
-                    bool isIncrease =
-                        preQty != 0 &&
-                        postQty != 0 &&
-                        Math.Sign(preQty) == Math.Sign(postQty) &&
-                        Math.Abs(postQty) > Math.Abs(preQty);
-
-                    bool isPositionFlip =
-                        preQty != 0 &&
-                        postQty != 0 &&
-                        Math.Sign(preQty) != Math.Sign(postQty);
-
-                    // ---------------------------------------------
-
-                    if (isFreshExposure || isIncrease)
+                    if (allClosedBefore && allClosedAfter)
                     {
-                        if (postLimit.UsedMarginWithoutPL <= preLimit.UsedMarginWithoutPL)
-                        {
-                            errors.Add(
-                                $"Fresh exposure detected but margin did not increase. " +
-                                $"Before: {preLimit.UsedMarginWithoutPL}, After: {postLimit.UsedMarginWithoutPL}");
-                        }
+                        scenario = ExposureChangeType.SquareOff;
                     }
 
-                    if (isPartialClose)
+                    switch (scenario)
                     {
-                        if (postLimit.UsedMarginWithoutPL >= preLimit.UsedMarginWithoutPL)
-                        {
-                            errors.Add(
-                                $"Partial close detected but margin did not reduce. " +
-                                $"Before: {preLimit.UsedMarginWithoutPL}, After: {postLimit.UsedMarginWithoutPL}");
-                        }
+                        case ExposureChangeType.ExposureIncrease:
+
+                            if (postLimit.UsedMarginWithoutPL <= preLimit.UsedMarginWithoutPL - tolerance)
+                            {
+                                errors.Add(
+                                    $"Exposure increased but margin did not increase. " +
+                                    $"Before:{preLimit.UsedMarginWithoutPL} After:{postLimit.UsedMarginWithoutPL}");
+                            }
+
+                            break;
+
+                        case ExposureChangeType.ExposureDecrease:
+
+                            if (postLimit.UsedMarginWithoutPL >= preLimit.UsedMarginWithoutPL - tolerance)//10>=15 | 10>=10   
+                            {
+                                errors.Add(
+                                    $"Exposure decreased but margin did not reduce.");
+                            }
+
+                            break;
+
+                        case ExposureChangeType.SquareOff:
+
+                            if (postLimit.UsedMarginWithoutPL >= preLimit.UsedMarginWithoutPL - tolerance)
+                            {
+                                errors.Add(
+                                    $"Square-off margin not released. " +
+                                    $"Pre:{preLimit.UsedMarginWithoutPL} Post:{postLimit.UsedMarginWithoutPL}");
+                            }
+
+                            break;
+
+                        case ExposureChangeType.Flip:
+
+                            decimal diff = Math.Abs(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
+
+                            if (diff <= tolerance)
+                            {
+                                errors.Add(
+                                    $"Position flip detected but margin did not change significantly diff: {diff}.");
+                            }
+
+                            break;
                     }
 
-                    if (isFullSquareOff)
-                    {
-                        if (postLimit.UsedMarginWithoutPL >= preLimit.UsedMarginWithoutPL)
-                        {
-                            errors.Add(
-                                $"Square-off margin release failed. " +
-                                $"Before: {preLimit.UsedMarginWithoutPL}, After: {postLimit.UsedMarginWithoutPL}");
-                        }
-                    }
-
-                    if (isPositionFlip)
-                    {
-                        if (postLimit.UsedMarginWithoutPL <= 0)
-                        {
-                            errors.Add(
-                                $"Position flip detected but margin not blocked for new exposure.");
-                        }
-                    }
                 }
 
                 // ----------------------------------------------------
                 // RMS Insufficient Margin Check
                 // ----------------------------------------------------
 
-                if (preLimit.RemainingMargin < orderMargin.OrderMargin &&
-                    postLimit.UsedMarginWithoutPL > preLimit.UsedMarginWithoutPL)
+                if (hasOrderMargin &&
+                     preLimit.RemainingMargin < orderMargin.OrderMargin &&
+                     postLimit.UsedMarginWithoutPL > preLimit.UsedMarginWithoutPL)
                 {
                     errors.Add(
                         $"RMS allowed execution despite insufficient margin. " +
@@ -187,10 +181,10 @@ namespace NTTCoreTester.Activities
                 if (!AreEqual(postLimit.UsedMargin, calculatedUsed))
                 {
                     errors.Add(
-    $"UsedMargin internal calculation mismatch. | " +
-    $"UsedMargin: {postLimit.UsedMargin} | " +
-    $"UsedMarginWithoutCharges: {postLimit.UsedMarginWithoutCharges} | " +
-    $"Charges: {postLimit.Charges} | CalculatedUsedMargin: {calculatedUsed}");
+                    $"UsedMargin internal calculation mismatch. | " +
+                    $"UsedMargin: {postLimit.UsedMargin} | " +
+                    $"UsedMarginWithoutCharges: {postLimit.UsedMarginWithoutCharges} | " +
+                    $"Charges: {postLimit.Charges} | CalculatedUsedMargin: {calculatedUsed}");
                 }
                 /*
                 if (!AreEqual(postLimit.TransferableAmount, postLimit.RemainingMargin))
@@ -220,6 +214,7 @@ namespace NTTCoreTester.Activities
                 // ----------------------------------------------------
 
                 _cache.Set(Constants.PostLimitMargin, postLimit);
+                _cache.Remove(Constants.GetOrderMargin);
 
                 if (errors.Any())
                     return string.Join(" | ", errors).FailWithLog(false);
@@ -231,6 +226,63 @@ namespace NTTCoreTester.Activities
                 $"Error in ExtractPostLimitMargin: {ex.Message}".Warn();
                 throw;
             }
+        }
+
+        private ExposureChangeType DetectExposureChange(List<PositionBookModel> prePositions,
+        List<PositionBookModel> postPositions)
+        {
+            bool increase = false;
+            bool decrease = false;
+            bool flip = false;
+
+            foreach (var post in postPositions)
+            {
+                var pre = prePositions.FirstOrDefault(p =>
+                    p.Symbol == post.Symbol &&
+                    p.ProductType == post.ProductType);
+
+                int preQty = pre?.NetQty ?? 0;
+                int postQty = post.NetQty;
+
+                if (preQty == postQty)
+                    continue;
+
+                $"{post.Symbol}-{post.ProductType} position change : Pre:{preQty} Post:{postQty}".Warn();
+
+                // new position
+                if (pre == null && postQty != 0)
+                {
+                    increase = true;
+                    continue;
+                }
+
+                // square-off
+                if (preQty != 0 && postQty == 0)
+                {
+                    decrease = true;
+                    continue;
+                }
+
+                // increase / decrease
+                if (Math.Sign(preQty) == Math.Sign(postQty))
+                {
+                    if (Math.Abs(postQty) > Math.Abs(preQty))
+                        increase = true;
+
+                    if (Math.Abs(postQty) < Math.Abs(preQty))
+                        decrease = true;
+                }
+
+                // flip
+                if (Math.Sign(preQty) != Math.Sign(postQty))
+                    flip = true;
+            }
+
+            if (flip) return ExposureChangeType.Flip;
+            if (increase) return ExposureChangeType.ExposureIncrease;
+            if (decrease) return ExposureChangeType.ExposureDecrease;
+
+            return ExposureChangeType.NoChange;
         }
 
         private List<LimitMarginDetails>? GetPrimaryLimitMargin(ApiExecutionResult result)

@@ -1,50 +1,57 @@
 ﻿using Newtonsoft.Json.Linq;
 using NTTCoreTester.Core.Helper;
 using NTTCoreTester.Core.Models;
+using NTTCoreTester.Models;
 
 namespace NTTCoreTester.Activities
 {
-    public class ExtractTradeFill(PlaceholderCache cache) : IActivityHandler
+    public class ExtractTradeFill(PlaceholderCache _cache) : IActivityHandler
     {
-        private readonly PlaceholderCache _cache = cache;
-
         public string Name => nameof(ExtractTradeFill);
 
         public ActivityResult Execute(ApiExecutionResult result, string endpoint)
         {
             try
             {
-                var tradesArray = result.DataObject?["AllTrades"] as JArray;
+                var tradesToken = result.DataObject?["AllTrades"];
 
-                if (tradesArray == null)
+                if (tradesToken == null || tradesToken.Type != JTokenType.Array)
                     return ActivityResult.HardFail("Trades not found");
 
-                string? clientOrdId = _cache.Get<string>(Constants.ClientOrdId);
-                if (clientOrdId == null)
-                    return $"Client order Id not found in {endpoint}".FailWithLog();
+                var tradesArray = tradesToken.ToObject<List<TradeModel>>();
+                if (tradesArray == null || !tradesArray.Any())
+                    return "Trades list empty".FailWithLog(true);
 
-                var relatedTrades = tradesArray
-                    .Where(t => t["ClientOrdId"]?.Value<string>() == clientOrdId);
+                var clientOrderIds = _cache.Get<Dictionary<string, string>>(Constants.ClientOrdIds);
 
-                int totalSignedQty = relatedTrades.Sum(t =>
+                if (clientOrderIds == null || !clientOrderIds.Any())
+                    return "ClientOrdIds not found in cache".FailWithLog(true);
+
+                var filledQtyMap = new Dictionary<string, int>();
+
+                foreach (var kv in clientOrderIds)
                 {
-                    int qty = t["TradedQty"]?.Value<int>() ?? 0;
-                    string side = t["BuySell"]?.Value<string>() ?? "";
+                    string key = kv.Key;
+                    string ordId = kv.Value;
 
-                    return side.Equals("Buy", StringComparison.OrdinalIgnoreCase)
-                        ? qty
-                        : -qty;
-                });
+                    var relatedTrades = tradesArray.Where(t => t.ClientOrdId == ordId);
 
-                if (totalSignedQty == 0)
-                    return "No quantity filled yet".FailWithLog(false);              
+                    int signedQty = relatedTrades.Sum(t =>
+                    {
+                        int qty = t.TradedQty;
+                        return t.BuySell.Equals("Buy", StringComparison.OrdinalIgnoreCase)
+                            ? qty
+                            : -qty;
+                    });
 
-                _cache.Set(Constants.FilledQty, totalSignedQty);
+                    filledQtyMap[key] = signedQty;
 
-                var log= $"Client order id: {clientOrdId}: Total filled quantity = {totalSignedQty}";
-                log.Warn();
+                    $"Trade fill: {key} Qty:{signedQty}".Warn();
+                }
 
-                return ActivityResult.Success(log);
+                _cache.Set(Constants.FilledQtyBySymbol, filledQtyMap);
+
+                return ActivityResult.Success("Trade fills extracted");
             }
             catch (Exception ex)
             {

@@ -38,13 +38,20 @@ namespace NTTCoreTester.Activities
                 return $"Order {key} not found".FailWithLog();
 
             var order = relatedOrders.FirstOrDefault();
-            if (order == null) return $"Order {key} not found".FailWithLog();
+            if (order == null) 
+                return $"Order {key} not found".FailWithLog();
 
             cache.Set(Constants.OrderNumber, order.OrderNumber);
             cache.Set(Constants.TotalQuantity, order.Quantity);
             cache.Set(Constants.OrderSymbol, order.TypeSymbol);
             cache.Set(Constants.OrderProduct, order.Product);
             cache.Set(Constants.OrderSide, order.TransactionType);
+
+            var map = cache.Get<Dictionary<string, string?>>(Constants.ClientOrdIds) ?? [];
+
+            map[$"{order.TypeSymbol}-{order.Product}"] = order.ClientOrderId;
+
+            cache.Set(Constants.ClientOrdIds, map);
 
             var log = $"status: {order.ExchangeStatus}, Product: {order.Product}, type: {order.TransactionType}, ordno:{order.OrderNumber}, qty:{order.Quantity}";
             log.Warn();

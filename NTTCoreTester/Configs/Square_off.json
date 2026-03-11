@@ -1,0 +1,129 @@
+{
+  "suiteName": "sq-off",
+  "description": "Trading validation scenarios",
+  "stopOnFailure": false,
+  "requests": [
+    {
+      "endpoint": "PositionBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPrePositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+
+    {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "PositionSquareOff",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "ClientType": "ALL"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "activity": "ExtractSquareOffOrder",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+    {
+      "endpoint": "TradeBook",
+      "description": "Extracting Trade Book to check the order is traded or not and also to get the trade details for comparing with position book.",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService"
+      },
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+
+    {
+      "endpoint": "Limits",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "ActivityOrderBook",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "RMS"
+      },
+      "activity": "ValidateSquareOffExecution",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    }
+
+  ]
+}

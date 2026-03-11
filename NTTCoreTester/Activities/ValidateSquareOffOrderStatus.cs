@@ -19,6 +19,7 @@ namespace NTTCoreTester.Activities
         {
             try
             {
+                List<string> errors = [];
                 var postPositions = cache.Get<List<PositionBookModel>>(Constants.PostPositions);
 
                 if (postPositions == null)
@@ -50,22 +51,28 @@ namespace NTTCoreTester.Activities
 
                 var orders = ordersToken.ToObject<List<OrderDetails>>();
 
+                var clientOrdIds = cache.Get<List<string>>(Constants.ClientOrdIds);
+
+                foreach (var orderId in clientOrdIds)
+                {
+                    var relatedOrders = orders
+                        .Where(o => o.NewClientOrderId == orderId)
+                        .ToList();
+
+                    bool filled = relatedOrders.Any(o =>
+                        o.OrderStatus == OrderEnumStatus.ORDER_TRADED);
+
+                    if (!filled)
+                    {
+                        errors.Add($"Square-off order {orderId} not filled.");
+                    }
+                }
                 string? clientOrdId = cache.Get<string>(Constants.ClientOrdId);
 
-                var relatedOrders = orders?.Where(o => o.NewClientOrderId == clientOrdId).ToList();
-
-                if (relatedOrders == null || !relatedOrders.Any())
-                    return $"Order {clientOrdId} not found"
-                        .FailWithLog(true);
-
-                bool filled = relatedOrders.Any(o => o.OrderStatus is OrderEnumStatus.ORDER_TRADED);
-
-                if (!filled)
+                if (errors.Any())
                 {
-                    var states = string.Join(" | ", relatedOrders.Select(o => o.Status));
-
-                    return $"Position is zero but square-off order not filled. Current states: {states}"
-                        .FailWithLog();
+                    var log = $"Square-off validation failed for ClientOrdId: {clientOrdId}. Errors: {string.Join(" | ", errors)}";
+                    return log.FailWithLog();
                 }
 
                 return ActivityResult.Success();

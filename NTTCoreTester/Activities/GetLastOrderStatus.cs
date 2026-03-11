@@ -50,6 +50,11 @@ namespace NTTCoreTester.Activities
             _cache.Set(Constants.OrderSymbol, orderToUse.TypeSymbol);
             _cache.Set(Constants.OrderProduct, orderToUse.Product);
             _cache.Set(Constants.OrderSide, orderToUse.TransactionType);
+            var map = _cache.Get<Dictionary<string, string>>(Constants.ClientOrdIds)?? [];
+
+            map[$"{orderToUse.TypeSymbol}-{orderToUse.Product}"] = orderToUse.ClientOrderId;
+
+            _cache.Set(Constants.ClientOrdIds, map);
 
 
             if (pendingOrder == null)

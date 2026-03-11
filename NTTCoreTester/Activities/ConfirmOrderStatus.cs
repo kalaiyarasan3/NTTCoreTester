@@ -43,9 +43,17 @@ namespace NTTCoreTester.Activities
             var filledOrder = relatedOrders
                 .FirstOrDefault(x => x.OrderStatus == Enums.OrderEnumStatus.ORDER_TRADED);
 
+            var orderToUse = relatedOrders.First();
+
+            var map = cache.Get<Dictionary<string, string?>>(Constants.ClientOrdIds) ?? [];
+
+            map[$"{orderToUse.TypeSymbol}-{orderToUse.Product}"] = orderToUse.ClientOrderId;
+
+            cache.Set(Constants.ClientOrdIds, map);
+
             if (filledOrder == null)
             {
-                if(relatedOrders.Any(x => x.OrderStatus is OrderEnumStatus.ORDER_PENDING or OrderEnumStatus.ORDER_RECEIVED))
+                if (relatedOrders.Any(x => x.OrderStatus is OrderEnumStatus.ORDER_PENDING or OrderEnumStatus.ORDER_RECEIVED))
                 {
                     $"Order is pending set block margin true".Warn();
                     cache.Set(Constants.ShouldBlockMargin, true);
