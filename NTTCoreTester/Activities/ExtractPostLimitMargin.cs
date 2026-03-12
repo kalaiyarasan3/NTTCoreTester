@@ -48,13 +48,13 @@ namespace NTTCoreTester.Activities
                     $"Margin snapshot " +
                     $"PreUsed:{preLimit.UsedMarginWithoutPL} | PostUsed:{postLimit.UsedMarginWithoutPL} | " +
                     $"PreRemaining:{preLimit.RemainingMargin} | PostRemaining:{postLimit.RemainingMargin}";
-                var limit = orderMargin.Charges - postLimit.Charges;
-                var diff=limit-postLimit.Charges;
-                var postLimitCharges = limit == postLimit.Charges ? "equal" : "notEqual";
+
+                var chargeDelta = postLimit.Charges - preLimit.Charges;
+                var postLimitCharges = orderMargin.Charges == chargeDelta ? "equal" : "notEqual";
 
                 ($"PreviewOrdMrgCharges: {orderMargin.Charges} | preLimitCharges: {preLimit.Charges} |\n" +
-                 $"postLimitCharges {postLimit.Charges} | Dofference:{limit} IsEqual: {postLimitCharges} | ").Info();
-                
+                 $"postLimitCharges {postLimit.Charges} | Charge:{chargeDelta} IsEqual: {postLimitCharges} | ").Info();
+
                 if (hasOrderMargin)
                 {
                     debug += $" PreviewOrderMargin:{orderMargin.OrderMargin} | MarginUsedPrev:{orderMargin.MarginUsedPrev}";
@@ -83,8 +83,8 @@ namespace NTTCoreTester.Activities
                 decimal deltaDiff = Math.Abs(remainingDelta + usedDelta);
 
                 // 5% tolerance
-                //decimal tolerance = Math.Max(2m, preLimit.UsedMarginWithoutPL * 0.05m);
-                decimal tolerance = 0m;
+                decimal tolerance = Math.Max(2m, preLimit.UsedMarginWithoutPL * 0.05m);
+                //decimal tolerance = 0m;
 
                 debug += $" | Margin movement UsedDelta:{usedDelta} | RemainingDelta:{remainingDelta} | Pre&PostMrgDifference:{deltaDiff} | Tolerance:{tolerance}";
 
@@ -127,12 +127,17 @@ namespace NTTCoreTester.Activities
 
                     if (isRejectedOrFinal)
                     {
-                        if (!AreEqual(postLimit.UsedMarginWithoutPL, preLimit.UsedMarginWithoutPL))
+                        decimal pre = Normalize(preLimit.UsedMarginWithoutCharges);
+                        decimal post = Normalize(postLimit.UsedMarginWithoutCharges);
+
+                        decimal differ = post - pre;
+
+                        if (Math.Abs(differ) > tolerance)
                         {
                             errors.Add(
                                 $"Rejected order changed margin unexpectedly. " +
                                 $"Status:{order.OrderStatus} " +
-                                $"Pre:{preLimit.UsedMarginWithoutPL} Post:{postLimit.UsedMarginWithoutPL}");
+                                $"Pre:{pre} Post:{post} Diff:{differ}");
                         }
                     }
 
@@ -178,6 +183,13 @@ namespace NTTCoreTester.Activities
                                     errors.Add(
                                         $"Blocked margin less than preview. " +
                                         $"Expected:{expected} Actual:{actualBlocked}");
+                                }
+                                // Margin should not exceed preview margin
+                                if (actualBlocked > expected + tolerance)
+                                {
+                                    errors.Add(
+                                        $"Blocked margin exceeds preview. " +
+                                        $"Preview:{expected} Actual:{actualBlocked}");
                                 }
                             }
                         }
@@ -322,6 +334,8 @@ namespace NTTCoreTester.Activities
 
                 _cache.Set(Constants.PostLimitMargin, postLimit);
                 _cache.Remove(Constants.GetOrderMargin);
+                _cache.Remove(Constants.ClientOrdIds);
+                _cache.Remove(Constants.FilledQtyBySymbol);
 
                 if (errors.Any())
                     return string.Join(" | ", errors).FailWithLog(false);

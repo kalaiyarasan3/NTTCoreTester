@@ -131,7 +131,7 @@ namespace NTTCoreTester.UI
 
             Console.WriteLine();
 
-            "B. Browse Scenarios".Warn();
+            "B. Browse Scenarios// Press Enter".Warn();
 
             Console.WriteLine();
 
