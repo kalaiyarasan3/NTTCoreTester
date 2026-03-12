@@ -24,6 +24,7 @@ namespace NTTCoreTester.UI
             {
                 ShowMenu();
                 string? choice = Console.ReadLine()?.Trim();
+                choice = string.IsNullOrWhiteSpace(choice) ? "b" : choice;
 
                 if (choice == "0")
                 {

@@ -48,10 +48,16 @@ namespace NTTCoreTester.Activities
                     $"Margin snapshot " +
                     $"PreUsed:{preLimit.UsedMarginWithoutPL} | PostUsed:{postLimit.UsedMarginWithoutPL} | " +
                     $"PreRemaining:{preLimit.RemainingMargin} | PostRemaining:{postLimit.RemainingMargin}";
+                var limit = orderMargin.Charges - postLimit.Charges;
+                var diff=limit-postLimit.Charges;
+                var postLimitCharges = limit == postLimit.Charges ? "equal" : "notEqual";
 
+                ($"PreviewOrdMrgCharges: {orderMargin.Charges} | preLimitCharges: {preLimit.Charges} |\n" +
+                 $"postLimitCharges {postLimit.Charges} | Dofference:{limit} IsEqual: {postLimitCharges} | ").Info();
+                
                 if (hasOrderMargin)
                 {
-                    debug += $" | OrderMargin:{orderMargin.OrderMargin} | MarginUsedPrev:{orderMargin.MarginUsedPrev}";
+                    debug += $" PreviewOrderMargin:{orderMargin.OrderMargin} | MarginUsedPrev:{orderMargin.MarginUsedPrev}";
                 }
 
                 // ----------------------------------------------------
@@ -256,7 +262,7 @@ namespace NTTCoreTester.Activities
 
                             break;
                     }
-                     
+
                 }
 
                 // ----------------------------------------------------
