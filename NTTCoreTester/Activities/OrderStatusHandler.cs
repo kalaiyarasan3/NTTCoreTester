@@ -43,7 +43,7 @@ namespace NTTCoreTester.Activities
                 return $"Order {key} not found".FailWithLog();
 
             var order = relatedOrders.FirstOrDefault();
-            if (order == null) 
+            if (order == null)
                 return $"Order {key} not found".FailWithLog();
 
             cache.Set(Constants.OrderNumber, order.OrderNumber);
@@ -51,6 +51,7 @@ namespace NTTCoreTester.Activities
             cache.Set(Constants.OrderSymbol, order.TypeSymbol);
             cache.Set(Constants.OrderProduct, order.Product);
             cache.Set(Constants.OrderSide, order.TransactionType);
+            cache.Set(Constants.Order, order);
 
             var map = cache.Get<Dictionary<string, string?>>(Constants.ClientOrdIds) ?? [];
 
@@ -67,9 +68,7 @@ namespace NTTCoreTester.Activities
                 case OrderEnumStatus.ORDER_MODIFIED:
                 case OrderEnumStatus.ORDER_TRADED:
 
-                    cache.Set(Constants.ShouldBlockMargin, true);
-
-                    return ActivityResult.Success(log);                     
+                    return ActivityResult.Success(log);
 
                 case OrderEnumStatus.ORDER_CANCELLED:
                 case OrderEnumStatus.RMS_PENDING:

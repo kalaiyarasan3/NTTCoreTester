@@ -89,6 +89,102 @@ namespace NTTCoreTester.Activities
                         $"Limit delta mismatch. RemainingDelta:{remainingDelta} UsedDelta:{usedDelta}");
                 }
 
+                //----------------------------------------------------
+                // Pending / Rejected Order Validation
+                //----------------------------------------------------
+
+                var order = _cache.Get<OrderDetails>(Constants.Order);
+                if (order != null)
+                {
+                    var prePositionsTmp = _cache.Get<List<PositionBookModel>>(Constants.PrePositions);
+
+                    int preQty = prePositionsTmp?
+                        .FirstOrDefault(p =>
+                            p.Symbol == order.TypeSymbol &&
+                            p.ProductType == order.Product)?
+                        .NetQty ?? 0;
+
+                    bool isRejectedOrFinal =
+                        order.OrderStatus is
+                            OrderEnumStatus.ORDER_CANCELLED or
+                            OrderEnumStatus.ORDER_REJECTED or
+                            OrderEnumStatus.RMS_PENDING or
+                            OrderEnumStatus.RMS_ORDER_REJECTED or
+                            OrderEnumStatus.NSE_ADAPTOR_REJECTION or
+                            OrderEnumStatus.NOT_FOUND or
+                            OrderEnumStatus.TRANSACTION_NOT_ALLOWED;
+
+                    //----------------------------------------------------
+                    // REJECTED / FINAL ORDER
+                    //----------------------------------------------------
+
+                    if (isRejectedOrFinal)
+                    {
+                        if (!AreEqual(postLimit.UsedMarginWithoutPL, preLimit.UsedMarginWithoutPL))
+                        {
+                            errors.Add(
+                                $"Rejected order changed margin unexpectedly. " +
+                                $"Status:{order.OrderStatus} " +
+                                $"Pre:{preLimit.UsedMarginWithoutPL} Post:{postLimit.UsedMarginWithoutPL}");
+                        }
+                    }
+
+                    //----------------------------------------------------
+                    // PENDING / ACTIVE ORDER
+                    //----------------------------------------------------
+
+                    if (order.OrderStatus is
+                        OrderEnumStatus.ORDER_PENDING or
+                        OrderEnumStatus.ORDER_RECEIVED or
+                        OrderEnumStatus.ORDER_MODIFIED or
+                        OrderEnumStatus.ORDER_TRADED)
+                    {
+                        bool exposureIncrease = false;
+
+                        if (order.TransactionType.Equals("Buy", StringComparison.OrdinalIgnoreCase))
+                            exposureIncrease = preQty >= 0;
+
+                        if (order.TransactionType.Equals("Sell", StringComparison.OrdinalIgnoreCase))
+                            exposureIncrease = preQty <= 0;
+
+                        if (exposureIncrease)
+                        {
+                            decimal actualBlocked =
+                                Normalize(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
+
+                            if (actualBlocked <= 0)
+                            {
+                                errors.Add(
+                                    $"Pending order should block margin but did not. " +
+                                    $"Pre:{preLimit.UsedMarginWithoutPL} Post:{postLimit.UsedMarginWithoutPL}");
+                            }
+
+                            // Compare preview margin with actual blocked margin
+                            if (hasOrderMargin)
+                            {
+                                decimal expected = Normalize(orderMargin.OrderMargin);
+
+                                if (actualBlocked < expected - tolerance)
+                                {
+                                    errors.Add(
+                                        $"Blocked margin less than preview. " +
+                                        $"Expected:{expected} Actual:{actualBlocked}");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (postLimit.UsedMarginWithoutPL > preLimit.UsedMarginWithoutPL + tolerance)
+                            {
+                                errors.Add(
+                                    $"Closing pending order unexpectedly blocked margin. " +
+                                    $"Pre:{preLimit.UsedMarginWithoutPL} Post:{postLimit.UsedMarginWithoutPL}");
+                            }
+                        }
+                    }
+                    _cache.Remove(Constants.Order);
+                }
+
                 // ----------------------------------------------------
                 // Position Based Validation
                 // ----------------------------------------------------
@@ -109,11 +205,13 @@ namespace NTTCoreTester.Activities
                         scenario = ExposureChangeType.SquareOff;
                     }
 
+                    decimal change = postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL;
+
                     switch (scenario)
                     {
                         case ExposureChangeType.ExposureIncrease:
 
-                            if (postLimit.UsedMarginWithoutPL <= preLimit.UsedMarginWithoutPL - tolerance)
+                            if (change <= 0)
                             {
                                 errors.Add(
                                     $"Exposure increased but margin did not increase. " +
@@ -124,7 +222,7 @@ namespace NTTCoreTester.Activities
 
                         case ExposureChangeType.ExposureDecrease:
 
-                            if (postLimit.UsedMarginWithoutPL >= preLimit.UsedMarginWithoutPL - tolerance)//10>=15 | 10>=10   
+                            if (change >= -tolerance)
                             {
                                 errors.Add(
                                     $"Exposure decreased but margin did not reduce.");
@@ -134,7 +232,7 @@ namespace NTTCoreTester.Activities
 
                         case ExposureChangeType.SquareOff:
 
-                            if (postLimit.UsedMarginWithoutPL >= preLimit.UsedMarginWithoutPL - tolerance)
+                            if (postLimit.UsedMarginWithoutPL > tolerance)
                             {
                                 errors.Add(
                                     $"Square-off margin not released. " +
@@ -145,17 +243,17 @@ namespace NTTCoreTester.Activities
 
                         case ExposureChangeType.Flip:
 
-                            decimal diff = Math.Abs(postLimit.UsedMarginWithoutPL - preLimit.UsedMarginWithoutPL);
+                            decimal diff = Math.Abs(change);
 
                             if (diff <= tolerance)
                             {
                                 errors.Add(
-                                    $"Position flip detected but margin did not change significantly diff: {diff}.");
+                                    $"Position flip detected but margin did not change significantly diff:{diff}.");
                             }
 
                             break;
                     }
-
+                     
                 }
 
                 // ----------------------------------------------------

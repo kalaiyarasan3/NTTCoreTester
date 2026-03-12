@@ -11,6 +11,7 @@ namespace NTTCoreTester.Core.Helper
         public const string ClientOrdId = "cl_ord_id";
         public const string ClientOrdIds = "ClientOrdIds";
         public const string SquareOffClientOrdIds = "SquareOffClientOrdIds";
+        public const string Order = "Order";    
         public const string OrderNumber = "ordno";
         public const string TotalQuantity = "Total_Quantity";
         public const string ShouldBlockMargin = "ShouldBlockMargin";
@@ -30,7 +31,7 @@ namespace NTTCoreTester.Core.Helper
         public const string OrderProduct = "OrderProduct";
         public const string OrderSide = "OrderSide";
 
-        public const string  PlaceOrderTime = "PlaceOrderTime";
+        public const string PlaceOrderTime = "PlaceOrderTime";
         public const string OrderBookAddedOn = "OrderBookAddedOn";
 
 
