@@ -9,8 +9,6 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
-    <None Remove="Configs\cancel_pending_order_request.json" />
-    <None Remove="Configs\Pledge_request.json" />
     <None Remove="Configs\Uat - Copy.json" />
     <None Remove="Configs\Uat_extended_flow.json" />
     <None Remove="ConfigMaster\_.json" />
@@ -40,31 +38,10 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\CNC_Opt_Buy_PlaceOrder .json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\Logout.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\CNC_Fut_PlaceOrder.json">
+    <Content Include="Configs\.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\1Login - Copy.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\MarketWatch.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\cancel_pending_order_request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\Place_Ord&amp;Mod_CNC.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\Pledge_request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\PositionCheck.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\1Login.json">
@@ -74,9 +51,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Uat.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configs\Place_Order_MIS.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Uat_extended_flow.json">
@@ -172,12 +146,6 @@
     <PackageReference Include="Scrutor" Version="7.0.0" />
 	  <None Update="appsettings.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Configs\FundTransfer.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Configs\Square_off.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
   </ItemGroup>
 
