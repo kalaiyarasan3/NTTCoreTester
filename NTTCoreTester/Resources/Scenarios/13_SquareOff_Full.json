@@ -1,0 +1,77 @@
+{
+  "testName": "Full Square-Off - All Positions",
+  "description": "Trigger full square-off for all open MIS positions, validate all positions go to zero and margin is fully released.",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "PositionBook",
+      "activity": "ExtractPrePositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "PositionSquareOff",
+      "activity": "",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "ClientType": "ALL"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "activity": "ExtractSquareOffOrder",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+    {
+      "endpoint": "TradeBook",
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "activity": "ValidateSquareOffExecution",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    }
+  ]
+}

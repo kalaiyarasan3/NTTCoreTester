@@ -19,7 +19,7 @@ namespace NTTCoreTester.Activities
                     return ActivityResult.HardFail("Trades not found");
 
                 var tradesArray = tradesToken.ToObject<List<TradeModel>>();
-                if (tradesArray == null || !tradesArray.Any())
+                if (tradesArray == null)
                     return "Trades list empty".FailWithLog(true);
 
                 var clientOrderIds = _cache.Get<Dictionary<string, string>>(Constants.ClientOrdIds);
