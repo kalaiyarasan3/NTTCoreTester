@@ -1,23 +1,167 @@
 {
   "masterTestName": "Regression_Run",
-  "description": "Runs all important Tests",
+  "description": "Runs ALL test cases - complete regression suite",
   "stopOnFailure": true,
   "Tests": [
     {
       "TestName": "Login",
-      "path": "Login",
+      "path": "Authorization/Login",
+      "enabled": true
+    },
+    {
+      "TestName": "LoginSession",
+      "path": "Authorization/LoginSession",
+      "enabled": true
+    },
+
+    // ── Derivatives ────────────────────────────────────────────
+    {
+      "TestName": "06_Futures_MIS_Buy",
+      "path": "Derivatives/06_Futures_MIS_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "07_Futures_MIS_Sell",
+      "path": "Derivatives/07_Futures_MIS_Sell",
+      "enabled": true
+    },
+    {
+      "TestName": "08_Futures_CNC_Buy",
+      "path": "Derivatives/08_Futures_CNC_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "09_Futures_CNC_Sell",
+      "path": "Derivatives/09_Futures_CNC_Sell",
+      "enabled": true
+    },
+    {
+      "TestName": "10_Options_MIS_Buy",
+      "path": "Derivatives/10_Options_MIS_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "11_Options_MIS_Sell",
+      "path": "Derivatives/11_Options_MIS_Sell",
+      "enabled": true
+    },
+    {
+      "TestName": "12_Options_CNC_Buy",
+      "path": "Derivatives/12_Options_CNC_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "15_Hedge_Create",
+      "path": "Derivatives/15_Hedge_Create",
+      "enabled": true
+    },
+    {
+      "TestName": "16_Hedge_Remove",
+      "path": "Derivatives/16_Hedge_Remove",
       "enabled": true
     },
     {
       "TestName": "21_MCX_Futures_CNC_Buy",
-      "path": "21_MCX_Futures_CNC_Buy",
+      "path": "Derivatives/21_MCX_Futures_CNC_Buy",
       "enabled": true
     },
     {
-      "TestName": "Logout",
-      "path": "Logout",
-      "enabled": false
-    }
+      "TestName": "22_CDS_Currency_MIS_Buy",
+      "path": "Derivatives/22_CDS_Currency_MIS_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "23_BFO_Options_MIS_Buy",
+      "path": "Derivatives/23_BFO_Options_MIS_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "25_NFO_CF_Sqoff_CrossSegment",
+      "path": "Derivatives/25_NFO_CF_Sqoff_CrossSegment",
+      "enabled": true
+    },
+    {
+      "TestName": "26_BFO_CF_Sqoff_CrossSegment",
+      "path": "Derivatives/26_BFO_CF_Sqoff_CrossSegment",
+      "enabled": true
+    },
+    {
+      "TestName": "27_MCX_Sqoff_CrossSegment",
+      "path": "Derivatives/27_MCX_Sqoff_CrossSegment",
+      "enabled": true
+    },
 
+    // ── Equities ───────────────────────────────────────────────
+    {
+      "TestName": "01_Equity_CNC_Buy",
+      "path": "Equities/01_Equity_CNC_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "02_Equity_CNC_Sell",
+      "path": "Equities/02_Equity_CNC_Sell",
+      "enabled": true
+    },
+    {
+      "TestName": "03_Equity_MIS_Buy",
+      "path": "Equities/03_Equity_MIS_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "04_Equity_MIS_Sell",
+      "path": "Equities/04_Equity_MIS_Sell",
+      "enabled": true
+    },
+    {
+      "TestName": "05_Equity_MTF_Buy",
+      "path": "Equities/05_Equity_MTF_Buy",
+      "enabled": true
+    },
+    {
+      "TestName": "13_SquareOff",
+      "path": "Equities/13_SquareOff",
+      "enabled": true
+    },
+    {
+      "TestName": "14_SquareOff_Partial",
+      "path": "Equities/14_SquareOff_Partial",
+      "enabled": true
+    },
+    {
+      "TestName": "17_OrderMod_IncreaseQty",
+      "path": "Equities/17_OrderMod_IncreaseQty",
+      "enabled": true
+    },
+    {
+      "TestName": "18_OrderMod_DecreaseQty",
+      "path": "Equities/18_OrderMod_DecreaseQty",
+      "enabled": true
+    },
+    {
+      "TestName": "19_RMS_InsufficientMargin",
+      "path": "Equities/19_RMS_InsufficientMargin",
+      "enabled": true
+    },
+    {
+      "TestName": "20_AMO_PendingCancel_MarginRelease",
+      "path": "Equities/20_AMO_PendingCancel_MarginRelease",
+      "enabled": true
+    },
+    {
+      "TestName": "24_Holding_Sell_MarginCheck",
+      "path": "Equities/24_Holding_Sell_MarginCheck",
+      "enabled": true
+    },
+    {
+      "TestName": "28_Equity_BuySell_MIS",
+      "path": "Equities/28_Equity_BuySell_MIS",
+      "enabled": true
+    },
+
+    {
+      "TestName": "Logout",
+      "path": "Authorization/Logout",
+      "enabled": true
+    }
   ]
 }
