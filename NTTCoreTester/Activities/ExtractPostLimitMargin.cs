@@ -139,14 +139,16 @@ namespace NTTCoreTester.Activities
                         OrderEnumStatus.ORDER_MODIFIED or
                         OrderEnumStatus.ORDER_TRADED)
                     {
-                        bool exposureIncrease = false;
+                        int orderQty = order.Quantity.GetValueOrDefault();
 
-                        if (order.TransactionType.Equals("Buy", StringComparison.OrdinalIgnoreCase))
-                            exposureIncrease = preQty >= 0;
+                        int signedOrderQty =
+                            order.TransactionType.Equals("Buy", StringComparison.OrdinalIgnoreCase)
+                                ? orderQty
+                                : -orderQty;
 
-                        if (order.TransactionType.Equals("Sell", StringComparison.OrdinalIgnoreCase))
-                            exposureIncrease = preQty <= 0;
+                        int resultingQty = preQty + signedOrderQty;
 
+                        bool exposureIncrease = Math.Abs(resultingQty) > Math.Abs(preQty);
                         if (exposureIncrease)
                         {
                             decimal actualBlocked =
