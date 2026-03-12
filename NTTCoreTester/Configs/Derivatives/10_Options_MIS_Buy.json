@@ -27,7 +27,7 @@
         "actid": "{{uid}}",
         "exch": "NFO",
         "tsym": "{{tsym}}",
-        "qty": "{{lotsize}}",
+        "qty": "1",
         "trantype": "Buy",
         "ordno": "0",
         "prc": 0,
