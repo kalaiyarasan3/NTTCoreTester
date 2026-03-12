@@ -77,9 +77,10 @@ namespace NTTCoreTester.Activities
                 decimal deltaDiff = Math.Abs(remainingDelta + usedDelta);
 
                 // 5% tolerance
-                decimal tolerance = Math.Max(2m, preLimit.UsedMarginWithoutPL * 0.05m);
+                //decimal tolerance = Math.Max(2m, preLimit.UsedMarginWithoutPL * 0.05m);
+                decimal tolerance = 0m;
 
-                debug += $" | Margin movement UsedDelta:{usedDelta} | RemainingDelta:{remainingDelta} | Difference:{deltaDiff} | Tolerance:{tolerance}";
+                debug += $" | Margin movement UsedDelta:{usedDelta} | RemainingDelta:{remainingDelta} | Pre&PostMrgDifference:{deltaDiff} | Tolerance:{tolerance}";
 
                 debug.Warn();
 

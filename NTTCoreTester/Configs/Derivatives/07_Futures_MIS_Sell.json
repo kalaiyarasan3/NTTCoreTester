@@ -1,5 +1,5 @@
 {
-  "testName": "Futures MIS Sell - NFO",
+  "testName": "Futures MIS Sell - NFO Nifty",
   "description": "Place MIS Sell order on NFO futures (DER segment), validate short intraday position.",
   "stopOnFailure": true,
   "requests": [
@@ -8,7 +8,7 @@
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "NFO",
-        "token": "35004"
+        "token": "51714"
       }
     },
     {

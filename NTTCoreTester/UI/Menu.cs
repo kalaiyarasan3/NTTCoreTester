@@ -41,7 +41,7 @@ namespace NTTCoreTester.UI
                 }
 
                 // NEW: browse scenarios
-                if (choice == "50")
+                if (choice == "b")
                 {
                     await ShowScenarioBrowser();
                     continue;
@@ -78,7 +78,7 @@ namespace NTTCoreTester.UI
 
         private void ShowMenu()
         {
-            Console.Clear();
+            //Console.Clear();
 
             "NTT Core Tester".Success();
 
@@ -130,7 +130,7 @@ namespace NTTCoreTester.UI
 
             Console.WriteLine();
 
-            "50. Browse Scenarios".Warn();
+            "B. Browse Scenarios".Warn();
 
             Console.WriteLine();
 

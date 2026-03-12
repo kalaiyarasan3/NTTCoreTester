@@ -17,6 +17,11 @@ namespace NTTCoreTester.Models
 
         [JsonProperty("TradedQty")]
         public int TradedQty { get; set; }
+
+        [JsonProperty("TotalQty")]
+        public int TotalQty { get; set; }
+        [JsonProperty("PendingQty")]
+        public int PendingQty { get; set; }
         public decimal TradePrice { get; set; }
     }
 }

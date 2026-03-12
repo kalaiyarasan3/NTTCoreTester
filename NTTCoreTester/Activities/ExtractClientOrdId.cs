@@ -31,7 +31,7 @@ namespace NTTCoreTester.Activities
             _cache.Set(Constants.ClientOrdId, clOrdId);
             _cache.Set(Constants.PlaceOrderTime, requestTimeRaw);
 
-            var log = $"Client order id: {clOrdId} | PlaceOrderTime = {requestTimeRaw}, Set block margin false";
+            var log = $"Client order id: {clOrdId} | PlaceOrderTime = {requestTimeRaw}";
             log.Warn();
 
             _cache.Set(Constants.ShouldBlockMargin, false);

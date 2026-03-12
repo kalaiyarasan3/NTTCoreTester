@@ -1,5 +1,5 @@
 {
-  "testName": "Futures MIS Buy - NFO",
+  "testName": "Futures MIS Buy - NFO Nifty",
   "description": "Place MIS Buy order on NFO futures (DER segment), validate intraday margin block and position creation.",
   "stopOnFailure": true,
   "requests": [
@@ -7,7 +7,10 @@
       "endpoint": "GetSecurityInfo",
       "description": "Extract security info for NFO futures token.",
       "activity": "ExtractSecurityInfo",
-      "payload": { "exch": "NFO", "token": "35004" }
+      "payload": {
+        "exch": "NFO",
+        "token": "51714"
+      }
     },
     {
       "endpoint": "Limits",
@@ -30,7 +33,7 @@
         "trgprc": "0",
         "dscqty": "0",
         "prd": "MIS",
-        "prctyp": "Limit",
+        "prctyp": "MKT",
         "ordersource": "Web",
         "blprc": "0",
         "filshares": "0",

@@ -44,9 +44,12 @@ namespace NTTCoreTester.Activities
                             : -qty;
                     });
 
+                    var totQty = relatedTrades.Sum(t => t.TradedQty);
+                    int PenQty=relatedTrades.Sum(t=>t.PendingQty);
+
                     filledQtyMap[key] = signedQty;
 
-                    $"Trade fill: {key} Qty:{signedQty}".Warn();
+                    $"Trade fill: {key} Qty:{signedQty} TotalQty: {totQty} PendingQty: {PenQty}".Warn();
                 }
 
                 _cache.Set(Constants.FilledQtyBySymbol, filledQtyMap);
