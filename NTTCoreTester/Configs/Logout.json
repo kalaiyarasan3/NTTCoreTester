@@ -1,0 +1,14 @@
+{
+  "TestName": "Logout",
+  "description": "LogOut",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "Logout",
+      "description": "Logout and invalidate session token",
+      "activity": "",
+      "payload": {
+      }
+    }
+  ]
+}
