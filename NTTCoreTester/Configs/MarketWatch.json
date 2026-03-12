@@ -1,0 +1,65 @@
+{
+  "testName": "Market Watch List",
+  "description": "Adding MWList and add symbols and checking and delete",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "MWList",
+      "description": "Getting List of Market Watch List",
+      "activity": "DeleteMarketWL",
+      "payload": {
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchName",
+      "description": "Adding Market Watch List",
+      "activity": "ExtractMarketWatcListID",
+      "payload": {
+        "MarketWatchName": "TestMWList"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|1624"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|13501"
+      }
+    },
+    {
+      "endpoint": "AddMarketWatchSymbols",
+      "method": "POST",
+      "activity": "",
+      "payload": {
+        "wlid": "{{MarketWatchId}}",
+        "scrips": "NSE|10604"
+      }
+    },
+    {
+      "endpoint": "MarketWatch",
+      "method": "POST",
+      "headers": {
+        "AuthToken": "{{token}}",
+        "Module": "OrderService",
+        "Source": "WEB"
+      },
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "wlid": [
+          "{{MarketWatchId}}"
+        ]
+      }
+    }    
+  ]
+}

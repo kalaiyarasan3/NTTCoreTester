@@ -10,6 +10,7 @@
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="ConfigMaster\_.json" />
+    <None Remove="Configs\MarketWatch.json" />
     <None Remove="ExpectedResponses\BasketOrder_response.json" />
     <None Remove="ExpectedResponses\CancelOrder_response.json" />
     <None Remove="ExpectedResponses\CheckLogin_response.json" />
@@ -151,6 +152,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ConfigMaster\_.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\MarketWatch.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\AddMarketWatchSymbols_response.json">

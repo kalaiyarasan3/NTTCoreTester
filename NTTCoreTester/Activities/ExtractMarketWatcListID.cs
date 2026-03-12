@@ -1,4 +1,5 @@
-﻿using NTTCoreTester.Core.Models;
+﻿using NTTCoreTester.Core.Helper;
+using NTTCoreTester.Core.Models;
 using NTTCoreTester.Models;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,9 @@ namespace NTTCoreTester.Activities
             _cache.Set("MarketWatchId", MarketWatchId);
 
             var log = $"MWId : {MarketWatchId} | Name : TestMWList";
+            log.Info();
      
-            return ActivityResult.Success();
+            return ActivityResult.Success(log);
         }
 
       
