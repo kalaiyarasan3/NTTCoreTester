@@ -27,27 +27,34 @@ namespace NTTCoreTester.UI
 
                 if (choice == "0")
                 {
-                    "\nExiting... CSV will be saved automatically.".Info();
+                    "\nCSV saved.".Info();
                     await _csvReport.Save();
                     continue;
                 }
+
                 if (choice == "00")
                 {
-                    "\nExiting... CSV will be saved automatically.".Info();
+                    "\nSaving and exiting...".Info();
+                    await _csvReport.Save();
                     _cache.Clear();
                     return;
                 }
 
-                
+                // NEW: browse scenarios
+                if (choice == "50")
+                {
+                    await ShowScenarioBrowser();
+                    continue;
+                }
 
                 var masterTests = _configRunner.GetAvailableMasterTest();
                 var Tests = _configRunner.GetAvailableTests();
 
                 int totalOptions = masterTests.Count + Tests.Count;
 
-                if(int.TryParse(choice, out int index) && index > 0 && index <= totalOptions)
+                if (int.TryParse(choice, out int index) && index > 0 && index <= totalOptions)
                 {
-                    if(index <= Tests.Count)
+                    if (index <= Tests.Count)
                     {
                         string selectedTest = Tests[index - 1];
                         await _configRunner.RunTest(selectedTest);
@@ -59,7 +66,6 @@ namespace NTTCoreTester.UI
                         await _configRunner.RunMasterTest(selectedMaster);
                     }
                 }
-
                 else
                 {
                     "\nInvalid option!".Error();
@@ -67,20 +73,19 @@ namespace NTTCoreTester.UI
 
                 "\nPress any key to continue...".Info();
                 Console.ReadKey(true);
-                //Console.Clear();
             }
         }
 
         private void ShowMenu()
         {
-            "NTT Core Tester".Success();  
+            Console.Clear();
 
-            // Show session status using cache
+            "NTT Core Tester".Success();
+
             string? token = _cache.Get<string>("token");
 
             if (!string.IsNullOrEmpty(token))
             {
-                _ = _cache.Get<string>("token");
                 string? userName = _cache.Get<string>("userName");
                 string? userId = _cache.Get<string>("uid");
 
@@ -93,11 +98,10 @@ namespace NTTCoreTester.UI
                 "\nNO ACTIVE SESSION".Warn();
             }
 
-            Console.WriteLine(); 
+            Console.WriteLine();
 
             $"{new string('─', 64)}".Info();
-
-            "AVAILABLE TEST TestS:".Info();
+            "AVAILABLE TESTS".Info();
             $"{new string('─', 64)}".Info();
 
             var masterTests = _configRunner.GetAvailableMasterTest();
@@ -110,17 +114,23 @@ namespace NTTCoreTester.UI
             else
             {
                 int index = 1;
+                "MasterFiles".Info();
+                foreach (var master in masterTests)
+                {
+                    $"{index++}. {master}".Info();
+                }
 
                 foreach (var Test in Tests)
                 {
                     $"{index++}. {Test}".Info();
                 }
 
-                foreach (var master in masterTests)
-                {
-                    $"{index++}. {master}".Info();
-                }
+            
             }
+
+            Console.WriteLine();
+
+            "50. Browse Scenarios".Warn();
 
             Console.WriteLine();
 
@@ -128,7 +138,58 @@ namespace NTTCoreTester.UI
             "00. Save and Exit".Info();
             $"{new string('─', 64)}".Info();
 
-            "\nChoose option: ".Info();   // note: no newline at the end → user types right after
+            "\nChoose option: ".Info();
+        }
+
+        private async Task ShowScenarioBrowser()
+        {
+            Console.Clear();
+
+            "CONFIG SCENARIOS".Success();
+            $"{new string('─', 64)}".Info();
+
+            var scenarios = _configRunner.GetAllScenarios();
+
+            var grouped = scenarios
+                .OrderBy(s => s.Folder)
+                .ThenBy(s => s.Name)
+                .GroupBy(s => s.Folder);
+
+            int index = 1;
+            var map = new Dictionary<int, ScenarioInfo>();
+
+            foreach (var group in grouped)
+            {
+                $"\n[{group.Key.ToUpper()}]".Warn();
+
+                foreach (var scenario in group)
+                {
+                    $"{index}. {scenario.Name}".Info();
+                    map[index] = scenario;
+                    index++;
+                }
+            }
+
+            "\n0. Back".Info();
+            "\nChoose option: ".Info();
+
+            var input = Console.ReadLine();
+
+            if (input == "0")
+                return;
+
+            if (int.TryParse(input, out int selected) && map.ContainsKey(selected))
+            {
+                var scenario = map[selected];
+                await _configRunner.RunTest(scenario.Name);
+            }
+            else
+            {
+                "\nInvalid option!".Error();
+            }
+
+            "\nPress any key to continue...".Info();
+            Console.ReadKey(true);
         }
     }
 }

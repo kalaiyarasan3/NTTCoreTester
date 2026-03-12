@@ -1,0 +1,139 @@
+{
+  "testName": "Equity CNC Buy - NSE",
+  "description": "Place CNC Buy order on NSE equity, validate margin block, position creation, and post-trade margin.",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "GetSecurityInfo",
+      "description": "Extract security info for NSE equity token.",
+      "activity": "ExtractSecurityInfo",
+      "payload": {
+        "exch": "NSE",
+        "token": "2885"
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Capture pre-order margin snapshot.",
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "GetOrderMargin",
+      "description": "Fetch required margin for CNC Buy order.",
+      "activity": "ExtractGetOrderMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "10",
+        "trantype": "Buy",
+        "ordno": "0",
+        "prc": 0,
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "ordersource": "Web",
+        "blprc": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0",
+        "snonum": "0"
+      }
+    },
+    {
+      "endpoint": "PositionBook",
+      "description": "Extract pre-trade positions.",
+      "activity": "ExtractPrePositions",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}",
+        "prd": ""
+      }
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "description": "Place CNC Buy Limit order on NSE equity.",
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Buy",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 10,
+        "prc": "{{lp}}",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
+      }
+    },
+    {
+      "endpoint": "OrderBook",
+      "description": "Save order for tracking.",
+      "activity": "SaveOrders",
+      "payload": { "uid": "{{uid}}", "actid": "{{uid}}" }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Validate order book sync timing.",
+      "activity": "ValidateOrderBookSync",
+      "payload": { "uid": "{{uid}}", "actid": "{{uid}}", "status": "ALL" }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Check order traded status.",
+      "activity": "OrderStatusHandler",
+      "payload": { "uid": "{{uid}}", "actid": "{{uid}}", "status": "ALL" }
+    },
+    {
+      "endpoint": "TradeBook",
+      "description": "Extract trade fill details.",
+      "activity": "ExtractTradeFill",
+      "payload": { "actid": "{{uid}}", "uid": "{{uid}}", "prd": "" }
+    },
+    {
+      "endpoint": "PositionBook",
+      "description": "Validate post-trade position creation.",
+      "activity": "ValidatePostPositions",
+      "payload": { "actid": "{{uid}}", "uid": "{{uid}}", "prd": "" }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Validate margin blocked after CNC Buy.",
+      "activity": "ExtractPostLimitMargin",
+      "payload": { "actid": "{{uid}}", "uid": "{{uid}}" }
+    }
+  ]
+}

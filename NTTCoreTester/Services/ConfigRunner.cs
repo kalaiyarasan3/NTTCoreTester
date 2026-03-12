@@ -33,7 +33,31 @@ namespace NTTCoreTester.Services
             var files = Directory.GetFiles(MASTER_CONFIG_FOLDER, "*.json");
             return files.Select(f => Path.GetFileNameWithoutExtension(f)).ToList();
         }
+        public List<ScenarioInfo> GetAllScenarios()
+        {
+            var scenarios = new List<ScenarioInfo>();
 
+            if (!Directory.Exists(CONFIG_FOLDER))
+                return scenarios;
+
+            var files = Directory.GetFiles(CONFIG_FOLDER, "*.json", SearchOption.AllDirectories);
+
+            foreach (var file in files)
+            {
+                var folder = Path.GetDirectoryName(file)?
+                    .Replace(CONFIG_FOLDER, "")
+                    .Trim(Path.DirectorySeparatorChar);
+
+                scenarios.Add(new ScenarioInfo
+                {
+                    Name = Path.GetFileNameWithoutExtension(file),
+                    Folder = string.IsNullOrEmpty(folder) ? "ROOT" : folder,
+                    Path = file
+                });
+            }
+
+            return scenarios;
+        }
         public async Task RunMasterTest(string masterConfigFileName)
         {
             string filePath = Path.Combine(MASTER_CONFIG_FOLDER, $"{masterConfigFileName}.json");
@@ -86,8 +110,12 @@ namespace NTTCoreTester.Services
 
                 if (!File.Exists(filePath))
                 {
-                    $"\n Config file not found: {filePath}".Error();
-                    return false;
+                    var file = Directory
+                        .GetFiles(CONFIG_FOLDER, $"{configFileName}.json", SearchOption.AllDirectories)
+                        .FirstOrDefault();
+
+                    if (file != null)
+                        filePath = file;
                 }
 
                 // Load config

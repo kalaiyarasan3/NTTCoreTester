@@ -4,26 +4,11 @@
   "stopOnFailure": true,
   "Tests": [
     {
-      "TestName": "1Login",
-      "path": "1Login",
-      "enabled": true
-    },
-    {
-      "TestName": "CNC_Fut_PlaceOrder",
-      "path": "CNC_Fut_PlaceOrder",
-      "enabled": true
-    },
-    {
-      "TestName": "Square_off",
-      "path": "Square_off",
+      "TestName": "Login",
+      "path": "Login",
       "enabled": true
     },
 
-    {
-      "TestName": "FundTransfer",
-      "path": "FundTransfer",
-      "enabled": false
-    },
     {
       "TestName": "Logout",
       "path": "Logout",

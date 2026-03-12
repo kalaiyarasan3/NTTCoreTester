@@ -9,8 +9,6 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
-    <None Remove="Configs\Uat - Copy.json" />
-    <None Remove="Configs\Uat_extended_flow.json" />
     <None Remove="ConfigMaster\_.json" />
     <None Remove="ExpectedResponses\BasketOrder_response.json" />
     <None Remove="ExpectedResponses\CancelOrder_response.json" />
@@ -32,28 +30,124 @@
     <None Remove="ExpectedResponses\PositionBook_response.json" />
     <None Remove="ExpectedResponses\SendOTP_response.json" />
     <None Remove="ExpectedResponses\ValOTPStPwd.json" />
+    <None Remove="Resources\Scenarios\13_SquareOff_Full.json" />
+    <None Remove="Resources\Scenarios\14_SquareOff_Partial.json" />
+    <None Remove="Resources\Scenarios\15_Hedge_Create.json" />
+    <None Remove="Resources\Scenarios\16_Hedge_Remove.json" />
+    <None Remove="Resources\Scenarios\20_AMO_PendingCancel_MarginRelease.json" />
+    <None Remove="Resources\Scenarios\21_MCX_Futures_CNC_Buy.json" />
+    <None Remove="Resources\Scenarios\22_CDS_Currency_MIS_Buy.json" />
+    <None Remove="Resources\Scenarios\23_BFO_Options_MIS_Buy.json" />
+    <None Remove="Resources\Scenarios\24_Holding_Sell_MarginCheck.json" />
+    <None Remove="Resources\Scenarios\25_NFO_CF_Sqoff_CrossSegment.json" />
+    <None Remove="Resources\Scenarios\26_BFO_CF_Sqoff_CrossSegment.json" />
+    <None Remove="Resources\Scenarios\27_MCX_CF_Sqoff_CrossSegment.json" />
+    <None Remove="Resources\Scenarios\Derivatives\06_Futures_MIS_Buy.json" />
+    <None Remove="Resources\Scenarios\Derivatives\07_Futures_MIS_Sell.json" />
+    <None Remove="Resources\Scenarios\Derivatives\08_Futures_CNC_Buy.json" />
+    <None Remove="Resources\Scenarios\Derivatives\09_Futures_CNC_Sell.json" />
+    <None Remove="Resources\Scenarios\Derivatives\10_Options_MIS_Buy.json" />
+    <None Remove="Resources\Scenarios\Derivatives\11_Options_MIS_Sell.json" />
+    <None Remove="Resources\Scenarios\Derivatives\12_Options_CNC_Buy.json" />
+    <None Remove="Resources\Scenarios\Equities\01_Equity_CNC_Buy.json" />
+    <None Remove="Resources\Scenarios\Equities\02_Equity_CNC_Sell.json" />
+    <None Remove="Resources\Scenarios\Equities\03_Equity_MIS_Buy.json" />
+    <None Remove="Resources\Scenarios\Equities\04_Equity_MIS_Sell.json" />
+    <None Remove="Resources\Scenarios\Equities\05_Equity_MTF_Buy.json" />
+    <None Remove="Resources\Scenarios\Equities\17_OrderMod_IncreaseQty.json" />
+    <None Remove="Resources\Scenarios\Equities\18_OrderMod_DecreaseQty.json" />
+    <None Remove="Resources\Scenarios\Equities\19_RMS_InsufficientMargin.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\.json">
+    <Content Include="Configs\13_SquareOff_Full.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\1Login - Copy.json">
+    <Content Include="Configs\14_SquareOff_Partial.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\1Login.json">
+    <Content Include="Configs\15_Hedge_Create.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Uat - Copy.json">
+    <Content Include="Configs\16_Hedge_Remove.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Uat.json">
+    <Content Include="Configs\LoginSession.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Uat_extended_flow.json">
+    <Content Include="Configs\Login.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\20_AMO_PendingCancel_MarginRelease.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\21_MCX_Futures_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\22_CDS_Currency_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\23_BFO_Options_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\24_Holding_Sell_MarginCheck.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\25_NFO_CF_Sqoff_CrossSegment.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\26_BFO_CF_Sqoff_CrossSegment.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\27_MCX_CF_Sqoff_CrossSegment.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Derivatives\06_Futures_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Derivatives\07_Futures_MIS_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Derivatives\08_Futures_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Derivatives\09_Futures_CNC_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Derivatives\10_Options_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Derivatives\11_Options_MIS_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Derivatives\12_Options_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\01_Equity_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\02_Equity_CNC_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\03_Equity_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\04_Equity_MIS_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\05_Equity_MTF_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\17_OrderMod_IncreaseQty.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\18_OrderMod_DecreaseQty.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\19_RMS_InsufficientMargin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ConfigMaster\_.json">
@@ -132,6 +226,87 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ExpectedResponses\ValOTPStPwd.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\13_SquareOff_Full.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\14_SquareOff_Partial.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\15_Hedge_Create.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\16_Hedge_Remove.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\20_AMO_PendingCancel_MarginRelease.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\21_MCX_Futures_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\22_CDS_Currency_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\23_BFO_Options_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\24_Holding_Sell_MarginCheck.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\25_NFO_CF_Sqoff_CrossSegment.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\26_BFO_CF_Sqoff_CrossSegment.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\27_MCX_CF_Sqoff_CrossSegment.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Derivatives\06_Futures_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Derivatives\07_Futures_MIS_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Derivatives\08_Futures_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Derivatives\09_Futures_CNC_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Derivatives\10_Options_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Derivatives\11_Options_MIS_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Derivatives\12_Options_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\01_Equity_CNC_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\02_Equity_CNC_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\03_Equity_MIS_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\04_Equity_MIS_Sell.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\05_Equity_MTF_Buy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\17_OrderMod_IncreaseQty.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\18_OrderMod_DecreaseQty.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Scenarios\Equities\19_RMS_InsufficientMargin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

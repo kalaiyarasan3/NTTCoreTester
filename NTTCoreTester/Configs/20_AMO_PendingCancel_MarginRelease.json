@@ -1,0 +1,157 @@
+{
+  "testName": "AMO Pending Order Cancel - Margin Release",
+  "description": "Place CNC Buy limit order far below market (AMO style) to keep it pending. Validate margin block, cancel it, validate full margin release.",
+  "stopOnFailure": true,
+  "requests": [
+    {
+      "endpoint": "GetSecurityInfo",
+      "activity": "ExtractSecurityInfo",
+      "payload": {
+        "exch": "NSE",
+        "token": "13501"
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "GetOrderMargin",
+      "activity": "ExtractGetOrderMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "NSE",
+        "tsym": "{{tsym}}",
+        "qty": "1",
+        "trantype": "Buy",
+        "ordno": "0",
+        "prc": "{{lp}}",
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "ordersource": "Web",
+        "blprc": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0",
+        "snonum": "0"
+      }
+    },
+    {
+      "endpoint": "PlaceOrder",
+      "description": "Place CNC Buy Limit far below market price to ensure pending state.",
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Buy",
+        "norenordno": "0",
+        "segment": "EQ",
+        "tsym": "{{tsym}}",
+        "qty": 1,
+        "prc": "7.00",
+        "trgprc": "0",
+        "dscqty": 0,
+        "prd": "CNC",
+        "prctyp": "Limit",
+        "mkt_protection": "0",
+        "ret": "DAY",
+        "remarks": "",
+        "ordersource": "Web",
+        "bpprc": "0",
+        "blprc": "0",
+        "trailprc": "0",
+        "ext_remarks": "External remarks",
+        "cl_ord_id": "",
+        "tsym2": "",
+        "trantype2": "",
+        "qty2": "0",
+        "prc2": "0",
+        "tsym3": "0",
+        "trantype3": "",
+        "qty3": "0",
+        "prc3": "0",
+        "algo_id": "0",
+        "naic_code": "0",
+        "snonum": "0",
+        "filshares": "0",
+        "rorgqty": "0",
+        "orgtrgprc": "0"
+      }
+    },
+    {
+      "endpoint": "OrderBook",
+      "activity": "SaveOrders",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Validate order is in PENDING state.",
+      "activity": "OrderStatusHandler",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "activity": "ValidateOrderBookSync",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Validate margin blocked for pending order.",
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    },
+    {
+      "endpoint": "CancelOrder",
+      "description": "Cancel the pending order.",
+      "activity": "",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "cl_ord_id": "{{cl_ord_id}}",
+        "ordno": "{{cl_ord_id}}",
+        "ext_remarks": "cancel pending"
+      }
+    },
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Validate order status is CANCELLED.",
+      "activity": "OrderStatusHandler",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+    {
+      "endpoint": "Limits",
+      "description": "Validate margin fully released after cancellation.",
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "actid": "{{uid}}",
+        "uid": "{{uid}}"
+      }
+    }
+  ]
+}
