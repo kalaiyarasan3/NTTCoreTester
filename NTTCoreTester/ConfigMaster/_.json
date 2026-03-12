@@ -8,7 +8,11 @@
       "path": "Login",
       "enabled": true
     },
-
+    {
+      "TestName": "21_MCX_Futures_CNC_Buy",
+      "path": "21_MCX_Futures_CNC_Buy",
+      "enabled": true
+    },
     {
       "TestName": "Logout",
       "path": "Logout",

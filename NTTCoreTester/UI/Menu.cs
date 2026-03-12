@@ -54,16 +54,16 @@ namespace NTTCoreTester.UI
 
                 if (int.TryParse(choice, out int index) && index > 0 && index <= totalOptions)
                 {
-                    if (index <= Tests.Count)
+                    if (index <= masterTests.Count)
                     {
-                        string selectedTest = Tests[index - 1];
-                        await _configRunner.RunTest(selectedTest);
+                        string selectedMaster = masterTests[index - 1];
+                        await _configRunner.RunMasterTest(selectedMaster);
                     }
                     else
                     {
-                        int masterIndex = index - Tests.Count;
-                        string selectedMaster = masterTests[masterIndex - 1];
-                        await _configRunner.RunMasterTest(selectedMaster);
+                        int testIndex = index - masterTests.Count;
+                        string selectedTest = Tests[testIndex - 1];
+                        await _configRunner.RunTest(selectedTest);
                     }
                 }
                 else
