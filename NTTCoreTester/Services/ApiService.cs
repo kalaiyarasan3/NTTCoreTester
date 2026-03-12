@@ -67,7 +67,15 @@ namespace NTTCoreTester.Services
             }
             catch (Exception ex)
             {
-                $" ERROR in Api service: {ex.Message}".Error();
+                if (ex.Message.Contains("AuthToken"))
+                {
+                    "There is no token.".Error();
+                }
+                else
+                {
+                    $"ERROR in Api service: {ex.Message}".Error();
+                }
+
                 return false;
             }
         }
