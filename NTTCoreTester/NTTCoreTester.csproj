@@ -63,46 +63,46 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\13_SquareOff_Full.json">
+    <Content Include="Configs\Equities\13_SquareOff_Full.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\14_SquareOff_Partial.json">
+    <Content Include="Configs\Equities\14_SquareOff_Partial.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\15_Hedge_Create.json">
+    <Content Include="Configs\Derivatives\15_Hedge_Create.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\16_Hedge_Remove.json">
+    <Content Include="Configs\Derivatives\16_Hedge_Remove.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\LoginSession.json">
+    <Content Include="Configs\Authorization\LoginSession.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\Login.json">
+    <Content Include="Configs\Authorization\Login.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\20_AMO_PendingCancel_MarginRelease.json">
+    <Content Include="Configs\Equities\20_AMO_PendingCancel_MarginRelease.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\21_MCX_Futures_CNC_Buy.json">
+    <Content Include="Configs\Derivatives\21_MCX_Futures_CNC_Buy.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\22_CDS_Currency_MIS_Buy.json">
+    <Content Include="Configs\Derivatives\22_CDS_Currency_MIS_Buy.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\23_BFO_Options_MIS_Buy.json">
+    <Content Include="Configs\Derivatives\23_BFO_Options_MIS_Buy.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\24_Holding_Sell_MarginCheck.json">
+    <Content Include="Configs\Equities\24_Holding_Sell_MarginCheck.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\25_NFO_CF_Sqoff_CrossSegment.json">
+    <Content Include="Configs\Derivatives\25_NFO_CF_Sqoff_CrossSegment.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\26_BFO_CF_Sqoff_CrossSegment.json">
+    <Content Include="Configs\Derivatives\26_BFO_CF_Sqoff_CrossSegment.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Configs\27_MCX_CF_Sqoff_CrossSegment.json">
+    <Content Include="Configs\Derivatives\27_MCX_CF_Sqoff_CrossSegment.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Derivatives\06_Futures_MIS_Buy.json">
