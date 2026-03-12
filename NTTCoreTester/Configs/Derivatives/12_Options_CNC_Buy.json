@@ -63,7 +63,7 @@
         "norenordno": "0",
         "segment": "DER",
         "tsym": "{{tsym}}",
-        "qty": "{{lotsize}}",
+        "qty": "1",
         "prc": "{{lp}}",
         "trgprc": "0",
         "dscqty": 0,
