@@ -1,0 +1,222 @@
+{
+  "testName": "Equity MIS BuySell Round Trip",
+  "description": "Buy then Sell same quantity. Position returns to zero and margin unchanged except charges.",
+  "stopOnFailure": true,
+  "requests": [
+
+    {
+      "endpoint": "GetSecurityInfo",
+      "description": "Fetch NSE equity security info.",
+      "activity": "ExtractSecurityInfo",
+      "payload": {
+        "exch": "NSE",
+        "token": "13501"
+      }
+    },
+
+    {
+      "endpoint": "Limits",
+      "description": "Capture initial margin snapshot.",
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "PositionBook",
+      "description": "Capture initial positions (should be zero).",
+      "activity": "ExtractPrePositions",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "prd": ""
+      }
+    },
+
+    {
+      "endpoint": "GetOrderMargin",
+      "description": "Preview margin for BUY order.",
+      "activity": "ExtractGetOrderMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "5",
+        "trantype": "Buy",
+        "ordno": "0",
+        "prc": 0,
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "MIS",
+        "prctyp": "MKT",
+        "ordersource": "Web"
+      }
+    },
+
+    {
+      "endpoint": "PlaceOrder",
+      "description": "Place BUY market order.",
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Buy",
+        "tsym": "{{tsym}}",
+        "qty": 5,
+        "prc": "0",
+        "prd": "MIS",
+        "prctyp": "MKT",
+        "ret": "DAY",
+        "ordersource": "Web"
+      }
+    },
+
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Validate BUY order traded.",
+      "activity": "OrderStatusHandler",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+
+    {
+      "endpoint": "TradeBook",
+      "description": "Extract BUY trade fill.",
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "PositionBook",
+      "description": "Validate BUY position created.",
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "Limits",
+      "description": "Validate margin blocked for BUY trade.",
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "PositionBook",
+      "description": "Capture initial positions (should be zero).",
+      "activity": "ExtractPrePositions",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "prd": ""
+      }
+    },
+
+    {
+      "endpoint": "Limits",
+      "description": "Capture initial margin snapshot.",
+      "activity": "ExtractPreLimitMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "GetOrderMargin",
+      "description": "Preview margin for SELL order.",
+      "activity": "ExtractGetOrderMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "tsym": "{{tsym}}",
+        "qty": "5",
+        "trantype": "Sell",
+        "ordno": "0",
+        "prc": 0,
+        "trgprc": "0",
+        "dscqty": "0",
+        "prd": "MIS",
+        "prctyp": "MKT",
+        "ordersource": "Web"
+      }
+    },
+
+    {
+      "endpoint": "PlaceOrder",
+      "description": "Place SELL market order to close position.",
+      "activity": "ExtractClientOrdId",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "exch": "{{exch}}",
+        "trantype": "Sell",
+        "tsym": "{{tsym}}",
+        "qty": 5,
+        "prc": "0",
+        "prd": "MIS",
+        "prctyp": "MKT",
+        "ret": "DAY",
+        "ordersource": "Web"
+      }
+    },
+
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Validate SELL order traded.",
+      "activity": "OrderStatusHandler",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+
+    {
+      "endpoint": "TradeBook",
+      "description": "Extract SELL trade fill.",
+      "activity": "ExtractTradeFill",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "PositionBook",
+      "description": "Validate position returned to zero.",
+      "activity": "ValidatePostPositions",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "Limits",
+      "description": "Validate margin returned except charges.",
+      "activity": "ExtractPostLimitMargin",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    }
+
+  ]
+}
