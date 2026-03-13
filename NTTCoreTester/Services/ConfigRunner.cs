@@ -82,8 +82,24 @@ namespace NTTCoreTester.Services
                 if (!Test.Enabled)
                     continue;
 
+                // Master Variables
+                if (masterTestConfig.Variables != null)
+                {
+                    foreach (var v in masterTestConfig.Variables)
+                        _cache.Set(v.Key, v.Value);
+                }
+
+                // Test Override Variables
+                if (Test.Variables != null)
+                {
+                    foreach (var v in Test.Variables)
+                        _cache.Set(v.Key, v.Value);
+                }
+
                 $"\n Running Test: {Test.TestName}".Info();
+
                 bool result = await RunTest(Test.Path);
+
                 if (!result && masterTestConfig.StopOnFailure)
                 {
                     "\nStopping master execution".Error();
@@ -122,6 +138,12 @@ namespace NTTCoreTester.Services
 
                 string configContent = await File.ReadAllTextAsync(filePath);
                 var testConfig = JsonConvert.DeserializeObject<TestTestConfig>(configContent);
+                // Test config level variables
+                if (testConfig?.Variables != null)
+                {
+                    foreach (var v in testConfig.Variables)
+                        _cache.Set(v.Key, v.Value);
+                }
 
                 if (testConfig == null || testConfig.Requests == null || testConfig.Requests.Count == 0)
                 {

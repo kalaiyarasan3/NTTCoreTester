@@ -1,0 +1,55 @@
+{
+  "masterTestName": "Eq Sq Off MIS",
+  "description": "Buy QTY-10 EQ in MIS  checking margin changes and Sell Qty-5 Eq and Sq Off ALL",
+  "stopOnFailure": true,
+  "variables": {
+    "exch": "NSE"
+  },
+  "Tests": [
+    {
+      "TestName": "Login",
+      "path": "Authorization/Login",
+      "variables": {
+        "uid": "90255961",
+        "pwd": "Hemanath@123"
+      },
+      "enabled": true
+    },
+
+    {
+      "TestName": "Equity_MIS_Buy",
+      "path": "Equities/PlaceOrder",
+      "variables": {
+        "qty": "1",
+        "trantype": "Buy",
+        "prctyp": "MKT",
+        "prd": "MIS"
+      },
+      "enabled": true
+    },
+    {
+      "TestName": "Equity_MIS_Sell",
+      "path": "Equities/PlaceOrder",
+      "variables": {
+        "qty": "1",
+        "trantype": "Sell",
+        "prctyp": "MKT",
+        "prd": "MIS"
+      },
+      "enabled": true
+    },
+
+    {
+      "TestName": "13_SquareOff_Full",
+      "path": "Equities/13_SquareOff_Full",
+      "enabled": true
+    },
+
+    {
+      "TestName": "Logout",
+      "path": "Authorization/Logout",
+      "enabled": true
+    }
+
+  ]
+}

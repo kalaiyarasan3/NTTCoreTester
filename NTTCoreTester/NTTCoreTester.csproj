@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
-    <None Remove="ConfigMaster\_.json" />
     <None Remove="Configs\MarketWatch.json" />
     <None Remove="ExpectedResponses\BasketOrder_response.json" />
     <None Remove="ExpectedResponses\CancelOrder_response.json" />
@@ -62,6 +61,9 @@
 
   <ItemGroup>
     <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configs\Equities\PlaceOrder.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\Equities\13_SquareOff_Full.json">
@@ -151,7 +153,7 @@
     <Content Include="Configs\Equities\19_RMS_InsufficientMargin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ConfigMaster\_.json">
+    <Content Include="ConfigMaster\Eq_SquareOff_MIS.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\MarketWatch.json">
@@ -325,6 +327,12 @@
     <PackageReference Include="Scrutor" Version="7.0.0" />
 	  <None Update="appsettings.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="ConfigMaster\EQ_SquareOff_CNC.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Configs\Authorization\Logout.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
   </ItemGroup>
 

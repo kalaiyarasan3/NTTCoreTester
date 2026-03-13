@@ -11,6 +11,7 @@ namespace NTTCoreTester.Core.Models
         public string TestName { get; set; }
         public string Description { get; set; }
         public bool StopOnFailure { get; set; }
+        public Dictionary<string, string>? Variables { get; set; }
         public List<ConfigRequest> Requests { get; set; }
     }
 
@@ -19,6 +20,7 @@ namespace NTTCoreTester.Core.Models
         public string MasterTestName { get; set; }
         public string Description { get; set; }
         public bool StopOnFailure { get; set; }
+        public Dictionary<string, string>? Variables { get; set; }
         public List<TestInfo> Tests { get; set; }
     }
 
@@ -27,5 +29,6 @@ namespace NTTCoreTester.Core.Models
         public string TestName { get; set; }
         public string Path { get; set; }
         public bool Enabled { get; set; }
+        public Dictionary<string, string>? Variables { get; set; }
     }
 }

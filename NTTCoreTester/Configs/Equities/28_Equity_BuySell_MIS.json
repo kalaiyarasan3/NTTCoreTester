@@ -76,6 +76,27 @@
     },
 
     {
+      "endpoint": "OrderBook",
+      "description": "Save order for tracking.",
+      "activity": "SaveOrders",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}"
+      }
+    },
+
+    {
+      "endpoint": "ActivityOrderBook",
+      "description": "Validate order book sync timing.",
+      "activity": "ValidateOrderBookSync",
+      "payload": {
+        "uid": "{{uid}}",
+        "actid": "{{uid}}",
+        "status": "ALL"
+      }
+    },
+
+    {
       "endpoint": "ActivityOrderBook",
       "description": "Validate BUY order traded.",
       "activity": "OrderStatusHandler",
@@ -115,7 +136,7 @@
         "actid": "{{uid}}"
       }
     },
-
+    //-----------Sell------------
     {
       "endpoint": "PositionBook",
       "description": "Capture initial positions (should be zero).",
