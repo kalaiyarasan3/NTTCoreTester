@@ -35,9 +35,12 @@ namespace NTTCoreTester.Activities
             $"Client order id: {key}".Warn();
 
             var relatedOrders = orders?
-                .Where(x => x.NewClientOrderId == key)
-                .OrderByDescending(x => x.AddedOn)
-                .ToList();
+            .Where(x =>
+                x.NewClientOrderId == key ||
+                x.OriginalClientOrderId == key ||
+                x.ClientOrderId == key)
+            .OrderByDescending(x => x.AddedOn)
+            .ToList();
 
             if (relatedOrders == null || !relatedOrders.Any())
                 return $"Order {key} not found".FailWithLog();
@@ -55,7 +58,9 @@ namespace NTTCoreTester.Activities
 
             var map = cache.Get<Dictionary<string, string?>>(Constants.ClientOrdIds) ?? [];
 
-            map[$"{order.TypeSymbol}-{order.Product}"] = order.ClientOrderId;
+            var clientOrderId = order.NewClientOrderId ?? order.ClientOrderId;
+
+            map[$"{order.TypeSymbol}-{order.Product}"] = clientOrderId;
 
             cache.Set(Constants.ClientOrdIds, map);
 
