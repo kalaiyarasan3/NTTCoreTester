@@ -9,7 +9,7 @@
       "activity": "ExtractSecurityInfo",
       "payload": {
         "exch": "{{exch}}",
-        "token": "13501"
+        "token": "{{token}}"
       }
     },
     {
@@ -60,7 +60,7 @@
         "segment": "DER",
         "tsym": "{{tsym}}",
         "qty": "{{qty}}",
-        "prc": "0.00",
+        "prc": "{{prc}}",
         "trgprc": "0",
         "dscqty": 0,
         "prd": "{{prd}}",

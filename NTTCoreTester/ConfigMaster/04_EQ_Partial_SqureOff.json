@@ -1,0 +1,40 @@
+{
+  "masterTestName": "MIS_Partial_Reduction",
+  "description": "Buy 10 then sell 6 leaving 4 long",
+  "stopOnFailure": true,
+  "variables": {
+    "exch": "NSE",
+    "token": "13501",
+    "prc": "{{lp}}"
+  },
+  "Tests": [
+    {
+      "TestName": "Login",
+      "path": "Authorization/Login"
+    },
+    {
+      "TestName": "Buy_10",
+      "path": "Equities/PlaceOrder",
+      "variables": {
+        "qty": "10",
+        "trantype": "Buy",
+        "prctyp": "MKT",
+        "prd": "MIS"
+      }
+    },
+    {
+      "TestName": "Sell_6",
+      "path": "Equities/PlaceOrder",
+      "variables": {
+        "qty": "6",
+        "trantype": "Sell",
+        "prctyp": "MKT",
+        "prd": "MIS"
+      }
+    },
+    {
+      "TestName": "Logout",
+      "path": "Authorization/Logout"
+    }
+  ]
+}

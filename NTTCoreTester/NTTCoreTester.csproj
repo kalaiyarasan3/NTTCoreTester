@@ -63,6 +63,15 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ConfigMaster\03_EQ_Flip_Short_Long.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ConfigMaster\05_NFO_CF_Option_buy_squreOff.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ConfigMaster\04_EQ_Partial_SqureOff.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configs\Equities\PlaceOrder.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -153,7 +162,7 @@
     <Content Include="Configs\Equities\19_RMS_InsufficientMargin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ConfigMaster\Eq_SquareOff_MIS.json">
+    <Content Include="ConfigMaster\01_Eq_SquareOff_MIS_M.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Configs\MarketWatch.json">
@@ -328,7 +337,7 @@
 	  <None Update="appsettings.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="ConfigMaster\EQ_SquareOff_CNC.json">
+	  <None Update="ConfigMaster\02_EQ_Flip_Long_Short.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Configs\Authorization\Logout.json">

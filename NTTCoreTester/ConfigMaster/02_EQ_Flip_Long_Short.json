@@ -1,0 +1,44 @@
+{
+  "masterTestName": "MIS_Short_To_Long_Flip",
+  "description": "Sell 5 then buy 10 to flip position to long",
+  "stopOnFailure": true,
+  "variables": {
+    "exch": "NSE",
+    "token": "13501",
+    "prc": "{{lp}}"
+  },
+  "Tests": [
+    {
+      "TestName": "Login",
+      "path": "Authorization/Login",
+      "enabled": true
+    },
+    {
+      "TestName": "Sell_5",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "qty": "5",
+        "trantype": "Sell",
+        "prctyp": "MKT",
+        "prd": "MIS"
+      }
+    },
+    {
+      "TestName": "Buy_10_Flip",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "qty": "10",
+        "trantype": "Buy",
+        "prctyp": "MKT",
+        "prd": "MIS"
+      }
+    },
+    {
+      "TestName": "Logout",
+      "path": "Authorization/Logout",
+      "enabled": true
+    }
+  ]
+}

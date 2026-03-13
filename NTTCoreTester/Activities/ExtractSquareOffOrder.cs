@@ -27,7 +27,7 @@ namespace NTTCoreTester.Activities
 
                 var prePositions = _cache.Get<List<PositionBookModel>>(Constants.PrePositions);
 
-                if (prePositions == null || !prePositions.Any())
+                if (prePositions == null)
                     return "PrePositions missing".FailWithLog(true);
 
                 var clientOrderIds = new Dictionary<string, string>();

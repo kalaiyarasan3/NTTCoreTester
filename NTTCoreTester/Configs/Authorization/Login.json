@@ -9,8 +9,8 @@
       "headerProfileName": "LoginHeaders",
       "activity": "ExtractSession",
       "payload": {
-        "uid": "{{uid}}",
-        "pwd": "{{pwd}}",
+        "uid": "47054457",
+        "pwd": "Navia@123",
         "otp": "7657768",
         "TwoFA": 1
       }

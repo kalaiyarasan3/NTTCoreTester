@@ -1,0 +1,114 @@
+{
+  "masterTestName": "RMS_ZeroMargin_Validation",
+  "description": "Test RMS rules when margin is insufficient",
+  "stopOnFailure": false,
+  "variables": {
+    "token": "51714",
+    "prc": "{{lp}}"
+  },
+  "Tests": [
+    {
+      "TestName": "Login",
+      "path": "Authorization/Login",
+      "enabled": true
+    },
+
+    {
+      "TestName": "NFO_CNC_Option_Buy",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "exch": "NFO",
+        "prd": "CNC",
+        "trantype": "Buy",
+        "prctyp": "MKT",
+        "qty": "1"
+      }
+    },
+
+    {
+      "TestName": "NFO_CNC_Option_SquareOff",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "exch": "NFO",
+        "prd": "CNC",
+        "trantype": "Sell",
+        "prctyp": "MKT",
+        "qty": "1"
+      }
+    },
+
+    {
+      "TestName": "MCX_Option_Sell_ShouldReject",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "token": "467748", // cotton
+        "exch": "MCX",
+        "prd": "MIS",
+        "trantype": "Sell",
+        "prctyp": "MKT",
+        "qty": "1"
+      }
+    },
+
+    {
+      "TestName": "NFO_Option_Sell_ShouldReject",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "exch": "NFO",
+        "prd": "MIS",
+        "trantype": "Sell",
+        "prctyp": "MKT",
+        "qty": "1"
+      }
+    },
+
+    {
+      "TestName": "BFO_Option_Sell_ShouldReject",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "exch": "BFO",
+        "prd": "MIS",
+        "trantype": "Sell",
+        "prctyp": "MKT",
+        "qty": "1"
+      }
+    },
+
+    {
+      "TestName": "BFO_Option_Buy_ShouldAccept",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "exch": "BFO",
+        "prd": "MIS",
+        "trantype": "Buy",
+        "prctyp": "MKT",
+        "qty": "1"
+      }
+    },
+
+    {
+      "TestName": "NFO_Option_Buy_ShouldAccept",
+      "path": "Equities/PlaceOrder",
+      "enabled": true,
+      "variables": {
+        "exch": "NFO",
+        "prd": "MIS",
+        "trantype": "Buy",
+        "prctyp": "MKT",
+        "qty": "1"
+      }
+    },
+
+    {
+      "TestName": "Logout",
+      "path": "Authorization/Logout",
+      "enabled": true
+    }
+  ]
+}
